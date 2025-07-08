@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Rapports - D-WEE</title>
+  <link rel="stylesheet" href="../static/salesCSS.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" />
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="logo">
+      <img src="https://dweehealthcare.com/wp-content/uploads/2023/08/D-wee-Final.png" alt="DWEE Logo" />
+      <div>
+        <div class="logo-text">D-WEE Healthcare</div>
+        <div class="logo-subtitle">Tableau de Bord Commercial</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-item"><a class="nav-link" href="sales_dashboard.html"><i class="fas fa-tachometer-alt"></i> Tableau de Bord</a></div>
+      <div class="nav-item"><a class="nav-link" href="sales_users.html"><i class="fas fa-users"></i> Utilisateurs</a></div>
+      <div class="nav-item"><a class="nav-link" href="sales_dkits.html"><i class="fas fa-box"></i> D-KIT Devices</a></div>
+      <div class="nav-item"><a class="nav-link" href="sales_assignments.html"><i class="fas fa-handshake"></i> Assignations</a></div>
+      <div class="nav-item"><a class="nav-link active" href="sales_reports.html"><i class="fas fa-chart-bar"></i> Rapports</a></div>
+      <div class="nav-item"><a class="nav-link" href="sales_profile.html"><i class="fas fa-user"></i> Profil</a></div>    
+    </nav>
+    <div class="sidebar-user">
+      <div class="user-avatar">JD</div>
+      <div class="user-details">
+        <div class="user-name">Jean Dupont</div>
+        <div class="user-role">Représentant Commercial</div>
+      </div>
+      <button class="logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i>
+      </button>
+    </div>
+  </aside>
+  <main class="main-content">
+    <!-- Reports Tab Content -->
+    <div id="reports" class="tab-content active">
+      <div class="dashboard-grid">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="card-icon fas fa-download"></i>
+              Rapports Disponibles
+            </div>
+          </div>
+          <div class="report-buttons">
+            <button class="btn btn-primary" onclick="downloadReport('sales')">
+              <i class="fas fa-file-pdf"></i> Rapport de mes ventes
+            </button>
+            <button class="btn btn-primary" onclick="downloadReport('maintenance')">
+              <i class="fas fa-file-excel"></i> Rapport de mes maintenances
+            </button>
+            <button class="btn btn-primary" onclick="downloadReport('stock')">
+              <i class="fas fa-boxes"></i> Rapport de mon stock
+            </button>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="card-icon fas fa-chart-pie"></i>
+              Résumé des Activités
+            </div>
+          </div>
+          <div class="activity-summary">
+            <div class="activity-week">
+              <strong>Cette Semaine:</strong>
+              <ul>
+                <li>8 nouveaux utilisateurs</li>
+                <li>12 D-KITs assignés</li>
+                <li>6 formations complétées</li>
+                <li>3 demandes en attente</li>
+              </ul>
+            </div>
+            <div class="activity-month">
+              <strong>Ce Mois:</strong>
+              <ul>
+                <li>25 nouveaux utilisateurs</li>
+                <li>32 D-KITs assignés</li>
+                <li>28 formations complétées</li>
+                <li>8 demandes en attente</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script src="../static/js/sales_common.js"></script>
+
+  <!-- Modals Start -->
+  <!-- User Modal -->
+  <div id="userModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">Gestion Utilisateur</div>
+        <button class="close-btn" onclick="closeModal('userModal')">&times;</button>
+      </div>
+      <form onsubmit="saveUser(event)">
+        <div class="form-group">
+          <label class="form-label">Nom Complet</label>
+          <input type="text" class="form-input" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-input" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Téléphone</label>
+          <input type="tel" class="form-input" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Profession</label>
+          <select class="form-select" required>
+            <option value="">Sélectionner...</option>
+            <option value="etudiant">Étudiant(e)</option>
+            <option value="enfant">Enfant</option>
+            <option value="parent">Parent</option>
+            <option value="enseignant">Enseignant(e)</option>
+            <option value="ingenieur">Ingénieur</option>
+            <option value="technicien">Technicien(ne)</option>
+            <option value="employe">Employé(e)</option>
+            <option value="cadre">Cadre</option>
+            <option value="medecin">Médecin</option>
+            <option value="autre">Autre</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Institution</label>
+          <input type="text" class="form-input">
+        </div>
+        <div class="modal-actions">
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save"></i> Enregistrer
+          </button>
+          <button type="button" class="btn btn-secondary" onclick="closeModal('userModal')">
+            Annuler
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- D-KIT Modal -->
+  <div id="dkitModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">Gestion D-KIT</div>
+        <button class="close-btn" onclick="closeModal('dkitModal')">&times;</button>
+      </div>
+      <form onsubmit="saveDKit(event)">
+        <div class="form-group">
+          <label class="form-label">ID Device</label>
+          <input type="text" class="form-input" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Modèle</label>
+          <select class="form-select" required>
+            <option value="">Sélectionner...</option>
+            <option value="dkit-standard">D-KIT Standard</option>
+            <option value="dkit-pro">D-KIT Pro</option>
+            <option value="dkit-advanced">D-KIT Advanced</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Numéro de Série</label>
+          <input type="text" class="form-input" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Statut</label>
+          <select class="form-select" required>
+            <option value="">Sélectionner...</option>
+            <option value="disponible">Disponible</option>
+            <option value="assigne">Assigné</option>
+            <option value="maintenance">En maintenance</option>
+            <option value="defectueux">Défectueux</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Notes</label>
+          <textarea class="form-textarea" placeholder="Notes additionnelles..."></textarea>
+        </div>
+        <div class="modal-actions">
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-save"></i> Enregistrer
+          </button>
+          <button type="button" class="btn btn-secondary" onclick="closeModal('dkitModal')">
+            Annuler
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Assignment Modal -->
+  <div id="assignModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <div class="modal-title">Assignation D-KIT</div>
+        <button class="close-btn" onclick="closeModal('assignModal')">&times;</button>
+      </div>
+      <form onsubmit="saveAssignment(event)">
+        <div class="form-group">
+          <label class="form-label">Utilisateur</label>
+          <select class="form-select" required>
+            <option value="">Sélectionner un utilisateur...</option>
+            <option value="user1">Dr. Amina Ben Ali</option>
+            <option value="user2">Dr. Mohamed Triki</option>
+            <option value="user3">Inf. Fatma Sghaier</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">D-KIT Disponible</label>
+          <select class="form-select" required>
+            <option value="">Sélectionner un D-KIT...</option>
+            <option value="dkit1">DKIT-002 (D-KIT Standard)</option>
+            <option value="dkit2">DKIT-004 (D-KIT Pro)</option>
+            <option value="dkit3">DKIT-005 (D-KIT Advanced)</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Date d'Assignation</label>
+          <input type="date" class="form-input" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Date de Formation Prévue</label>
+          <input type="date" class="form-input">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Notes</label>
+          <textarea class="form-textarea" placeholder="Notes concernant l'assignation..."></textarea>
+        </div>
+        <div class="modal-actions">
+          <button type="submit" class="btn btn-primary">
+            <i class="fas fa-check"></i> Assigner
+          </button>
+          <button type="button" class="btn btn-secondary" onclick="closeModal('assignModal')">
+            Annuler
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <!-- Modals End -->
+</body>
+</html> 

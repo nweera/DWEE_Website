@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>D-WEE Healthcare - Support</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="{{ url_for('static', filename='userCSS.css') }}" />
+    <style>
+      /* Professional Support Page Styles */
+      .support-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+        margin: 2rem 0;
+      }
+
+      .support-card {
+        background: white;
+        border-radius: 12px;
+        padding: 2rem;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .support-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+      }
+
+      .support-card:hover {
+        transform: translateY(-4px);
+        box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+      }
+
+      .card-header {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        margin-bottom: 1.5rem;
+        padding-bottom: 1rem;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+        justify-content: flex-start;
+      }
+
+      .card-header i {
+        font-size: 1.2rem; /* smaller icon */
+        padding: 0.75rem; /* smaller padding inside circle */
+        width: 45px;
+        height: 45px;
+        color: var(--primary-color);
+        background: rgba(37, 168, 223, 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .card-header h2 {
+        margin: 0;
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--text-color);
+      }
+
+      .contact-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+      }
+
+      .contact-item {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        padding: 1rem 0;
+        border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+        transition: all 0.2s ease;
+      }
+
+      .contact-item:last-child {
+        border-bottom: none;
+      }
+
+      .contact-item:hover {
+        background: rgba(37, 168, 223, 0.03);
+        border-radius: 8px;
+        padding-left: 1rem;
+        margin: 0 -1rem;
+      }
+
+      .flag-icon {
+        width: 24px;
+        height: auto;
+        border-radius: 2px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+      }
+
+      .contact-item i {
+        color: var(--primary-color);
+        font-size: 1.2rem;
+        width: 24px;
+        text-align: center;
+      }
+
+      .contact-item a {
+        text-decoration: none;
+        color: var(--text-color);
+        font-weight: 500;
+        font-size: 1.1rem;
+        transition: all 0.2s ease;
+        flex: 1;
+      }
+
+      .contact-item a:hover {
+        color: var(--primary-color);
+        text-decoration: underline;
+      }
+
+      /* Chatbot Section */
+      .chatbot-section {
+        background: white;
+        border-radius: 12px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+        margin: 2rem 0;
+        overflow: hidden;
+      }
+
+      .chatbot-header {
+        background: var(--primary-color);
+        color: white;
+        padding: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+      }
+
+      .chatbot-header i {
+        font-size: 1.5rem;
+      }
+
+      .chatbot-header h3 {
+        margin: 0;
+        font-size: 1.3rem;
+        font-weight: 600;
+      }
+
+      .chat-container {
+        height: 400px;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .chat-messages {
+        flex: 1;
+        padding: 1rem;
+        overflow-y: auto;
+        background: #f8f9fa;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .message {
+        display: flex;
+        gap: 0.75rem;
+        align-items: flex-start;
+        max-width: 80%;
+      }
+
+      .message.user {
+        align-self: flex-end;
+        flex-direction: row-reverse;
+      }
+
+      .message.bot {
+        align-self: flex-start;
+      }
+
+      .message i {
+        width: 35px;
+        height: 35px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1rem;
+        flex-shrink: 0;
+      }
+
+      .message.user i {
+        background: var(--primary-color);
+        color: white;
+      }
+
+      .message.bot i {
+        background: var(--primary-color);
+        color: white;
+      }
+
+      .message-content {
+        background: white;
+        padding: 0.75rem 1rem;
+        border-radius: 12px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(0, 0, 0, 0.05);
+      }
+
+      .message.user .message-content {
+        background: var(--primary-color);
+        color: white;
+      }
+
+      .message-content p {
+        margin: 0;
+        line-height: 1.4;
+      }
+
+      .typing-indicator {
+        display: none;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 1rem;
+        margin-bottom: 1rem;
+      }
+
+      .typing-indicator span {
+        width: 8px;
+        height: 8px;
+        border-radius: 50%;
+        background: var(--secondary-color);
+        animation: typing 1.4s infinite;
+        opacity: 0.4;
+      }
+
+      .typing-indicator span:nth-child(2) {
+        animation-delay: 0.2s;
+      }
+
+      .typing-indicator span:nth-child(3) {
+        animation-delay: 0.4s;
+      }
+
+      @keyframes typing {
+        0%,
+        60%,
+        100% {
+          transform: translateY(0);
+          opacity: 0.4;
+        }
+        30% {
+          transform: translateY(-10px);
+          opacity: 1;
+        }
+      }
+
+      .chat-input {
+        display: flex;
+        gap: 0.5rem;
+        padding: 1rem;
+        background: white;
+        border-top: 1px solid rgba(0, 0, 0, 0.05);
+      }
+
+      .chat-input input {
+        flex: 1;
+        padding: 0.75rem;
+        border: 1px solid rgba(0, 0, 0, 0.15);
+        border-radius: 8px;
+        font-size: 1rem;
+        outline: none;
+        transition: all 0.2s ease;
+      }
+
+      .chat-input input:focus {
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(37, 168, 223, 0.1);
+      }
+
+      .chat-input button {
+        padding: 0.75rem 1rem;
+        background: var(--primary-color);
+        color: white;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        font-size: 1rem;
+      }
+
+      .chat-input button:hover {
+        background: var(--primary-hover);
+        transform: translateY(-1px);
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .support-grid {
+          grid-template-columns: 1fr;
+          gap: 1.5rem;
+          margin: 1.5rem 0;
+        }
+
+        .support-card {
+          padding: 1.5rem;
+        }
+
+        .card-header {
+          flex-direction: column;
+          text-align: center;
+          gap: 0.5rem;
+        }
+
+        .card-header i {
+          font-size: 1.5rem;
+          width: 50px;
+          height: 50px;
+        }
+        .contact-item {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.5rem;
+        }
+      }
+    </style>
+  </head>
+  <body class="dashboard">
+    <!-- Sidebar Navigation -->
+    <!-- Sidebar Navigation -->
+
+    <nav class="sidebar">
+      <div class="logo">
+        <img
+          src="https://dweehealthcare.com/wp-content/uploads/2023/08/D-wee-Final.png"
+          alt="DWEE Logo"
+        />
+        <div>
+          <div class="logo-text">D-WEE Healthcare</div>
+          <div class="logo-subtitle">Compte Client</div>
+        </div>
+      </div>
+      <ul class="nav-links">
+        <li>
+          <a href="{{ url_for('user_dashboard') }}"><i class="fas fa-home"></i>Tableau de bord</a>
+        </li>
+        <li>
+          <a href="{{ url_for('user_dkits') }}"><i class="fas fa-box"></i>Mes Dkits</a>
+        </li>
+        <li>
+          <a href="{{ url_for('user_calendar') }}"><i class="fas fa-calendar-alt"></i>RDV maintenance</a>
+        </li>
+        <li>
+          <a href="{{ url_for('user_profile') }}"><i class="fas fa-user"></i>Mon Profil</a>
+        </li>
+        <li>
+          <a href="{{ url_for('user_support') }}"><i class="fas fa-headset"></i>Support</a>
+        </li>
+      </ul>
+      <div class="user-info">
+        <i class="fas fa-user-circle avatar"></i>
+        <a href="{{ url_for('user_profile') }}" class="user-name">{{ user.first_name }} {{ user.last_name }}</a>
+        <span class="sales-badge" style="display: none">Commercial</span>
+        <button class="logout-btn" onclick="openLogoutModal()">
+          <i class="fas fa-sign-out-alt"></i>
+        </button>
+      </div>
+
+      <a
+        href="{{ url_for('user_commercial_registration') }}"
+        class="role-switch"
+        id="becomeSales"
+        ><i class="fas fa-user-tie"></i>
+        Devenir Commercial
+      </a>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <div class="page-header">
+        <div>
+          <h1><i class="page-title"></i> Support D-WEE Healthcare</h1>
+          <p class="page-subtitle">
+            Notre équipe est là pour vous aider avec votre D-KIT
+          </p>
+        </div>
+      </div>
+      <div class="support-grid">
+        <div class="support-card">
+          <div class="card-header">
+            <i class="fas fa-phone-alt"></i>
+            <h2>Téléphone</h2>
+          </div>
+          <ul class="contact-list">
+            <li class="contact-item">
+              <img
+                src="https://flagcdn.com/16x12/tn.png"
+                alt="Tunisia"
+                class="flag-icon"
+              />
+              <a href="tel:+21652431472">+216 52 431 472</a>
+            </li>
+            <li class="contact-item">
+              <img
+                src="https://flagcdn.com/16x12/ca.png"
+                alt="Canada"
+                class="flag-icon"
+              />
+              <a href="tel:+14183212646">+1 418 321 2646</a>
+            </li>
+          </ul>
+        </div>
+
+        <div class="support-card">
+          <div class="card-header">
+            <i class="fas fa-envelope"></i>
+            <h2>Email</h2>
+          </div>
+          <ul class="contact-list">
+            <li class="contact-item">
+              <i class="fas fa-envelope"></i>
+              <a href="mailto:contact@dweehealthcare.com"
+                >contact@dweehealthcare.com</a
+              >
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Chatbot Section -->
+      <div class="chatbot-section">
+        <div class="chatbot-header">
+          <i class="fas fa-robot"></i>
+          <h3>Assistant D-WEE - Chat en Direct</h3>
+        </div>
+        <div class="chat-container">
+          <div class="chat-messages" id="chatMessages">
+            <div class="message bot">
+              <i class="fas fa-robot"></i>
+              <div class="message-content">
+                <p>
+                  Bonjour! Je suis l'assistant D-WEE. Comment puis-je vous aider
+                  aujourd'hui?
+                </p>
+              </div>
+            </div>
+          </div>
+          <div class="typing-indicator" id="typingIndicator">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+          <div class="chat-input">
+            <input
+              type="text"
+              id="chatInput"
+              placeholder="Tapez votre message ici..."
+            />
+            <button id="sendMessage"><i class="fas fa-paper-plane"></i></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Modal de déconnexion -->
+      <div id="logoutModal" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 class="modal-title">Confirmation de déconnexion</h2>
+            <button class="close" onclick="closeLogoutModal()">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Êtes-vous sûr de vouloir vous déconnecter ?</p>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-outline" onclick="closeLogoutModal()">
+              Annuler
+            </button>
+            <button class="btn btn-primary" onclick="confirmLogout()">
+              Se déconnecter
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <script>
+        // Chatbot knowledge base
+        const chatbotResponses = {
+          greetings: ["bonjour", "salut", "hello", "bonsoir", "hi"],
+          maintenance: [
+            "maintenance",
+            "entretien",
+            "réparation",
+            "problème",
+            "panne",
+          ],
+          dkit: ["dkit", "d-kit", "appareil", "équipement", "fauteuil"],
+          contact: [
+            "contact",
+            "support",
+            "aide",
+            "assistance",
+            "téléphone",
+            "email",
+            "appeler",
+          ],
+          schedule: [
+            "rendez-vous",
+            "rdv",
+            "planifier",
+            "programmer",
+            "calendrier",
+          ],
+        };
+
+        const chatbotAnswers = {
+          greetings: [
+            "Bonjour! Je suis l'assistant D-WEE. Comment puis-je vous aider?",
+            "Salut! Je suis là pour répondre à vos questions sur D-WEE.",
+            "Bonjour! Que puis-je faire pour vous aujourd'hui?",
+          ],
+          maintenance: [
+            "Pour la maintenance de votre D-KIT, voici les options disponibles :\n" +
+              "1. Planifier une maintenance préventive\n" +
+              "2. Signaler un problème technique\n" +
+              "3. Consulter l'historique des maintenances\n" +
+              "Que souhaitez-vous faire?",
+            "Je peux vous aider avec la maintenance. Voulez-vous planifier un rendez-vous ou signaler un problème?",
+          ],
+          dkit: [
+            "Concernant votre D-KIT, je peux vous aider avec :\n" +
+              "1. L'enregistrement d'un nouveau D-KIT\n" +
+              "2. La consultation des informations techniques\n" +
+              "3. Le suivi des maintenances\n" +
+              "Que souhaitez-vous savoir?",
+            "Je peux vous fournir des informations sur votre D-KIT. Quel aspect vous intéresse?",
+          ],
+          contact: [
+            "Voici nos coordonnées :\n" +
+              "📞 Téléphone : +216 52 431 472\n" +
+              "📧 Email : contact@dweehealthcare.com\n" +
+              "Horaires : 8H - 18H (Lun-Ven), 8H - 12H (Sam)",
+            "Notre équipe support est disponible par téléphone au +216 52 431 472 ou par email à contact@dweehealthcare.com",
+          ],
+          schedule: [
+            "Pour planifier un rendez-vous, vous pouvez :\n" +
+              "1. Utiliser notre calendrier en ligne\n" +
+              "2. Nous contacter par téléphone\n" +
+              "Que préférez-vous?",
+            "Je peux vous aider à planifier un rendez-vous. Souhaitez-vous voir les disponibilités?",
+          ],
+          default: [
+            "Je ne suis pas sûr de comprendre. Pouvez-vous reformuler votre question?",
+            "Désolé, je n'ai pas bien compris. Voulez-vous des informations sur la maintenance, le D-KIT ou contacter le support?",
+            "Je ne peux pas répondre à cette question. Puis-je vous rediriger vers notre support?",
+          ],
+        };
+
+        function getChatbotResponse(message) {
+          const lowercaseMessage = message.toLowerCase();
+
+          // Check each category of keywords
+          for (const [category, keywords] of Object.entries(chatbotResponses)) {
+            if (
+              keywords.some((keyword) => lowercaseMessage.includes(keyword))
+            ) {
+              const answers = chatbotAnswers[category];
+              return answers[Math.floor(Math.random() * answers.length)];
+            }
+          }
+
+          // If no category matches, return a default response
+          return chatbotAnswers.default[
+            Math.floor(Math.random() * chatbotAnswers.default.length)
+          ];
+        }
+
+        function showTypingIndicator() {
+          const indicator = document.getElementById("typingIndicator");
+          indicator.style.display = "flex";
+        }
+
+        function hideTypingIndicator() {
+          const indicator = document.getElementById("typingIndicator");
+          indicator.style.display = "none";
+        }
+
+        function addMessage(message, isUser = true) {
+          const messageDiv = document.createElement("div");
+          messageDiv.className = `message ${isUser ? "user" : "bot"}`;
+
+          // Format message with line breaks
+          const formattedMessage = message.replace(/\n/g, "<br>");
+
+          messageDiv.innerHTML = `
+          <i class="fas fa-${isUser ? "user" : "robot"}"></i>
+          <div class="message-content">
+            <p>${formattedMessage}</p>
+          </div>
+        `;
+          chatMessages.appendChild(messageDiv);
+          chatMessages.scrollTop = chatMessages.scrollHeight;
+        }
+
+        const chatInput = document.getElementById("chatInput");
+        const sendButton = document.getElementById("sendMessage");
+        const chatMessages = document.getElementById("chatMessages");
+
+        sendButton.addEventListener("click", () => {
+          const message = chatInput.value.trim();
+          if (message) {
+            addMessage(message);
+            chatInput.value = "";
+
+            // Show typing indicator
+            showTypingIndicator();
+
+            // Get and display bot response after a short delay
+            setTimeout(() => {
+              hideTypingIndicator();
+              const response = getChatbotResponse(message);
+              addMessage(response, false);
+            }, 1000);
+          }
+        });
+
+        chatInput.addEventListener("keypress", (e) => {
+          if (e.key === "Enter") {
+            sendButton.click();
+          }
+        });
+      </script>
+    </div>
+
+    <script>
+      // Handle active navigation state
+      function setActiveNavItem() {
+        const currentPath = window.location.pathname;
+        const navLinks = document.querySelectorAll(".nav-links li a");
+
+        navLinks.forEach((link) => {
+          // Remove any existing active class from parent li
+          link.parentElement.classList.remove("active");
+
+          // If the link's href matches the current path, add active class
+          if (currentPath.endsWith(link.getAttribute("href"))) {
+            link.parentElement.classList.add("active");
+          }
+        });
+      }
+
+      // Initialize when page loads
+      document.addEventListener("DOMContentLoaded", function () {
+        setActiveNavItem();
+      });
+
+      //js déconnexion
+      function openLogoutModal() {
+        const modal = document.getElementById("logoutModal");
+        modal.style.display = "flex";
+      }
+
+      function closeLogoutModal() {
+        const modal = document.getElementById("logoutModal");
+        modal.style.display = "none";
+      }
+
+      function confirmLogout() {
+        window.location.href = "{{ url_for('logout') }}";
+      }
+
+      // Fermer la modale si l'utilisateur clique en dehors
+      window.onclick = function (event) {
+        const modal = document.getElementById("logoutModal");
+        if (event.target == modal) {
+          closeLogoutModal();
+        }
+      };
+    </script>
+  </body>
+</html>

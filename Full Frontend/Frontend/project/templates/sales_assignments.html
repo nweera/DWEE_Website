@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Assignations - D-WEE</title>
+  <link rel="stylesheet" href="../static/salesCSS.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" />
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="logo">
+      <img src="https://dweehealthcare.com/wp-content/uploads/2023/08/D-wee-Final.png" alt="DWEE Logo" />
+      <div>
+        <div class="logo-text">D-WEE Healthcare</div>
+        <div class="logo-subtitle">Tableau de Bord Commercial</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-item"><a class="nav-link" href="sales_dashboard.html"><i class="fas fa-tachometer-alt"></i> Tableau de Bord</a></div>
+      <div class="nav-item"><a class="nav-link" href="sales_users.html"><i class="fas fa-users"></i> Utilisateurs</a></div>
+      <div class="nav-item"><a class="nav-link" href="sales_dkits.html"><i class="fas fa-box"></i> D-KIT Devices</a></div>
+      <div class="nav-item"><a class="nav-link active" href="sales_assignments.html"><i class="fas fa-handshake"></i> Assignations</a></div>
+      <div class="nav-item"><a class="nav-link" href="sales_reports.html"><i class="fas fa-chart-bar"></i> Rapports</a></div>
+      <div class="nav-item"><a class="nav-link" href="sales_profile.html"><i class="fas fa-user"></i> Profil</a></div>   
+    </nav>
+    <div class="sidebar-user">
+      <div class="user-avatar">JD</div>
+      <div class="user-details">
+        <div class="user-name">Jean Dupont</div>
+        <div class="user-role">Représentant Commercial</div>
+      </div>
+      <button class="logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i>
+      </button>
+    </div>
+  </aside>
+  <main class="main-content">
+    <!-- Assignments Tab Content -->
+    <div id="assignments" class="tab-content active">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <i class="card-icon fas fa-handshake"></i>
+            Assignations de mes clients
+          </div>
+          <button class="btn btn-primary btn-small" onclick="openModal('newAssignmentModal')">
+            <i class="fas fa-plus"></i> Nouvelle Assignation
+          </button>
+        </div>
+        <div class="table-container">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Client</th>
+                <th>D-KIT</th>
+                <th>Statut</th>
+                <th>Note</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Dr. Amina Ben Ali</td>
+                <td>DKIT-001</td>
+                <td><span class="status-badge status-delivered">En service</span></td>
+                <td>Formation prévue pour utilisation en cardiologie</td>
+                <td>
+                  <button class="btn btn-secondary btn-small" onclick="viewAssignmentDetails('Dr. Amina Ben Ali', 'DKIT-001', 'En service', 'Formation prévue pour utilisation en cardiologie')">
+                    <i class="fas fa-eye"></i> Détails
+                  </button>
+                </td>
+              </tr>
+              <tr>
+                <td>M. Sami Kacem</td>
+                <td>DKIT-002</td>
+                <td><span class="status-badge status-pending">En attente</span></td>
+                <td>En attente de livraison sur site</td>
+                <td>
+                  <button class="btn btn-secondary btn-small" onclick="viewAssignmentDetails('M. Sami Kacem', 'DKIT-002', 'En attente', 'En attente de livraison sur site')">
+                    <i class="fas fa-eye"></i> Détails
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </main>
+  <div id="modalContainer"></div>
+
+  <script src="../static/js/sales_common.js"></script>
+  <script>
+    // Fetch and inject the modals HTML from sales_modals.html
+    fetch('sales_modals.html')
+      .then(response => response.text())
+      .then(html => {
+        document.getElementById('modalContainer').innerHTML = html;
+      })
+      .catch(error => {
+        console.error('Erreur lors du chargement des modals:', error);
+      });
+
+    // Function to create a new assignment
+    function createNewAssignment(event) {
+      event.preventDefault();
+
+      const client = document.getElementById('assignClientSelect').value;
+      const dkit = document.getElementById('assignDkitSelect').value;
+      const status = document.getElementById('assignStatusSelect').value;
+      const notes = document.getElementById('assignNotes').value;
+
+      // Here you would typically send this data to your backend
+      console.log('Nouvelle assignation:', {
+        client,
+        dkit,
+        status,
+        notes
+      });
+
+      // Show success message and close modal
+      alert('Assignation créée avec succès!');
+      closeModal('newAssignmentModal');
+
+      // Reset form
+      event.target.reset();
+    }
+
+    // Function to view assignment details
+    function viewAssignmentDetails(client, dkit, status, notes) {
+      // Populate the details modal
+      document.getElementById('detailAssignClient').textContent = client;
+      document.getElementById('detailAssignDkit').textContent = dkit;
+      document.getElementById('detailAssignStatus').innerHTML = `<span class="status-badge ${getStatusClass(status)}">${status}</span>`;
+      document.getElementById('detailAssignNotes').textContent = notes || 'Aucune note';
+
+      // Open the details modal
+      openModal('assignmentDetailsModal');
+    }
+
+    // Helper function to get status class
+    function getStatusClass(status) {
+      switch(status.toLowerCase()) {
+        case 'en service': return 'status-delivered';
+        case 'en attente': return 'status-pending';
+        case 'en maintenance': return 'status-maintenance';
+        case 'défectueux': return 'status-defective';
+        default: return 'status-pending';
+      }
+    }
+
+    // Set today's date as default for assignment date
+    document.addEventListener('DOMContentLoaded', function() {
+      const today = new Date().toISOString().split('T')[0];
+      const assignDateInput = document.getElementById('assignDate');
+      if (assignDateInput) {
+        assignDateInput.value = today;
+      }
+    });
+  </script>
+  
+</body>
+</html>

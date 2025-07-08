@@ -1,0 +1,1230 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>D-WEE - Planning</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="../static/userCSS.css" />
+    <link rel="stylesheet" href="user_calendar.css" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="dashboard">
+    <!-- Sidebar Navigation -->
+    <!-- Sidebar Navigation -->
+
+    <nav class="sidebar">
+      <div class="logo">
+        <img
+          src="https://dweehealthcare.com/wp-content/uploads/2023/08/D-wee-Final.png"
+          alt="DWEE Logo"
+        />
+        <div>
+          <div class="logo-text">D-WEE Healthcare</div>
+          <div class="logo-subtitle">Compte Client</div>
+        </div>
+      </div>
+      <ul class="nav-links">
+        <li class="active">
+          <a href="{{ url_for('user_dashboard') }}"><i class="fas fa-home"></i>Tableau de bord</a>
+        </li>
+        <li>
+          <a href="{{ url_for('user_dkits') }}"><i class="fas fa-box"></i>Mes Dkits</a>
+        </li>
+        <li>
+          <a href="{{ url_for('user_calendar') }}"><i class="fas fa-calendar-alt"></i>RDV maintenance</a>
+        </li>
+        <li>
+          <a href="{{ url_for('user_profile') }}"><i class="fas fa-user"></i>Mon Profil</a>
+        </li>
+        <li>
+          <a href="{{ url_for('user_support') }}"><i class="fas fa-headset"></i>Support</a>
+        </li>
+      </ul>
+      <div class="user-info">
+        <i class="fas fa-user-circle avatar"></i>
+        <a href="{{ url_for('user_profile') }}" class="user-name">{{ user.first_name }} {{ user.last_name }}</a>
+        <span class="sales-badge" style="display: none">Commercial</span>
+        <a href="{{ url_for('logout') }}" class="logout-btn">
+          <i class="fas fa-sign-out-alt"></i>
+        </a>
+      </div>
+      <a
+        href="{{ url_for('user_commercial_registration') }}"
+        class="role-switch"
+        id="becomeSales"
+      >
+        <i class="fas fa-user-tie"></i>
+        Devenir Commercial
+      </a>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Dashboard Header -->
+      <div class="dashboard-header">
+        <div class="welcome-section">
+          <h1><i class="fas fa-calendar-alt"></i> Planning de Maintenance</h1>
+          <p>Gérez et planifiez vos rendez-vous de maintenance D-KIT</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn-primary" id="addAppointmentBtn">
+            <i class="fas fa-plus"></i>
+            Demander un RDV en urgence
+          </button>
+        </div>
+      </div>
+
+      <!-- Modal de déconnexion -->
+      <div id="logoutModal" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 class="modal-title">Confirmation de déconnexion</h2>
+            <button class="close" onclick="closeLogoutModal()">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Êtes-vous sûr de vouloir vous déconnecter ?</p>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-outline" onclick="closeLogoutModal()">
+              Annuler
+            </button>
+            <button class="btn btn-primary" onclick="confirmLogout()">
+              Se déconnecter
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Calendar Section -->
+      <div class="dashboard-grid">
+        <!-- Calendar Panel -->
+        <div class="calendar-panel">
+          <div class="panel-header">
+            <h3><i class="fas fa-calendar"></i> Calendrier</h3>
+            <div class="calendar-controls">
+              <button class="view-btn active" data-view="month">Mois</button>
+              <!-- <button class="view-btn" data-view="week">Semaine</button> -->
+            </div>
+          </div>
+          <div class="panel-content">
+            <div id="maintenanceCalendar"></div>
+          </div>
+        </div>
+
+        <!-- Upcoming Appointments Panel -->
+        <div class="appointments-panel">
+          <div class="panel-header">
+            <h3><i class="fas fa-list"></i> Prochains RDV</h3>
+          </div>
+          <div class="panel-content">
+            <div class="appointment-list">
+              <!-- No hardcoded appointments here -->
+              {% for app in appointments if app.status == 'confirmed' %}
+                <!-- Show in Prochains RDV -->
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Urgent Requests Section -->
+      <div class="urgent-requests-section">
+        <div class="panel-header">
+          <h3>
+            <i class="fas fa-exclamation-circle"></i> Mes demandes de
+            rendez-vous
+          </h3>
+        </div>
+        <div class="panel-content">
+          <div class="urgent-requests-list" id="urgentRequestsList">
+            {% for app in appointments if app.status == 'scheduled' %}
+              <div class="urgent-request-item">
+                <div class="request-details">
+                  <h4>Maintenance Urgente - D-KIT #{{ app.serial_number }}</h4>
+                  <div class="request-info">
+                    <p><strong>Date souhaitée:</strong> {{ app.datetime.strftime('%d %B %Y') }}</p>
+                    <p><strong>Heure souhaitée:</strong> {{ app.datetime.strftime('%H:%M') }}</p>
+                    <p><strong>Statut:</strong> <span class="request-status status-submitted">Soumise</span></p>
+                  </div>
+                  <div class="request-description">
+                    <strong>Description:</strong><br>
+                    {{ app.notes or "" }}
+                  </div>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+
+      <!-- Add Appointment Modal -->
+      <div id="addAppointmentModal" class="modal">
+        <div class="modal-content large">
+          <div class="modal-header">
+            <h3>Demander un RDV en urgence</h3>
+            <button class="close-modal">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div id="appointmentForm">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="dkitSelect">D-KIT concerné *</label>
+                  <select id="dkitSelect" name="dkit" required>
+                    <option value="">Sélectionner un D-KIT</option>
+                    {% for device in validated_devices %}
+                      <option value="{{ device.serial_number }}">D-KIT #{{ device.serial_number }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="appointmentDate">Date souhaitée *</label>
+                  <input
+                    type="date"
+                    id="appointmentDate"
+                    name="date"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="appointmentTime">Heure souhaitée *</label>
+                  <select id="appointmentTime" name="time" required>
+                    <option value="">Sélectionner l'heure</option>
+                    <option value="08:00">08:00 - 10:00</option>
+                    <option value="10:00">10:00 - 12:00</option>
+                    <option value="12:00">12:00 - 14:00</option>
+                    <option value="14:00">14:00 - 16:00</option>
+                    <option value="16:00">16:00 - 18:00</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="description">Description du problème *</label>
+                <textarea
+                  id="description"
+                  name="description"
+                  rows="4"
+                  required
+                  placeholder="Veuillez décrire le problème et la raison de l'urgence..."
+                ></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn-secondary" id="cancelAppointment"></button>
+              Annuler
+            </button>
+            <button type="button" class="btn-primary" id="submitAppointment">
+              <i class="fas fa-paper-plane"></i>
+              Envoyer la demande
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Appointment Details Modal -->
+      <div id="appointmentModal" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 class="modal-title">Détails du Rendez-vous</h3>
+            <button class="close">&times;</button>
+          </div>
+          <div id="modalDetails"></div>
+        </div>
+      </div>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+    <script>
+      let calendar;
+
+      document.addEventListener("DOMContentLoaded", function () {
+        initializeCalendar();
+        initializeModals();
+        initializeAppointmentForm();
+        setActiveNavItem();
+        syncAppointments();
+      });
+
+      function initializeCalendar() {
+        var calendarEl = document.getElementById("maintenanceCalendar");
+        calendar = new FullCalendar.Calendar(calendarEl, {
+          initialView: "dayGridMonth",
+          locale: "fr",
+          height: "auto",
+          headerToolbar: {
+            left: "",
+            center: "title",
+            right: "prev,next",
+          },
+          events: [], // No hardcoded events
+          eventContent: function (arg) {
+            const status = arg.event.extendedProps.status;
+            const isRegular = arg.event.extendedProps.isRegular;
+
+            const eventEl = document.createElement("div");
+            eventEl.innerHTML = `
+              <div class="fc-event-title">${arg.event.title}</div>
+              ${
+                arg.timeText
+                  ? `<div class="fc-event-time">${arg.timeText}</div>`
+                  : ""
+              }
+              <div class="maintenance-status status-${status}">${getStatusLabel(
+              status
+            )}</div>
+            `;
+            return { domNodes: [eventEl] };
+          },
+          eventClick: function (info) {
+            showEventDetails(info.event);
+          },
+        });
+        calendar.render();
+      }
+
+      function initializeModals() {
+        // Add appointment modal
+        const addModal = document.getElementById("addAppointmentModal");
+        const addBtn = document.getElementById("addAppointmentBtn");
+        const closeModals = document.querySelectorAll(".close-modal");
+        const cancelBtn = document.getElementById("cancelAppointment");
+
+        addBtn.addEventListener("click", () => openAddAppointmentModal());
+
+        closeModals.forEach((btn) => {
+          btn.addEventListener("click", closeAllModals);
+        });
+
+        cancelBtn.addEventListener("click", closeAllModals);
+
+        // Close modal when clicking outside
+        window.addEventListener("click", function (event) {
+          if (event.target.classList.contains("modal")) {
+            closeAllModals();
+          }
+        });
+      }
+
+      function initializeAppointmentForm() {
+        const today = new Date().toISOString().split("T")[0];
+        const dateInput = document.getElementById("appointmentDate");
+        dateInput.setAttribute("min", today);
+        dateInput.addEventListener("change", function () {
+          validateWeekend(this);
+        });
+
+        // Gérer la soumission du formulaire
+        document
+          .getElementById("submitAppointment")
+          .addEventListener("click", function () {
+            const dkit = document.getElementById("dkitSelect").value;
+            const date = document.getElementById("appointmentDate").value;
+            const time = document.getElementById("appointmentTime").value;
+            const description = document.getElementById("description").value;
+
+            const requestData = {
+              dkit: dkit,
+              date: date,
+              time: time,
+              description: description,
+            };
+
+            if (validateRequestData(requestData)) {
+              // Vérifier si la date n'est pas un weekend
+              const selectedDate = new Date(date);
+              const day = selectedDate.getDay();
+
+              if (day === 0 || day === 6) {
+                showErrorMessage(
+                  "Les rendez-vous ne sont pas disponibles les weekends. Veuillez choisir un jour de semaine."
+                );
+                return;
+              }
+
+              // Créer un nouvel événement dans le calendrier
+              const [hours, minutes] = time.split(":");
+              const startDate = new Date(date);
+              startDate.setHours(parseInt(hours), parseInt(minutes));
+
+              const endDate = new Date(startDate);
+              endDate.setHours(startDate.getHours() + 2);
+
+              const eventId = "urgent_" + Date.now();
+
+              // Ajouter l'événement au calendrier
+              calendar.addEvent({
+                id: eventId,
+                title: `Maintenance D-KIT #${dkit}`,
+                start: startDate,
+                end: endDate,
+                color: "#d46161",
+                extendedProps: {
+                  device: `D-KIT #${dkit}`,
+                  type: "Urgente",
+                  isRegular: false,
+                  status: "pending",
+                  statusMessage: "En attente de confirmation",
+                },
+              });
+
+              // Ajouter la demande
+              addUrgentRequest({
+                ...requestData,
+                id: eventId,
+                originalEventId: eventId,
+                isRegularMaintenance: false,
+                currentTime: startDate.toLocaleTimeString("fr-FR", {
+                  hour: "2-digit",
+                  minute: "2-digit",
+                }),
+                currentDate: startDate.toLocaleDateString("fr-FR", {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                }),
+              });
+
+              // Synchroniser les rendez-vous
+              syncAppointments();
+
+              closeAllModals(); // <-- Move this line here, before resetting the form
+
+              // Réinitialiser le formulaire
+              document.getElementById("dkitSelect").value = "";
+              document.getElementById("appointmentDate").value = "";
+              document.getElementById("appointmentTime").value = "";
+              document.getElementById("description").value = "";
+
+              showSuccessMessage(
+                "Votre demande de rendez-vous a été ajoutée et est en attente de confirmation"
+              );
+            }
+          });
+      }
+
+      function validateRequestData(data) {
+        if (!data.dkit || !data.date || !data.time || !data.description) {
+          alert("Veuillez remplir tous les champs obligatoires.");
+          return false;
+        }
+        return true;
+      }
+
+      function addUrgentRequest(data) {
+        const requestsList = document.getElementById("urgentRequestsList");
+        const requestId = "request_" + Date.now();
+        data.id = requestId;
+
+        const requestElement = document.createElement("div");
+        requestElement.className = "urgent-request-item";
+        requestElement.id = requestId;
+
+        const formattedDate = new Date(data.date).toLocaleDateString("fr-FR", {
+          day: "numeric",
+          month: "long",
+          year: "numeric",
+        });
+
+        requestElement.innerHTML = `
+          <div class="request-details">
+            <h4>${
+              data.isRegularMaintenance
+                ? "Modification de maintenance régulière"
+                : "Maintenance Urgente"
+            } - D-KIT #${data.dkit}</h4>
+            <div class="request-info">
+              <p><strong>Date actuelle:</strong> ${
+                data.currentDate || "Non spécifiée"
+              }</p>
+              <p><strong>Heure actuelle:</strong> ${
+                data.currentTime || "Non spécifiée"
+              }</p>
+              <p><strong>Nouvelle date souhaitée:</strong> ${formattedDate}</p>
+              <p><strong>Nouvelle heure souhaitée:</strong> ${data.time}</p>
+              <p><strong>Statut:</strong> <span class="request-status status-submitted">Soumise</span></p>
+            </div>
+            <div class="request-description">
+              <strong>Raison du changement:</strong><br>
+              ${data.description}
+            </div>
+          </div>
+          <div class="request-actions">
+            <button class="action-btn edit" onclick="modifyRequest('${requestId}')" title="Modifier la demande">
+              <i class="fas fa-edit"></i>
+            </button>
+            <button class="action-btn delete" onclick="cancelRequest('${requestId}')" title="Annuler la demande">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+        `;
+
+        requestElement.dataset.requestData = JSON.stringify(data);
+        requestsList.insertBefore(requestElement, requestsList.firstChild);
+
+        showSuccessMessage(
+          "Votre demande a bien été ajoutée dans la liste des demandes !"
+        );
+      }
+
+      function modifyRequest(requestId) {
+        const requestElement = document.getElementById(requestId);
+        if (!requestElement) return;
+
+        const requestData = JSON.parse(requestElement.dataset.requestData);
+
+        const modifyForm = `
+          <form id="modifyRequestForm" class="date-change-form">
+            <div class="form-group">
+              <label for="newDate">Nouvelle date souhaitée *</label>
+              <input type="date" id="newDate" name="newDate" required min="${
+                new Date().toISOString().split("T")[0]
+              }" value="${requestData.date}">
+            </div>
+            <div class="form-group">
+              <label for="newTime">Nouvelle heure souhaitée *</label>
+              <select id="newTime" name="newTime" required>
+                <option value="">Sélectionner l'heure</option>
+                <option value="08:00" ${
+                  requestData.time === "08:00" ? "selected" : ""
+                }>08:00 - 10:00</option>
+                <option value="09:00" ${
+                  requestData.time === "09:00" ? "selected" : ""
+                }>09:00 - 11:00</option>
+                <option value="10:00" ${
+                  requestData.time === "10:00" ? "selected" : ""
+                }>10:00 - 12:00</option>
+                <option value="11:00" ${
+                  requestData.time === "11:00" ? "selected" : ""
+                }>11:00 - 13:00</option>
+                <option value="14:00" ${
+                  requestData.time === "14:00" ? "selected" : ""
+                }>14:00 - 16:00</option>
+                <option value="15:00" ${
+                  requestData.time === "15:00" ? "selected" : ""
+                }>15:00 - 17:00</option>
+                <option value="16:00" ${
+                  requestData.time === "16:00" ? "selected" : ""
+                }>16:00 - 18:00</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="changeReason">Raison du changement *</label>
+              <textarea id="changeReason" name="changeReason" rows="3" required>${
+                requestData.description
+              }</textarea>
+            </div>
+            <div class="modal-actions">
+              <button type="button" class="btn-secondary" onclick="closeAllModals()">Annuler</button>
+              <button type="submit" class="btn-primary">
+                <i class="fas fa-save"></i>
+                Enregistrer les modifications
+              </button>
+            </div>
+          </form>
+        `;
+
+        showModal("Modifier la demande", modifyForm);
+
+        document
+          .getElementById("modifyRequestForm")
+          .addEventListener("submit", function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+
+            const updatedData = {
+              ...requestData,
+              date: formData.get("newDate"),
+              time: formData.get("newTime"),
+              description: formData.get("changeReason"),
+            };
+
+            updateRequestElement(requestId, updatedData);
+            closeAllModals();
+            showSuccessMessage("La demande a été modifiée avec succès !");
+          });
+      }
+
+      function cancelRequest(requestId) {
+        const confirmModal = `
+          <div class="confirmation-dialog">
+            <p>Êtes-vous sûr de vouloir annuler cette demande ?</p>
+            <div class="modal-actions">
+              <button class="btn-secondary" onclick="closeAllModals()">Non</button>
+              <button class="btn-danger" onclick="confirmCancelRequest('${requestId}')">
+                <i class="fas fa-trash"></i> Oui, annuler
+              </button>
+            </div>
+          </div>
+        `;
+
+        showModal("Confirmer l'annulation", confirmModal);
+      }
+
+      function confirmCancelRequest(requestId) {
+        const requestElement = document.getElementById(requestId);
+        if (requestElement) {
+          const requestData = JSON.parse(requestElement.dataset.requestData);
+
+          // Si c'est une modification de rendez-vous régulier, restaurer le statut
+          if (requestData.isRegularMaintenance && requestData.originalEventId) {
+            const appointmentElement = document.querySelector(
+              `[data-appointment-id="${requestData.originalEventId}"]`
+            );
+            if (appointmentElement) {
+              appointmentElement.querySelector(
+                ".maintenance-status"
+              ).className = "maintenance-status status-confirmed";
+              appointmentElement.querySelector(
+                ".maintenance-status"
+              ).textContent = "Confirmé";
+            }
+          }
+
+          // Supprimer l'événement du calendrier
+          const event = calendar.getEventById(requestData.originalEventId);
+          if (event) {
+            event.remove();
+          }
+
+          // Supprimer l'élément de la liste des prochains rendez-vous
+          const appointmentElement = document.querySelector(
+            `[data-appointment-id="${requestData.originalEventId}"]`
+          );
+          if (appointmentElement) {
+            appointmentElement.remove();
+          }
+
+          // Supprimer la demande
+          requestElement.remove();
+
+          // Synchroniser les rendez-vous
+          syncAppointments();
+
+          closeAllModals();
+          showSuccessMessage(
+            "La demande et le rendez-vous ont été supprimés avec succès"
+          );
+        }
+      }
+
+      function openAddAppointmentModal(selectedDate = null) {
+        const modal = document.getElementById("addAppointmentModal");
+        if (selectedDate) {
+          document.getElementById("appointmentDate").value = selectedDate;
+        }
+        modal.style.display = "block";
+        document.body.style.overflow = "hidden";
+      }
+
+      function closeAllModals() {
+        document.querySelectorAll(".modal").forEach((modal) => {
+          modal.style.display = "none";
+        });
+        document.body.style.overflow = "auto";
+      }
+
+      function showEventDetails(event) {
+        const props = event.extendedProps;
+        const startTime = event.start.toLocaleTimeString("fr-FR", {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+        const endTime = event.end
+          ? event.end.toLocaleTimeString("fr-FR", {
+              hour: "2-digit",
+              minute: "2-digit",
+            })
+          : "";
+
+        const isRegular = props.isRegular;
+        const status = props.status;
+
+        const details = `
+        <div class="event-details">
+          <div class="detail-row">
+            <strong>Dispositif:</strong> ${props.device}
+          </div>
+          <div class="detail-row">
+            <strong>Type:</strong> ${props.type}
+          </div>
+          <div class="detail-row">
+            <strong>Date:</strong> ${event.start.toLocaleDateString("fr-FR")}
+          </div>
+          <div class="detail-row">
+            <strong>Heure:</strong> ${startTime}${
+          endTime ? " - " + endTime : ""
+        }
+          </div>
+          
+          ${
+            props.description
+              ? `<div class="detail-row"><strong>Description:</strong> ${props.description}</div>`
+              : ""
+          }
+          ${
+            isRegular
+              ? `
+            <div class="detail-row">
+              <strong>Statut:</strong> 
+              <span class="maintenance-status status-${status}">${getStatusLabel(
+                  status
+                )}</span>
+            </div>
+            ${
+              props.statusMessage
+                ? `
+              <div class="detail-row">
+                <strong>Message:</strong> ${props.statusMessage}
+              </div>
+            `
+                : ""
+            }
+          `
+              : ""
+          }
+        </div>
+        <div class="modal-actions">
+          <button class="btn-secondary" onclick="closeAllModals()">Fermer</button>
+        </div>
+      `;
+
+        showModal("Détails du Rendez-vous", details);
+      }
+
+      function showModal(title, content) {
+        const modal = document.createElement("div");
+        modal.className = "modal";
+        modal.style.display = "block";
+        modal.innerHTML = `
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3>${title}</h3>
+            <button class="close-modal" onclick="this.closest('.modal').remove(); document.body.style.overflow='auto'">&times;</button>
+          </div>
+          <div class="modal-body">
+            ${content}
+          </div>
+        </div>
+      `;
+        document.body.appendChild(modal);
+        document.body.style.overflow = "hidden";
+      }
+
+      function showSuccessMessage(message) {
+        const notification = document.createElement("div");
+        notification.className = "success-notification";
+        notification.innerHTML = `
+        <i class="fas fa-check-circle"></i>
+        ${message}
+      `;
+        notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: #00A69C;
+        color: white;
+        padding: 1rem 1.5rem;
+        border-radius: 8px;
+        z-index: 1001;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        animation: slideIn 0.3s ease;
+      `;
+
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+          notification.remove();
+        }, 3000);
+      }
+
+      function editAppointment(eventId) {
+        const appointmentElement = document.querySelector(
+          `[data-appointment-id="${eventId}"]`
+        );
+        const currentDevice = appointmentElement.querySelector(
+          ".appointment-device"
+        ).textContent;
+        const currentTime =
+          appointmentElement.querySelector(".appointment-time").textContent;
+        const fullDateEl = appointmentElement.querySelector(
+          ".appointment-full-date"
+        );
+        const currentDate = fullDateEl ? fullDateEl.textContent : "";
+
+        const dateChangeForm = `
+          <form id="dateChangeForm" class="date-change-form">
+            <div class="form-group">
+              <label for="newDate">Nouvelle date souhaitée *</label>
+              <input type="date" id="newDate" name="newDate" required min="${
+                new Date().toISOString().split("T")[0]
+              }">
+            </div>
+            <div class="form-group">
+              <label for="newTime">Nouvelle heure souhaitée *</label>
+              <select id="newTime" name="newTime" required>
+                <option value="">Sélectionner l'heure</option>
+                <option value="08:00">08:00 - 10:00</option>
+                <option value="10:00">10:00 - 12:00</option>
+                <option value="12:00">12:00 - 14:00</option>
+                <option value="14:00">14:00 - 16:00</option>
+                <option value="16:00">16:00 - 18:00</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="changeReason">Raison du changement *</label>
+              <textarea id="changeReason" name="changeReason" rows="3" required 
+                placeholder="Veuillez expliquer la raison du changement de date..."></textarea>
+            </div>
+            <div class="modal-actions">
+              <button type="button" class="btn-secondary" onclick="closeAllModals()">Annuler</button>
+              <button type="submit" class="btn-primary">
+                <i class="fas fa-paper-plane"></i>
+                Envoyer la demande
+              </button>
+            </div>
+          </form>
+        `;
+
+        showModal("Demande de changement de date", dateChangeForm);
+
+        // Gérer la soumission du formulaire
+        document
+          .getElementById("dateChangeForm")
+          .addEventListener("submit", function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+
+            // Créer une nouvelle demande de rendez-vous
+            const requestData = {
+              dkit: currentDevice.split("#")[1].trim(),
+              date: formData.get("newDate"),
+              time: formData.get("newTime"),
+              description: formData.get("changeReason"),
+              originalEventId: eventId,
+              isRegularMaintenance: false,
+              currentTime: currentTime,
+              currentDate: currentDate,
+            };
+
+            // Ajouter la demande à la liste des demandes
+            addUrgentRequest(requestData);
+
+            // Mettre à jour le statut du rendez-vous
+            if (appointmentElement) {
+              appointmentElement.querySelector(
+                ".maintenance-status"
+              ).className = "maintenance-status status-pending";
+              appointmentElement.querySelector(
+                ".maintenance-status"
+              ).textContent = "En attente de confirmation";
+            }
+
+            closeAllModals();
+            showSuccessMessage(
+              "Votre demande de modification a été envoyée avec succès!"
+            );
+          });
+      }
+
+      function logout() {
+        window.location.href = "login3.html";
+      }
+
+      // Handle active navigation state
+      function setActiveNavItem() {
+        const currentPath = window.location.pathname;
+        const navLinks = document.querySelectorAll(".nav-links li a");
+
+        navLinks.forEach((link) => {
+          // Remove any existing active class from parent li
+          link.parentElement.classList.remove("active");
+
+          // If the link's href matches the current path, add active class
+          if (currentPath.endsWith(link.getAttribute("href"))) {
+            link.parentElement.classList.add("active");
+          }
+        });
+      }
+
+      //js déconnexion
+      function logout() {
+        // Afficher la fenêtre modale de confirmation
+        const modal = document.getElementById("logoutModal");
+        modal.style.display = "flex";
+      }
+
+      function closeLogoutModal() {
+        const modal = document.getElementById("logoutModal");
+        modal.style.display = "none";
+      }
+
+      function confirmLogout() {
+        // Ici, vous pouvez ajouter la logique de déconnexion
+        // Par exemple, rediriger vers la page de connexion
+        window.location.href = "login.html";
+      }
+
+      // Fermer la modale si l'utilisateur clique en dehors
+      window.onclick = function (event) {
+        const modal = document.getElementById("logoutModal");
+        if (event.target == modal) {
+          closeLogoutModal();
+        }
+      };
+
+      function getStatusLabel(status) {
+        const labels = {
+          pending: "En attente",
+          confirmed: "Confirmé",
+          rejected: "Refusé",
+        };
+        return labels[status] || status;
+      }
+
+      function requestDateChange(eventId) {
+        const event = calendar.getEventById(eventId);
+        if (!event) return;
+
+        // Créer un ID unique pour ce formulaire
+        const formId = `dateChangeForm_${Date.now()}`;
+
+        const dateChangeForm = `
+          <form id="${formId}" class="date-change-form" onsubmit="return false;">
+            <div class="form-group">
+              <label for="newDate_${formId}">Nouvelle date souhaitée *</label>
+              <input type="date" id="newDate_${formId}" name="newDate" required min="${
+          new Date().toISOString().split("T")[0]
+        }" onchange="validateWeekend(this)">
+            </div>
+            <div class="form-group">
+              <label for="newTime_${formId}">Nouvelle heure souhaitée *</label>
+              <select id="newTime_${formId}" name="newTime" required>
+                <option value="">Sélectionner l'heure</option>
+                <option value="08:00">08:00 - 10:00</option>
+                <option value="10:00">10:00 - 12:00</option>
+                <option value="12:00">12:00 - 14:00</option>
+                <option value="14:00">14:00 - 16:00</option>
+                <option value="16:00">16:00 - 18:00</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="changeReason_${formId}">Raison du changement *</label>
+              <textarea id="changeReason_${formId}" name="changeReason" rows="3" required placeholder="Veuillez expliquer la raison du changement de date..."></textarea>
+            </div>
+            <div class="modal-actions">
+              <button type="button" class="btn-secondary" onclick="closeAllModals()">Annuler</button>
+              <button type="button" class="btn-primary" onclick="submitDateChange('${eventId}', '${formId}')">
+                <i class="fas fa-paper-plane"></i>
+                Envoyer la demande
+              </button>
+            </div>
+          </form>
+        `;
+
+        showModal("Demande de changement de date", dateChangeForm);
+      }
+
+      function validateWeekend(input) {
+        const date = new Date(input.value);
+        const day = date.getDay();
+
+        if (day === 0 || day === 6) {
+          // 0 = Dimanche, 6 = Samedi
+          input.value = ""; // Réinitialiser la date
+          showErrorMessage(
+            "Les rendez-vous ne sont pas disponibles les weekends. Veuillez choisir un jour de semaine."
+          );
+        }
+      }
+
+      function showErrorMessage(message) {
+        const notification = document.createElement("div");
+        notification.className = "error-notification";
+        notification.innerHTML = `
+          <i class="fas fa-exclamation-circle"></i>
+          ${message}
+        `;
+        notification.style.cssText = `
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          background: #dc3545;
+          color: white;
+          padding: 1rem 1.5rem;
+          border-radius: 8px;
+          z-index: 1001;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          animation: slideIn 0.3s ease;
+        `;
+
+        document.body.appendChild(notification);
+
+        setTimeout(() => {
+          notification.remove();
+        }, 3000);
+      }
+
+      function submitDateChange(eventId, formId) {
+        const event = calendar.getEventById(eventId);
+        if (!event) return;
+
+        const form = document.getElementById(formId);
+        const formData = new FormData(form);
+
+        // Mettre à jour l'événement dans le calendrier
+        const newDate = formData.get("newDate");
+        const newTime = formData.get("newTime");
+        const [hours, minutes] = newTime.split(":");
+
+        const newStart = new Date(newDate);
+        newStart.setHours(parseInt(hours), parseInt(minutes));
+
+        const newEnd = new Date(newStart);
+        newEnd.setHours(newStart.getHours() + 2);
+
+        // Sauvegarder l'ancienne date et heure avant la modification
+        const oldStart = event.start;
+        const oldEnd = event.end;
+
+        event.setStart(newStart);
+        event.setEnd(newEnd);
+
+        // Mettre à jour le statut
+        event.setExtendedProp("status", "pending");
+        event.setExtendedProp("statusMessage", "En attente de confirmation");
+
+        // Synchroniser les rendez-vous
+        syncAppointments();
+
+        // Ajouter la demande de changement avec l'ancienne date
+        const requestData = {
+          dkit: event.extendedProps.device.split("#")[1],
+          date: newDate,
+          time: newTime,
+          description: formData.get("changeReason"),
+          originalEventId: eventId,
+          isRegularMaintenance: event.extendedProps.isRegular,
+          currentTime: oldStart.toLocaleTimeString("fr-FR", {
+            hour: "2-digit",
+            minute: "2-digit",
+          }),
+          currentDate: oldStart.toLocaleDateString("fr-FR", {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+          }),
+        };
+
+        addUrgentRequest(requestData);
+        closeAllModals();
+        showSuccessMessage(
+          "Votre demande de modification a été envoyée avec succès!"
+        );
+      }
+
+      function updateRequestElement(requestId, newData) {
+        const requestElement = document.getElementById(requestId);
+        if (!requestElement) return;
+
+        newData.id = requestId;
+
+        const formattedDate = new Date(newData.date).toLocaleDateString(
+          "fr-FR",
+          {
+            day: "numeric",
+            month: "long",
+            year: "numeric",
+          }
+        );
+
+        const statusElement = requestElement.querySelector(".request-status");
+        const currentStatus = statusElement
+          ? statusElement.textContent
+          : "Soumise";
+
+        requestElement.querySelector(".request-details").innerHTML = `
+          <h4>${
+            newData.isRegularMaintenance
+              ? "Modification de maintenance régulière"
+              : "Maintenance Urgente"
+          } - D-KIT #${newData.dkit}</h4>
+          <div class="request-info">
+            <p><strong>Date souhaitée:</strong> ${formattedDate}</p>
+            <p><strong>Heure souhaitée:</strong> ${newData.time}</p>
+            <p><strong>Statut:</strong> <span class="request-status status-submitted">${currentStatus}</span></p>
+          </div>
+          <div class="request-description">
+            <strong>Description:</strong><br>
+            ${newData.description}
+          </div>
+        `;
+
+        requestElement.dataset.requestData = JSON.stringify(newData);
+      }
+
+      // Fonction pour annuler une maintenance urgente
+      function cancelUrgentAppointment(eventId) {
+        const confirmModal = `
+          <div class="confirmation-dialog">
+            <p>Êtes-vous sûr de vouloir annuler cette maintenance urgente ?</p>
+            <div class="modal-actions">
+              <button class="btn-secondary" onclick="closeAllModals()">Non</button>
+              <button class="btn-danger" onclick="confirmCancelUrgentAppointment('${eventId}')">
+                <i class="fas fa-trash"></i> Oui, annuler
+              </button>
+            </div>
+          </div>
+        `;
+
+        showModal("Confirmer l'annulation", confirmModal);
+      }
+
+      function confirmCancelUrgentAppointment(eventId) {
+        // Supprimer l'événement du calendrier
+        const event = calendar.getEventById(eventId);
+        if (event) {
+          event.remove();
+        }
+
+        // Supprimer l'élément de la liste des prochains rendez-vous
+        const appointmentElement = document.querySelector(
+          `[data-appointment-id="${eventId}"]`
+        );
+        if (appointmentElement) {
+          appointmentElement.remove();
+        }
+
+        // Supprimer la demande associée si elle existe
+        const requestElement = document.querySelector(
+          `[data-request-data*="${eventId}"]`
+        );
+        if (requestElement) {
+          requestElement.remove();
+        }
+
+        // Synchroniser les rendez-vous
+        syncAppointments();
+
+        // Fermer le modal
+        closeAllModals();
+
+        // Afficher le message de succès
+        const successMessage = document.createElement("div");
+        successMessage.style.cssText = `
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          background: #00A69C;
+          color: white;
+          padding: 1rem 1.5rem;
+          border-radius: 8px;
+          z-index: 1001;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          animation: slideIn 0.3s ease;
+        `;
+        successMessage.innerHTML = `
+          <i class="fas fa-check-circle"></i>
+          Maintenance urgente annulée avec succès
+        `;
+        document.body.appendChild(successMessage);
+
+        // Supprimer le message après 3 secondes
+        setTimeout(() => {
+          successMessage.remove();
+        }, 3000);
+      }
+
+      // Fonction pour synchroniser les rendez-vous
+      function syncAppointments() {
+        const appointmentsList = document.querySelector(".appointment-list");
+        const events = calendar.getEvents();
+
+        // Trier les événements par date (du plus proche au plus éloigné)
+        events.sort((a, b) => a.start - b.start);
+
+        // Mettre à jour la liste des prochains rendez-vous
+        appointmentsList.innerHTML = "";
+
+        events.forEach((event) => {
+          const appointmentDate = new Date(event.start);
+          const appointmentElement = document.createElement("div");
+          appointmentElement.className = `appointment-item ${
+            event.extendedProps.isRegular ? "maintenance-regular" : "urgent"
+          }`;
+          appointmentElement.setAttribute("data-appointment-id", event.id);
+
+          appointmentElement.innerHTML = `
+            <div class="appointment-date">
+              <div class="date-day">${appointmentDate.getDate()}</div>
+              <div class="date-month">${appointmentDate.toLocaleString(
+                "fr-FR",
+                { month: "short" }
+              )}</div>
+            </div>
+            <div class="appointment-details">
+              <h4>${
+                event.extendedProps.type === "Régulière"
+                  ? "Maintenance Régulière"
+                  : "Maintenance Urgente"
+              }</h4>
+              <div class="appointment-full-date" style="font-size: 0.85em; color: var(--text-muted); margin-bottom: 2px;">
+                ${appointmentDate.toLocaleDateString("fr-FR", {
+                  day: "numeric",
+                  month: "long",
+                  year: "numeric",
+                })}
+              </div>
+              <p class="appointment-device">${event.extendedProps.device}</p>
+              <p class="appointment-time">${event.start.toLocaleTimeString(
+                "fr-FR",
+                { hour: "2-digit", minute: "2-digit" }
+              )} - ${event.end.toLocaleTimeString("fr-FR", {
+            hour: "2-digit",
+            minute: "2-digit",
+          })}</p>
+              <div class="maintenance-status status-${
+                event.extendedProps.status
+              }">${getStatusLabel(event.extendedProps.status)}</div>
+            </div>
+            <div class="appointment-actions">
+              <button class="action-btn-small edit" title="Modifier" onclick="requestDateChange('${
+                event.id
+              }')">
+                <i class="fas fa-edit"></i>
+              </button>
+              ${
+                !event.extendedProps.isRegular
+                  ? `
+                <button class="action-btn-small delete" title="Supprimer" onclick="cancelUrgentAppointment('${event.id}')">
+                  <i class="fas fa-trash"></i>
+                </button>
+              `
+                  : ""
+              }
+            </div>
+          `;
+
+          appointmentsList.appendChild(appointmentElement);Child(appointmentElement);
+        });
+      }
+    </script>    </script>
+  </body>
+</html>

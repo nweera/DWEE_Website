@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" />
+    <title>D-WEE Healthcare - Configuration Système</title>
+    <style>
+      :root {
+    --primary-color: #25A8DF;
+    --primary-hover: #1E8FBF;
+    --secondary-color: #00A69C;
+    --text-color: #0A0648;
+    --text-muted: #1A1A1A;
+    --bg-color: #F4F1EE;
+    --bg-alt: #F4F1EE;
+    --border-color: rgba(26, 26, 26, 0.15);
+    --border-light: rgba(26, 26, 26, 0.08);
+    --success-color: #00A69C;
+    --warning-color: #25A8DF;
+    --danger-color: #d46161;
+    --shadow: 0 2px 8px 0 rgba(10, 6, 72, 0.08), 0 1px 4px 0 rgba(10, 6, 72, 0.04);
+    --shadow-lg: 0 8px 24px -4px rgba(10, 6, 72, 0.12), 0 4px 12px -2px rgba(10, 6, 72, 0.08);
+    --radius: 8px;
+    --radius-lg: 12px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg-color);
+    min-height: 100vh;
+    color: var(--text-color);
+}
+
+.page-header {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.config-section {
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-light);
+    margin-bottom: 1.5rem;
+}
+
+.config-section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1rem;
+}
+
+.config-section-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    color: white;
+}
+
+.settings-icon { 
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-hover)); 
+}
+
+.email-icon { 
+    background: linear-gradient(135deg, var(--secondary-color), var(--success-color)); 
+}
+
+.config-section-title {
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--text-color);
+    font-size: 0.875rem;
+}
+
+.form-input,
+.form-textarea,
+.form-select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    font-size: 0.875rem;
+    background: #fff;
+    color: var(--text-color);
+}
+
+.form-textarea {
+    min-height: 150px;
+    resize: vertical;
+}
+
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(37, 168, 223, 0.1);
+}
+
+.container {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+      width: 250px;
+      background: white;
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
+      z-index: 1000;
+      box-shadow: var(--shadow);
+    }
+
+    .logo {
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .logo img {
+      width: 40px;
+      height: 40px;
+    }
+
+    .logo-text {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+
+    .logo-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 1rem 0;
+    }
+
+    .nav-item {
+      margin: 0.25rem 0;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1.5rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: all 0.2s ease;
+      font-size: 0.95rem;
+      border-radius: 0;
+      cursor: pointer;
+    }
+
+    .nav-link:hover {
+      background: var(--bg-alt);
+      color: var(--text-color);
+    }
+
+    .nav-link.active {
+      background: var(--primary-color);
+      color: white;
+      border-radius: var(--radius);
+      margin: 0.25rem 1rem;
+      padding: 0.75rem 1.25rem;
+    }
+     .nav-link.active:hover {
+        background: var(--primary-hover);
+    }
+
+    .nav-link i {
+      width: 18px;
+      text-align: center;
+    }
+
+    .sidebar-user {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .user-avatar {
+      width: 35px;
+      height: 35px;
+      background: var(--secondary-color);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .user-details {
+      flex: 1;
+    }
+
+    .user-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text-color);
+    }
+
+    .user-role {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .logout-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .logout-btn:hover {
+      background: var(--bg-alt);
+      color: var(--text-color);
+    }
+/* Main Content */
+.main-content {
+    flex: 1;
+    margin-left: 250px;
+    padding: 2rem;
+    background: var(--bg-color);
+    min-height: 100vh;
+}
+
+/* Alert Banner - Updated with new colors */
+.alert-banner {
+    background: linear-gradient(90deg, var(--warning-color), var(--primary-hover));
+    color: white;
+    padding: 12px 20px;
+    border-radius: var(--radius);
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.875rem;
+    font-weight: 500;
+    box-shadow: var(--shadow);
+}
+
+.alert-text {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.alert-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 6px 16px;
+    border-radius: var(--radius);
+    font-size: 0.8rem;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.alert-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Management Grid */
+.management-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.section-card {
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-light);
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1.5rem;
+}
+
+.section-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: white;
+    font-weight: 600;
+}
+
+.create-section .section-icon {
+    background: linear-gradient(135deg, var(--success-color), var(--secondary-color));
+}
+
+.view-section .section-icon {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+}
+
+.section-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.btn {
+    padding: 10px 16px;
+    border: none;
+    border-radius: var(--radius);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    text-align: center;
+    display: inline-block;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--primary-hover);
+}
+
+.btn-secondary {
+    background: var(--bg-alt);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+    background: var(--bg-color);
+    border-color: var(--border-color);
+}
+
+.btn-danger {
+    background: var(--danger-color);
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #c55555;
+}
+
+/* Users Table */
+.users-table-container {
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-light);
+}
+
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.table-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.search-box {
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    font-size: 0.875rem;
+    width: 240px;
+    color: var(--text-color);
+}
+
+.search-box:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(37, 168, 223, 0.1);
+}
+
+.users-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.users-table th,
+.users-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-light);
+    font-size: 0.875rem;
+}
+
+.users-table th {
+    background: var(--bg-alt);
+    font-weight: 600;
+    color: var(--text-color);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.users-table td {
+    color: var(--text-muted);
+}
+
+.status-badge {
+    padding: 4px 12px;
+    border-radius: var(--radius-lg);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.status-active {
+    background: rgba(0, 166, 156, 0.1);
+    color: var(--success-color);
+}
+
+.status-inactive {
+    background: rgba(212, 97, 97, 0.1);
+    color: var(--danger-color);
+}
+
+.status-pending {
+    background: rgba(37, 168, 223, 0.1);
+    color: var(--warning-color);
+}
+
+.action-menu {
+    display: flex;
+    gap: 6px;
+}
+
+.action-btn {
+    padding: 4px 8px;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.edit-btn {
+    background: rgba(37, 168, 223, 0.1);
+    color: var(--primary-color);
+}
+
+.edit-btn:hover {
+    background: rgba(37, 168, 223, 0.2);
+}
+
+.delete-btn {
+    background: rgba(212, 97, 97, 0.1);
+    color: var(--danger-color);
+}
+
+.delete-btn:hover {
+    background: rgba(212, 97, 97, 0.2);
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(10, 6, 72, 0.5);
+}
+
+.modal-content {
+    background: white;
+    margin: 5% auto;
+    padding: 2rem;
+    border-radius: var(--radius-lg);
+    width: 90%;
+    max-width: 500px;
+    box-shadow: var(--shadow-lg);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.modal-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.close {
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-weight: bold;
+}
+
+.close:hover {
+    color: var(--text-color);
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--text-color);
+    font-size: 0.875rem;
+}
+
+.form-input,
+.form-select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    font-size: 0.875rem;
+    color: var(--text-color);
+}
+
+.form-input:focus,
+.form-select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(37, 168, 223, 0.1);
+}
+
+/* Checkbox styling */
+input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--primary-color);
+}
+
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+       <aside class="sidebar">
+    <div class="logo">
+      <img src="https://dweehealthcare.com/wp-content/uploads/2023/08/D-wee-Final.png" alt="DWEE Logo" />
+      <div>
+        <div class="logo-text">D-WEE Healthcare</div>
+        <div class="logo-subtitle">Super Admin</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+  <div class="nav-item">
+    <a id="nav-dashboard" class="nav-link" href="{{ url_for('superadmin_dashboard') }}">
+      <i class="fas fa-home"></i> Tableau de bord
+    </a>
+  </div>
+  <div class="nav-item">
+    <a id="nav-users" class="nav-link" href="{{ url_for('admin_user_management') }}">
+      <i class="fas fa-users"></i> Gestion Utilisateurs
+    </a>
+  </div>
+  <div class="nav-item">
+    <a id="nav-salesreps" class="nav-link" href="{{ url_for('admin_sales_representative') }}">
+      <i class="fas fa-user-tie"></i> Représentants
+    </a>
+  </div>
+  <div class="nav-item">
+    <a id="nav-appointments" class="nav-link" href="{{ url_for('admin_appointment') }}">
+      <i class="fas fa-calendar-alt"></i> Rendez-vous
+    </a>
+  </div>
+  <div class="nav-item">
+    <a id="nav-devices" class="nav-link" href="{{ url_for('admin_dkit_device_management') }}">
+      <i class="fas fa-microchip"></i> Appareils 
+    </a>
+  </div>
+  <div class="nav-item">
+    <a id="nav-reports" class="nav-link" href="{{ url_for('admin_reports_analytics') }}">
+      <i class="fas fa-chart-bar"></i> Rapports & Analytics
+    </a>
+  </div>
+  <div class="nav-item">
+    <a id="nav-system" class="nav-link active" href="{{ url_for('admin_system_configuration') }}">
+      <i class="fas fa-cogs"></i> Configuration Système
+    </a>
+  </div>
+  <div class="nav-item">
+    <a id="nav-audit" class="nav-link" href="{{ url_for('admin_audit_logs') }}">
+      <i class="fas fa-clipboard-list"></i> Journaux d'Audit
+    </a>
+  </div>
+</nav>
+    
+    <div class="sidebar-user">
+      <div class="user-avatar">SA</div>
+      <div class="user-details">
+        <div class="user-name">Super Admin</div>
+        <div class="user-role">Administrateur</div>
+      </div>
+      <button class="logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i>
+      </button>
+    </div>
+  </aside>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <h2 class="page-header">Configuration du Système</h2>
+
+            <!-- General Settings Section -->
+            <div class="config-section">
+                <div class="config-section-header">
+                    <div class="config-section-icon settings-icon">🔧</div>
+                    <h3 class="config-section-title">Paramètres Généraux</h3>
+                </div>
+                <form id="generalSettingsForm">
+                    <div class="form-group">
+                        <label for="termsOfUse" class="form-label">Conditions d'Utilisation</label>
+                        <textarea id="termsOfUse" class="form-textarea" placeholder="Entrez les conditions d'utilisation..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="privacyPolicy" class="form-label">Politique de Confidentialité</label>
+                        <textarea id="privacyPolicy" class="form-textarea" placeholder="Entrez la politique de confidentialité..."></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="systemPreference1" class="form-label">Préférence Système 1 (Exemple)</label>
+                        <input type="text" id="systemPreference1" class="form-input" placeholder="Valeur de la préférence...">
+                    </div>
+                    <button type="submit" class="btn btn-primary">Sauvegarder Paramètres Généraux</button>
+                </form>
+            </div>
+
+            <!-- Email Templates/Notifications Section -->
+            <div class="config-section">
+                <div class="config-section-header">
+                    <div class="config-section-icon email-icon">✉️</div>
+                    <h3 class="config-section-title">Modèles d'Email et Notifications</h3>
+                </div>
+                <form id="emailTemplatesForm">
+                    <div class="form-group">
+                        <label for="emailTemplateSelect" class="form-label">Sélectionner un Modèle d'Email</label>
+                        <select id="emailTemplateSelect" class="form-select">
+                            <option value="welcome">Email de Bienvenue</option>
+                            <option value="password_reset">Réinitialisation Mot de Passe</option>
+                            <option value="new_device_assigned">Nouvel Appareil Assigné</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="emailSubject" class="form-label">Sujet de l'Email</label>
+                        <input type="text" id="emailSubject" class="form-input" placeholder="Sujet...">
+                    </div>
+                    <div class="form-group">
+                        <label for="emailBody" class="form-label">Corps de l'Email (Utiliser {{variable}} pour les placeholders)</label>
+                        <textarea id="emailBody" class="form-textarea" placeholder="Corps du message..."></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Sauvegarder Modèle</button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Placeholder for General Settings Form
+        document.getElementById('generalSettingsForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Paramètres généraux sauvegardés (simulation).');
+            // Actual save logic would go here
+        });
+        
+        // Placeholder for Email Templates Form
+        document.getElementById('emailTemplatesForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const selectedTemplate = document.getElementById('emailTemplateSelect').value;
+            alert(`Modèle d'email '${selectedTemplate}' sauvegardé (simulation).`);
+            // Actual save logic would go here
+        });
+
+        // Example: Load email template content on selection (very basic)
+        document.getElementById('emailTemplateSelect').addEventListener('change', function(e){
+            const templateKey = e.target.value;
+            const subjectInput = document.getElementById('emailSubject');
+            const bodyInput = document.getElementById('emailBody');
+            // In a real app, fetch this from a data source
+            if(templateKey === 'welcome'){
+                subjectInput.value = "Bienvenue chez D-WEE Healthcare!";
+                bodyInput.value = "Bonjour {{userName}},\n\nBienvenue sur notre plateforme.\n\nCordialement,\nL'équipe D-WEE";
+            } else if (templateKey === 'password_reset'){
+                subjectInput.value = "Réinitialisation de votre mot de passe";
+                bodyInput.value = "Bonjour {{userName}},\n\nPour réinitialiser votre mot de passe, veuillez cliquer sur ce lien: {{resetLink}}\n\nCordialement,\nL'équipe D-WEE";
+            } else {
+                subjectInput.value = "";
+                bodyInput.value = "";
+            }
+        });
+         // Trigger change to load default template
+        document.getElementById('emailTemplateSelect').dispatchEvent(new Event('change'));
+
+    </script>
+</body>
+</html>

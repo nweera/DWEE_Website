@@ -1,0 +1,368 @@
+<!-- Add User Modal -->
+<div id="addUserModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="modal-title">Ajouter Nouveau Client</div>
+      <button class="close-btn" onclick="closeModal('addUserModal')">&times;</button>
+    </div>
+    <form onsubmit="addUser(event)">
+      <div class="form-group">
+        <label class="form-label">Prénom</label>
+        <input type="text" id="addUserFirstName" class="form-input" placeholder="Entrez le prénom" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Nom de famille</label>
+        <input type="text" id="addUserLastName" class="form-input" placeholder="Entrez le nom de famille" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Email</label>
+        <input type="email" id="addUserEmail" class="form-input" placeholder="Entrez l'email" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Pays</label>
+        <select id="addUserCountry" class="form-select" onchange="updateProvinces()" required>
+          <option value="">Sélectionner un pays...</option>
+          <option value="Tunisia">Tunisie</option>
+          <option value="Canada">Canada</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Province/Gouvernorat</label>
+        <select id="addUserProvince" class="form-select" required>
+          <option value="">Sélectionner d'abord un pays...</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Adresse</label>
+        <input type="text" id="addUserAddress" class="form-input" placeholder="Entrez l'adresse complète" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Code pays</label>
+        <select id="addUserCountryCode" class="form-select" required>
+          <option value="">Sélectionner...</option>
+          <option value="+216">+216 (Tunisie)</option>
+          <option value="+1">+1 (Canada)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Numéro de téléphone</label>
+        <input type="tel" id="addUserPhone" class="form-input" placeholder="Entrez le numéro de téléphone" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Mot de passe généré</label>
+        <div style="display: flex; gap: 10px; align-items: center;">
+          <input type="text" id="addUserPassword" class="form-input" readonly style="background-color: #f5f5f5;">
+          <button type="button" class="btn btn-secondary" onclick="generateRandomPassword()" style="white-space: nowrap;">
+            <i class="fas fa-refresh"></i> Générer
+          </button>
+        </div>
+      </div>
+      <div class="modal-actions">
+        <button type="submit" class="btn btn-primary">
+          <i class="fas fa-plus"></i> Ajouter Client
+        </button>
+        <button type="button" class="btn btn-success" onclick="sendUserInfoByEmail()">
+          <i class="fas fa-envelope"></i> Envoyer par Email
+        </button>
+        <button type="button" class="btn btn-secondary" onclick="closeModal('addUserModal')">
+          Annuler
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- View User Modal (Read-only) -->
+<div id="editUserModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="modal-title">Détails du Client</div>
+      <button class="close-btn" onclick="closeModal('editUserModal')">&times;</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Prénom</label>
+      <div id="viewUserFirstName" class="form-display"></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Nom de famille</label>
+      <div id="viewUserLastName" class="form-display"></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email</label>
+      <div id="viewUserEmail" class="form-display"></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Pays</label>
+      <div id="viewUserCountry" class="form-display"></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Province/Gouvernorat</label>
+      <div id="viewUserProvince" class="form-display"></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Adresse</label>
+      <div id="viewUserAddress" class="form-display"></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Téléphone</label>
+      <div id="viewUserPhone" class="form-display"></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Mot de passe</label>
+      <div id="viewUserPassword" class="form-display"></div>
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-success" onclick="sendViewedUserInfoByEmail()">
+        <i class="fas fa-envelope"></i> Envoyer par Email
+      </button>
+      <button type="button" class="btn btn-secondary" onclick="closeModal('editUserModal')">
+        Fermer
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- Add D-KIT Modal -->
+<div id="addDkitModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="modal-title">Ajouter Nouveau D-KIT</div>
+      <button class="close-btn" onclick="closeModal('addDkitModal')">&times;</button>
+    </div>
+    <form onsubmit="addDKit(event)">
+      <div class="form-group">
+        <label class="form-label">Numéro de Série</label>
+        <input type="text" id="addDkitSerial" class="form-input" placeholder="Ex: DKIT-003" required>
+      </div>
+      
+      <div class="form-group">
+        <label class="form-label">Date d'Achat</label>
+        <input type="date" id="addDkitDate" class="form-input" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Statut</label>
+        <select id="addDkitStatus" class="form-select" required>
+          <option value="">Sélectionner...</option>
+          <option value="En service">En service</option>
+          <option value="En attente">En attente</option>
+          <option value="En maintenance">En maintenance</option>
+          <option value="Défectueux">Défectueux</option>
+        </select>
+      </div>
+
+      <div class="modal-actions">
+        <button type="submit" class="btn btn-primary">
+          <i class="fas fa-plus"></i> Ajouter D-KIT
+        </button>
+        <button type="button" class="btn btn-secondary" onclick="closeModal('addDkitModal')">
+          Annuler
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- D-KIT Details Modal (Read-only) -->
+<div id="dkitDetailsModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="modal-title">Détails D-KIT</div>
+      <button class="close-btn" onclick="closeModal('dkitDetailsModal')">&times;</button>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Numéro de Série</label>
+      <div id="detailDkitSerial" class="form-display"></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Modèle</label>
+      <div id="detailDkitModel" class="form-display"></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Date d'Achat</label>
+      <div id="detailDkitDate" class="form-display"></div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Statut</label>
+      <div id="detailDkitStatus" class="form-display"></div>
+    </div>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-secondary" onclick="closeModal('dkitDetailsModal')">
+        Fermer
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- New Assignment Modal -->
+<div id="newAssignmentModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="modal-title">Nouvelle Assignation D-KIT</div>
+      <button class="close-btn" onclick="closeModal('newAssignmentModal')">&times;</button>
+    </div>
+    <form onsubmit="createNewAssignment(event)">
+      <div class="form-group">
+        <label class="form-label">Client</label>
+        <select id="assignClientSelect" class="form-select" required>
+          <option value="">Sélectionner un client...</option>
+          <option value="user1">Dr. Amina Ben Ali</option>
+          <option value="user2">Dr. Mohamed Triki</option>
+          <option value="user3">Inf. Fatma Sghaier</option>
+          <option value="user4">M. Sami Kacem</option>
+          <option value="user5">Mme. Leila Mansour</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">D-KIT Disponible</label>
+        <select id="assignDkitSelect" class="form-select" required>
+          <option value="">Sélectionner un D-KIT...</option>
+          <option value="dkit1">DKIT-003 (D-KIT Standard)</option>
+          <option value="dkit2">DKIT-004 (D-KIT Pro)</option>
+          <option value="dkit3">DKIT-005 (D-KIT Advanced)</option>
+          <option value="dkit4">DKIT-006 (D-KIT Standard)</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Statut</label>
+        <select id="assignStatusSelect" class="form-select" required>
+          <option value="">Sélectionner le statut...</option>
+          <option value="En service">En service</option>
+          <option value="En attente">En attente</option>
+          <option value="En maintenance">En maintenance</option>
+          <option value="Défectueux">Défectueux</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Notes</label>
+        <textarea id="assignNotes" class="form-textarea" placeholder="Notes concernant l'assignation..."></textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="submit" class="btn btn-primary">
+          <i class="fas fa-check"></i> Créer Assignation
+        </button>
+        <button type="button" class="btn btn-secondary" onclick="closeModal('newAssignmentModal')">
+          Annuler
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Assignment Details Modal (Editable Notes) -->
+<div id="assignmentDetailsModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">
+      <div class="modal-title">Détails de l'Assignation</div>
+      <button class="close-btn" onclick="closeModal('assignmentDetailsModal')">&times;</button>
+    </div>
+    <form id="assignmentDetailsForm" onsubmit="saveAssignmentNotes(event)">
+      <div class="form-group">
+        <label class="form-label">Client</label>
+        <div id="detailAssignClient" class="form-display"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">D-KIT Assigné</label>
+        <div id="detailAssignDkit" class="form-display"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Statut Actuel</label>
+        <div id="detailAssignStatus" class="form-display"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Notes</label>
+        <textarea id="detailAssignNotes" class="form-textarea"></textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="submit" class="btn btn-primary">
+          <i class="fas fa-save"></i> Sauvegarder
+        </button>
+        <button type="button" class="btn btn-secondary" onclick="closeModal('assignmentDetailsModal')">
+          Fermer
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+
+<script>
+// Province/Country management
+function updateProvinces() {
+  const country = document.getElementById('addUserCountry').value;
+  const provinceSelect = document.getElementById('addUserProvince');
+  
+  provinceSelect.innerHTML = '<option value="">Sélectionner...</option>';
+  
+  if (country === 'Tunisia') {
+    const tunisianGovernorates = [
+      'Tunis', 'Ariana', 'Ben Arous', 'Manouba', 'Nabeul', 'Zaghouan',
+      'Bizerte', 'Béja', 'Jendouba', 'Kef', 'Siliana', 'Kairouan',
+      'Kasserine', 'Sidi Bouzid', 'Sousse', 'Monastir', 'Mahdia',
+      'Sfax', 'Gafsa', 'Tozeur', 'Kebili', 'Gabès', 'Medenine', 'Tataouine'
+    ];
+    tunisianGovernorates.forEach(gov => {
+      provinceSelect.innerHTML += `<option value="${gov}">${gov}</option>`;
+    });
+  } else if (country === 'Canada') {
+    const canadianProvinces = [
+      'Alberta', 'British Columbia', 'Manitoba', 'New Brunswick',
+      'Newfoundland and Labrador', 'Northwest Territories', 'Nova Scotia',
+      'Nunavut', 'Ontario', 'Prince Edward Island', 'Quebec', 'Saskatchewan', 'Yukon'
+    ];
+    canadianProvinces.forEach(province => {
+      provinceSelect.innerHTML += `<option value="${province}">${province}</option>`;
+    });
+  }
+}
+
+// Password generation
+function generateRandomPassword() {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
+  let password = '';
+  for (let i = 0; i < 12; i++) {
+    password += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  document.getElementById('addUserPassword').value = password;
+}
+
+// Email functions
+function sendUserInfoByEmail() {
+  const userData = {
+    firstName: document.getElementById('addUserFirstName').value,
+    lastName: document.getElementById('addUserLastName').value,
+    email: document.getElementById('addUserEmail').value,
+    country: document.getElementById('addUserCountry').value,
+    province: document.getElementById('addUserProvince').value,
+    address: document.getElementById('addUserAddress').value,
+    phone: document.getElementById('addUserCountryCode').value + document.getElementById('addUserPhone').value,
+    password: document.getElementById('addUserPassword').value
+  };
+  
+  const emailBody = `Nouveau client créé:\n\nPrénom: ${userData.firstName}\nNom: ${userData.lastName}\nEmail: ${userData.email}\nPays: ${userData.country}\nProvince: ${userData.province}\nAdresse: ${userData.address}\nTéléphone: ${userData.phone}\nMot de passe: ${userData.password}`;
+  
+  window.open(`mailto:${userData.email}?subject=Informations de votre compte&body=${encodeURIComponent(emailBody)}`);
+}
+
+function sendViewedUserInfoByEmail() {
+  const userData = {
+    firstName: document.getElementById('viewUserFirstName').textContent,
+    lastName: document.getElementById('viewUserLastName').textContent,
+    email: document.getElementById('viewUserEmail').textContent,
+    country: document.getElementById('viewUserCountry').textContent,
+    province: document.getElementById('viewUserProvince').textContent,
+    address: document.getElementById('viewUserAddress').textContent,
+    phone: document.getElementById('viewUserPhone').textContent,
+    password: document.getElementById('viewUserPassword').textContent
+  };
+  
+  const emailBody = `Informations client:\n\nPrénom: ${userData.firstName}\nNom: ${userData.lastName}\nEmail: ${userData.email}\nPays: ${userData.country}\nProvince: ${userData.province}\nAdresse: ${userData.address}\nTéléphone: ${userData.phone}\nMot de passe: ${userData.password}`;
+  
+  window.open(`mailto:${userData.email}?subject=Vos informations de compte&body=${encodeURIComponent(emailBody)}`);
+}
+
+// Auto-generate password when modal opens
+document.addEventListener('DOMContentLoaded', function() {
+  generateRandomPassword();
+});
+</script>

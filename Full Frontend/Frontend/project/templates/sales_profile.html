@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Profil - D-WEE</title>
+  <link rel="stylesheet" href="../static/salesCSS.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" />
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="logo">
+      <img src="https://dweehealthcare.com/wp-content/uploads/2023/08/D-wee-Final.png" alt="DWEE Logo" />
+      <div>
+        <div class="logo-text">D-WEE Healthcare</div>
+        <div class="logo-subtitle">Tableau de Bord Commercial</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-item"><a class="nav-link" href="sales_dashboard.html"><i class="fas fa-tachometer-alt"></i> Tableau de Bord</a></div>
+      <div class="nav-item"><a class="nav-link" href="sales_users.html"><i class="fas fa-users"></i> Utilisateurs</a></div>
+      <div class="nav-item"><a class="nav-link" href="sales_dkits.html"><i class="fas fa-box"></i> D-KIT Devices</a></div>
+      <div class="nav-item"><a class="nav-link" href="sales_assignments.html"><i class="fas fa-handshake"></i> Assignations</a></div>
+      <div class="nav-item"><a class="nav-link" href="sales_reports.html"><i class="fas fa-chart-bar"></i> Rapports</a></div>
+      <div class="nav-item"><a class="nav-link active" href="sales_profile.html"><i class="fas fa-user"></i> Profil</a></div>    
+    </nav>
+    <div class="sidebar-user">
+      <div class="user-avatar">JD</div>
+      <div class="user-details">
+        <div class="user-name">Jean Dupont</div>
+        <div class="user-role">Représentant Commercial</div>
+      </div>
+      <button class="logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i>
+      </button>
+    </div>
+  </aside>
+  <main class="main-content">
+    <div id="profile" class="tab-content active">
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title">
+            <i class="card-icon fas fa-user"></i>
+            Mon Profil
+          </div>
+        </div>
+        <form>
+          <div class="profile-form-grid">
+            <div>
+              <div class="form-group">
+                <label class="form-label">Prénom</label>
+                <input type="text" class="form-input" value="Jean" readonly>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Nom</label>
+                <input type="text" class="form-input" value="Dupont" readonly>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Email</label>
+                <input type="email" class="form-input" value="jean.dupont@dwee.com" readonly>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Type de compte</label>
+                <input type="text" class="form-input" value="sales" readonly>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Raison sociale</label>
+                <input type="text" class="form-input" value="D-WEE Healthcare" readonly>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Matricule fiscale</label>
+                <input type="text" class="form-input" value="A1234567Z" readonly>
+              </div>
+            </div>
+            <div>
+              <div class="form-group">
+                <label class="form-label">Téléphone</label>
+                <input type="tel" class="form-input" value="+216 71 123 456" readonly>
+              </div>
+              <div class="form-group">
+                <label class="form-label">Adresse</label>
+                <input type="text" class="form-input" value="12 Rue de la Santé, Tunis" readonly>
+              </div>
+            </div>
+          </div>
+          <div class="profile-form-actions">
+            <button type="button" class="btn btn-warning" id="request-change-btn">
+              <i class="fas fa-envelope"></i> Demander une modification
+            </button>
+          </div>
+        </form>
+        
+      </div>
+    </div>
+  </main>
+  <!-- Modal for modification request -->
+  <div id="modificationModal" class="modal" style="display:none;align-items:center;justify-content:center;">
+    <div class="modal-content" style="max-width:500px;width:95%;position:relative;">
+      <span id="closeModificationModal" class="close" style="position:absolute;top:15px;right:20px;cursor:pointer;">&times;</span>
+      <h3>Demande de modification du profil</h3>
+      <form id="modificationForm">
+        <div class="form-group">
+          <label class="form-label">Prénom</label>
+          <input type="text" class="form-input" name="prenom" value="Jean">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Nom</label>
+          <input type="text" class="form-input" name="nom" value="Dupont">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email</label>
+          <input type="email" class="form-input" name="email" value="jean.dupont@dwee.com">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Téléphone</label>
+          <input type="tel" class="form-input" name="telephone" value="+216 71 123 456">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Adresse</label>
+          <input type="text" class="form-input" name="adresse" value="12 Rue de la Santé, Tunis">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Raison sociale</label>
+          <input type="text" class="form-input" name="Raison sociale" value="xxxxxxxxx">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Matricule fiscale</label>
+          <input type="text" class="form-input" name="Matricule fiscale" value="xxxxx">
+        </div>
+        <div class="modal-actions" style="margin-top:1.5rem;display:flex;justify-content:flex-end;gap:0.5rem;">
+          <button type="button" class="btn btn-secondary" id="cancelModificationBtn">Annuler</button>
+          <button type="submit" class="btn btn-primary">Envoyer la demande</button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <script src="../static/js/sales_common.js"></script>
+  <script>
+    // Modal logic
+    const modal = document.getElementById('modificationModal');
+    const openBtn = document.getElementById('request-change-btn');
+    const closeBtn = document.getElementById('closeModificationModal');
+    const cancelBtn = document.getElementById('cancelModificationBtn');
+    const form = document.getElementById('modificationForm');
+
+    openBtn.onclick = function() {
+      modal.style.display = 'flex';
+    };
+    closeBtn.onclick = cancelBtn.onclick = function() {
+      modal.style.display = 'none';
+    };
+    window.onclick = function(event) {
+      if (event.target === modal) {
+        modal.style.display = 'none';
+      }
+    };
+
+    form.onsubmit = function(e) {
+      e.preventDefault();
+      // Here you would send the request to the admin (AJAX or backend)
+      alert('Votre demande de modification a été envoyée à l\'administrateur.');
+      modal.style.display = 'none';
+    };
+  </script>
+</body>
+</html>

@@ -1,0 +1,60 @@
+<aside class="sidebar">
+    <div class="logo">
+      <img src="https://dweehealthcare.com/wp-content/uploads/2023/08/D-wee-Final.png" alt="DWEE Logo" />
+      <div>
+        <div class="logo-text">D-WEE Healthcare</div>
+        <div class="logo-subtitle">Tableau de Bord Commercial</div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <div class="nav-item">
+        <button class="nav-link active" onclick="showTab('dashboard')">
+          <i class="fas fa-tachometer-alt"></i>
+          Tableau de Bord
+        </button>
+      </div>
+      <div class="nav-item">
+        <button class="nav-link" onclick="showTab('users')">
+          <i class="fas fa-users"></i>
+          Utilisateurs
+        </button>
+      </div>
+      <div class="nav-item">
+        <button class="nav-link" onclick="showTab('dkits')">
+          <i class="fas fa-box"></i>
+          D-KIT Devices
+        </button>
+      </div>
+      <div class="nav-item">
+        <button class="nav-link" onclick="showTab('assignments')">
+          <i class="fas fa-handshake"></i>
+          Assignations
+        </button>
+      </div>
+      <div class="nav-item">
+        <button class="nav-link" onclick="showTab('reports')">
+          <i class="fas fa-chart-bar"></i>
+          Rapports
+        </button>
+      </div>
+      
+      <div class="nav-item">
+        <button class="nav-link" onclick="showTab('profile')">
+          <i class="fas fa-user"></i>
+          Profil
+        </button>
+      </div>
+    </nav>
+
+    <div class="sidebar-user">
+      <div class="user-avatar">JD</div>
+      <div class="user-details">
+        <div class="user-name">Jean Dupont</div>
+        <div class="user-role">Représentant Commercial</div>
+      </div>
+      <button class="logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i>
+      </button>
+    </div>
+  </aside> 

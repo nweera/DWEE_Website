@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Tableau de Bord - D-WEE</title>
+  <link rel="stylesheet" href="../static/salesCSS.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" />
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="logo">
+      <img src="https://dweehealthcare.com/wp-content/uploads/2023/08/D-wee-Final.png" alt="DWEE Logo" />
+      <div>
+        <div class="logo-text">D-WEE Healthcare</div>
+        <div class="logo-subtitle">Tableau de Bord Commercial</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-item"><a class="nav-link active" href="sales_dashboard.html"><i class="fas fa-tachometer-alt"></i> Tableau de Bord</a></div>
+      <div class="nav-item"><a class="nav-link" href="sales_users.html"><i class="fas fa-users"></i> Utilisateurs</a></div>
+      <div class="nav-item"><a class="nav-link" href="sales_dkits.html"><i class="fas fa-box"></i> D-KIT Devices</a></div>
+      <div class="nav-item"><a class="nav-link" href="sales_assignments.html"><i class="fas fa-handshake"></i> Assignations</a></div>
+      <div class="nav-item"><a class="nav-link" href="sales_reports.html"><i class="fas fa-chart-bar"></i> Rapports</a></div>
+      <div class="nav-item"><a class="nav-link" href="sales_profile.html"><i class="fas fa-user"></i> Profil</a></div>
+    </nav>
+    <div class="sidebar-user">
+      <div class="user-avatar">JD</div>
+      <div class="user-details">
+        <div class="user-name">Jean Dupont</div>
+        <div class="user-role">Représentant Commercial</div>
+      </div>
+      <button class="logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i>
+      </button>
+    </div>
+  </aside>
+  <main class="main-content">
+    <!-- Dashboard Tab Content -->
+    <div id="dashboard" class="tab-content active">
+      <div class="stats-grid">
+        <a href="sales_users.html" class="stat-card-link"><div class="stat-card">
+          <div class="stat-number">12</div>
+          <div class="stat-label">Mes Clients</div>
+        </div></a>
+        <a href="sales_dkits.html" class="stat-card-link"><div class="stat-card">
+          <div class="stat-number">8</div>
+          <div class="stat-label">Mes D-KITs Vendus</div>
+        </div></a>
+        <a href="sales_dkits.html" class="stat-card-link"><div class="stat-card">
+          <div class="stat-number">5</div>
+          <div class="stat-label">Mon Stock</div>
+        </div></a>
+        <a href="sales_assignments.html" class="stat-card-link"><div class="stat-card">
+          <div class="stat-number">2</div>
+          <div class="stat-label">Mes Validations en Attente</div>
+        </div></a>
+      </div>
+      <div class="dashboard-grid">
+        <div class="card">
+          <div class="card-header">
+            <div class="card-title">
+              <i class="card-icon fas fa-clock"></i>
+              Assignations Récentes
+            </div>
+          </div>
+          <div class="table-container">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Utilisateur</th>
+                  <th>D-KIT ID</th>
+                  <th>Date</th>
+                  <th>Statut</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Dr. Amina Ben Ali</td>
+                  <td>DKIT-027</td>
+                  <td>27/05/2025</td>
+                  <td><span class="status-badge status-delivered">Livré</span></td>
+                </tr>
+                <tr>
+                  <td>Dr. Mohamed Triki</td>
+                  <td>DKIT-026</td>
+                  <td>26/05/2025</td>
+                  <td><span class="status-badge status-demo">Formation en cours</span></td>
+                </tr>
+                <tr>
+                  <td>Inf. Fatma Sghaier</td>
+                  <td>DKIT-025</td>
+                  <td>25/05/2025</td>
+                  <td><span class="status-badge status-pending">En transit</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+        <div class="card">
+          <div class="card-header card-header-center">
+            <span class="card-icon"><i class="fas fa-chart-line"></i></span>
+            <span class="card-title card-title-large">Performance des Ventes (30 jours)</span>
+          </div>
+          <div class="card-content" style="padding: 1.5rem;">
+            <canvas id="performanceChart" height="80"></canvas>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+  <script src="../static/js/sales_common.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+document.addEventListener('DOMContentLoaded', function () {
+  const ctx = document.getElementById('performanceChart').getContext('2d');
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: ['01/05', '05/05', '10/05', '15/05', '20/05', '25/05', '30/05'],
+      datasets: [{
+        label: 'D-KITs Vendus',
+        data: [2, 3, 4, 6, 5, 7, 8],
+        borderColor: '#007bff',
+        backgroundColor: 'rgba(0,123,255,0.1)',
+        fill: true,
+        tension: 0.3,
+        pointRadius: 4,
+        pointBackgroundColor: '#007bff'
+      }]
+    },
+    options: {
+      plugins: {
+        legend: { display: false }
+      },
+      scales: {
+        y: { beginAtZero: true, ticks: { stepSize: 1 } }
+      }
+    }
+  });
+});
+</script>
+  
+</body>
+</html>

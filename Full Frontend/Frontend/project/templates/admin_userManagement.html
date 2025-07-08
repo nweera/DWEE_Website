@@ -1,0 +1,900 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" />
+    <title>D-WEE Healthcare - Gestion Utilisateurs</title>
+    <style>
+
+        :root {
+    --primary-color: #25A8DF;
+    --primary-hover: #1E8FBF;
+    --secondary-color: #00A69C;
+    --text-color: #0A0648;
+    --text-muted: #1A1A1A;
+    --bg-color: #F4F1EE;
+    --bg-alt: #F4F1EE;
+    --border-color: rgba(26, 26, 26, 0.15);
+    --border-light: rgba(26, 26, 26, 0.08);
+    --success-color: #00A69C;
+    --warning-color: #25A8DF;
+    --danger-color: #d46161;
+    --shadow: 0 2px 8px 0 rgba(10, 6, 72, 0.08), 0 1px 4px 0 rgba(10, 6, 72, 0.04);
+    --shadow-lg: 0 8px 24px -4px rgba(10, 6, 72, 0.12), 0 4px 12px -2px rgba(10, 6, 72, 0.08);
+    --radius: 8px;
+    --radius-lg: 12px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg-color);
+    min-height: 100vh;
+    color: var(--text-color);
+}
+
+.container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar - Updated with new colors */
+.sidebar {
+      width: 250px;
+      background: white;
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
+      z-index: 1000;
+      box-shadow: var(--shadow);
+    }
+
+    .logo {
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .logo img {
+      width: 40px;
+      height: 40px;
+    }
+
+    .logo-text {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+
+    .logo-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 1rem 0;
+    }
+
+    .nav-item {
+      margin: 0.25rem 0;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1.5rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: all 0.2s ease;
+      font-size: 0.95rem;
+      border-radius: 0;
+      cursor: pointer;
+    }
+
+    .nav-link:hover {
+      background: var(--bg-alt);
+      color: var(--text-color);
+    }
+
+    .nav-link.active {
+      background: var(--primary-color);
+      color: white;
+      border-radius: var(--radius);
+      margin: 0.25rem 1rem;
+      padding: 0.75rem 1.25rem;
+    }
+     .nav-link.active:hover {
+        background: var(--primary-hover);
+    }
+
+    .nav-link i {
+      width: 18px;
+      text-align: center;
+    }
+
+    .sidebar-user {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .user-avatar {
+      width: 35px;
+      height: 35px;
+      background: var(--secondary-color);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .user-details {
+      flex: 1;
+    }
+
+    .user-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text-color);
+    }
+
+    .user-role {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .logout-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .logout-btn:hover {
+      background: var(--bg-alt);
+      color: var(--text-color);
+    }
+/* Main Content */
+.main-content {
+    flex: 1;
+    margin-left: 250px;
+    padding: 2rem;
+    background: var(--bg-color);
+    min-height: 100vh;
+}
+
+/* Alert Banner - Updated with new colors */
+.alert-banner {
+      background: rgba(37, 168, 223, 0.1);
+      border: 1px solid var(--warning-color);
+      border-radius: var(--radius);
+      padding: 1rem 1.5rem;
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: var(--shadow);
+    }
+
+    .alert-content {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: var(--text-color);
+    }
+
+    .alert-icon {
+      color: var(--warning-color);
+    }
+
+ .alert-btn {
+      background: var(--warning-color);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .alert-btn:hover {
+      background: var(--primary-hover);
+    }
+
+
+/* Management Grid */
+.management-grid {
+    display: grid;
+
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.section-card {
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-light);
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1.5rem;
+}
+
+.section-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: white;
+    font-weight: 600;
+}
+
+.create-section .section-icon {
+    background: linear-gradient(135deg, var(--success-color), var(--secondary-color));
+}
+
+.view-section .section-icon {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+}
+
+.section-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.btn {
+    padding: 10px 16px;
+    border: none;
+    border-radius: var(--radius);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    text-align: center;
+    display: inline-block;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--primary-hover);
+}
+
+.btn-secondary {
+    background: var(--bg-alt);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+    background: var(--bg-color);
+    border-color: var(--border-color);
+}
+
+.btn-danger {
+    background: var(--danger-color);
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #c55555;
+}
+
+/* Users Table */
+.users-table-container {
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-light);
+}
+
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.table-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.search-box {
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    font-size: 0.875rem;
+    width: 240px;
+    color: var(--text-color);
+}
+
+.search-box:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(37, 168, 223, 0.1);
+}
+
+.users-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.users-table th,
+.users-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-light);
+    font-size: 0.875rem;
+}
+
+.users-table th {
+    background: var(--bg-alt);
+    font-weight: 600;
+    color: var(--text-color);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.users-table td {
+    color: var(--text-muted);
+}
+
+.status-badge {
+    padding: 4px 12px;
+    border-radius: var(--radius-lg);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.status-approuve {
+    background: rgba(0, 166, 156, 0.1);
+    color: var(--success-color);
+}
+
+.status-en-attente {
+    background: rgba(37, 168, 223, 0.1);
+    color: var(--warning-color);
+}
+
+.action-menu {
+    display: flex;
+    gap: 6px;
+}
+
+.action-btn {
+    padding: 4px 8px;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.edit-btn {
+    background: rgba(37, 168, 223, 0.1);
+    color: var(--primary-color);
+}
+
+.edit-btn:hover {
+    background: rgba(37, 168, 223, 0.2);
+}
+
+.delete-btn {
+    background: rgba(212, 97, 97, 0.1);
+    color: var(--danger-color);
+}
+
+.delete-btn:hover {
+    background: rgba(212, 97, 97, 0.2);
+}
+
+.approve-btn {
+    background: rgba(0, 166, 156, 0.1);
+    color: var(--success-color);
+}
+
+.approve-btn:hover {
+    background: rgba(0, 166, 156, 0.2);
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(10, 6, 72, 0.5);
+}
+
+.modal-content {
+    background: white;
+    margin: 5% auto;
+    padding: 2rem;
+    border-radius: var(--radius-lg);
+    width: 90%;
+    max-width: 500px;
+    box-shadow: var(--shadow-lg);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.modal-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.close {
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-weight: bold;
+}
+
+.close:hover {
+    color: var(--text-color);
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--text-color);
+    font-size: 0.875rem;
+}
+
+.form-input,
+.form-select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    font-size: 0.875rem;
+    color: var(--text-color);
+}
+
+.form-input:focus,
+.form-select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(37, 168, 223, 0.1);
+}
+
+/* Checkbox styling */
+input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--primary-color);
+}
+    </style>
+</head>
+<body>
+ <aside class="sidebar">
+    <div class="logo">
+      <img src="https://dweehealthcare.com/wp-content/uploads/2023/08/D-wee-Final.png" alt="DWEE Logo" />
+      <div>
+        <div class="logo-text">D-WEE Healthcare</div>
+        <div class="logo-subtitle">Super Admin</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+  <div class="nav-item">
+    <a id="nav-dashboard" class="nav-link" href="admin_dashboard.html">
+      <i class="fas fa-home"></i> Tableau de bord
+    </a>
+  </div>
+  <div class="nav-item">
+    <a id="nav-users" class="nav-link active" href="admin_userManagement.html">
+      <i class="fas fa-users"></i> Gestion Utilisateurs
+    </a>
+  </div>
+  <div class="nav-item">
+    <a id="nav-salesreps" class="nav-link" href="admin_salesRepresentative.html">
+      <i class="fas fa-user-tie"></i> Représentants
+    </a>
+  </div>
+  <div class="nav-item">
+    <a id="nav-appointments" class="nav-link" href="admin_appointment.html">
+      <i class="fas fa-calendar-alt"></i> Rendez-vous
+    </a>
+  </div>
+  <div class="nav-item">
+    <a id="nav-devices" class="nav-link " href="admin_DKITDeviceManagement.html">
+      <i class="fas fa-microchip"></i> Appareils
+    </a>
+  </div>
+  <div class="nav-item">
+    <a id="nav-reports" class="nav-link" href="admin_ReportsAnalytics.html">
+      <i class="fas fa-chart-bar"></i> Rapports & Analytics
+    </a>
+  </div>
+  <div class="nav-item">
+    <a id="nav-system" class="nav-link" href="admin_SystemConfiguration.html">
+      <i class="fas fa-cogs"></i> Configuration Système
+    </a>
+  </div>
+  <div class="nav-item">
+    <a id="nav-audit" class="nav-link" href="admin_AuditLogs.html">
+      <i class="fas fa-clipboard-list"></i> Journaux d'Audit
+    </a>
+  </div>
+</nav>
+
+    <div class="sidebar-user">
+      <div class="user-avatar">SA</div>
+      <div class="user-details">
+        <div class="user-name">Super Admin</div>
+        <div class="user-role">Administrateur</div>
+      </div>
+      <button class="logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i>
+      </button>
+    </div>
+  </aside>
+
+        <div class="main-content">
+            <div class="alert-banner">
+            <div class="alert-content">
+            <i class="fas fa-exclamation-triangle alert-icon"></i>
+            <span>3 nouvelles demandes d'utilisateurs en attente de validation</span>
+            </div>
+                <button class="alert-btn">Examiner</button>
+            </div>
+
+
+            <div class="management-grid">
+                <div class="section-card create-section">
+                    <div class="section-header">
+                        <div class="section-icon">+</div>
+                        <div class="section-title">Création des Comptes</div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" onclick="openCreateModal()">
+                            Créer un Utilisateur
+                        </button>
+                    </div>
+                </div>
+
+                <div class="section-card view-section">
+                    <div class="section-header">
+                        <div class="section-icon">👁</div>
+                        <div class="section-title">Visualiser les Utilisateurs</div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" onclick="showAllUsers()">
+                            Voir Tous les Utilisateurs
+                        </button>
+                        <button class="btn btn-secondary" onclick="filterByRole('admin')">
+                            Administrateurs Seulement
+                        </button>
+                        <button class="btn btn-secondary" onclick="filterByRole('sales_rep')">
+                            Représentants Seulement
+                        </button>
+                        <button class="btn btn-secondary" onclick="filterByRole('user')">
+                            Utilisateurs Seulement
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="users-table-container">
+                <div class="table-header">
+                    <div class="table-title">Liste des Utilisateurs</div>
+                    <input type="text" class="search-box" placeholder="Rechercher un utilisateur..." onkeyup="searchUsers(this.value)">
+                </div>
+
+                <table class="users-table" id="usersTable">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" onchange="selectAll(this)"></th>
+                            <th>Nom Complet</th>
+                            <th>Email</th>
+                            <th>Rôle</th>
+                            <th>Région/Spécialité</th>
+                            <th>Statut</th>
+                            <th>Date d'Inscription</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="usersTableBody">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="createUserModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Créer un Nouveau Utilisateur</h2>
+                <span class="close" onclick="closeModal('createUserModal')">&times;</span>
+            </div>
+            <form id="createUserForm">
+                <div class="form-group">
+                    <label class="form-label">Nom Complet *</label>
+                    <input type="text" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email *</label>
+                    <input type="email" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Téléphone</label>
+                    <input type="tel" class="form-input">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Rôle *</label>
+                    <select class="form-select" required>
+                        <option value="">Sélectionner un rôle</option>
+                        <option value="sales_rep">Représentant Commercial</option>
+                        <option value="admin">Administrateur</option>
+                        <option value="user">Utilisateur</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Région/Spécialité</label>
+                    <select class="form-select">
+                        <option value="">Sélectionner une région</option>
+                        <option value="alger">Alger</option>
+                        <option value="oran">Oran</option>
+                        <option value="constantine">Constantine</option>
+                        <option value="annaba">Annaba</option>
+                    </select>
+                </div>
+                <div class="action-buttons">
+                    <button type="submit" class="btn btn-primary">Créer le Compte</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('createUserModal')">Annuler</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Sample user data
+        let allUsers = [
+            {
+                id: 1,
+                name: "Ahmed Benali",
+                email: "ahmed.benali@dwee.com",
+                role: "Représentant Commercial",
+                region: "Alger - CHU Mustapha",
+                status: "en attente",
+                date: "30/05/2025"
+            },
+            {
+                id: 2,
+                name: "Dr. Fatma Mansouri",
+                email: "fatma.mansouri@dwee.com",
+                role: "Administrateur",
+                region: "Région Nord",
+                status: "approuve",
+                date: "29/05/2025"
+            },
+            {
+                id: 3,
+                name: "Karim Ouali",
+                email: "karim.ouali@dwee.com",
+                role: "Représentant Commercial",
+                region: "Oran - Hôpital Militaire",
+                status: "approuve",
+                date: "28/05/2025"
+            },
+            {
+                id: 4,
+                name: "Amina Khelifi",
+                email: "amina.khelifi@dwee.com",
+                role: "Représentant Commercial",
+                region: "Constantine - CHU Ben Badis",
+                status: "en attente",
+                date: "27/05/2025"
+            },
+            {
+                id: 5,
+                name: "Eya Ouali",
+                email: "eya.ouali@dwee.com",
+                role: "Utilisateur",
+                region: "Annaba - Hôpital Militaire",
+                status: "approuve",
+                date: "29/05/2025"
+            }
+        ];
+
+        // Modal functions
+        function openCreateModal() {
+            document.getElementById('createUserModal').style.display = 'block';
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // User management functions
+        function editUser(userId) {
+            alert(`Modifier l'utilisateur ID: ${userId}`);
+        }
+
+        function deleteUser(userId) {
+            if (confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur?')) {
+                allUsers = allUsers.filter(user => user.id !== userId);
+                renderUsersTable(allUsers);
+                alert(`Utilisateur ${userId} supprimé`);
+            }
+        }
+
+        function approveUser(userId) {
+            const userIndex = allUsers.findIndex(user => user.id === userId);
+            if (userIndex !== -1) {
+                if (confirm(`Êtes-vous sûr de vouloir approuver l'utilisateur ${allUsers[userIndex].name}?`)) {
+                    allUsers[userIndex].status = 'approuve';
+                    renderUsersTable(allUsers);
+                    alert(`Utilisateur ${allUsers[userIndex].name} approuvé.`);
+                }
+            }
+        }
+
+
+        function getSelectedUsers() {
+            const checkboxes = document.querySelectorAll('input[name="userSelect"]:checked');
+            return Array.from(checkboxes).map(cb => cb.value);
+        }
+
+        function selectAll(checkbox) {
+            const checkboxes = document.querySelectorAll('input[name="userSelect"]');
+            checkboxes.forEach(cb => cb.checked = checkbox.checked);
+        }
+
+        // Filter functions
+        function showAllUsers() {
+            renderUsersTable(allUsers);
+        }
+
+        function filterByRole(role) {
+            const roleNames = {
+                'admin': 'Administrateur',
+                'sales_rep': 'Représentant Commercial',
+                'user': 'Utilisateur'
+            };
+            const filtered = allUsers.filter(user => user.role === roleNames[role]);
+            renderUsersTable(filtered);
+        }
+
+        function searchUsers(query) {
+            if (!query) {
+                renderUsersTable(allUsers);
+                return;
+            }
+            const filtered = allUsers.filter(user =>
+                user.name.toLowerCase().includes(query.toLowerCase()) ||
+                user.email.toLowerCase().includes(query.toLowerCase()) ||
+                user.role.toLowerCase().includes(query.toLowerCase()) ||
+                user.region.toLowerCase().includes(query.toLowerCase())
+            );
+            renderUsersTable(filtered);
+        }
+
+        function renderUsersTable(users) {
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = '';
+
+            users.forEach(user => {
+                const statusClass = user.status === 'approuve' ? 'status-approuve' : 'status-en-attente';
+                const statusText = user.status === 'approuve' ? 'Approuvé' : 'En attente';
+
+                let actionButtonsHtml = `
+                    <button class="action-btn edit-btn" onclick="editUser(${user.id})">Modifier</button>
+                    <button class="action-btn delete-btn" onclick="deleteUser(${user.id})">Supprimer</button>
+                `;
+                if (user.status === 'en attente') {
+                    actionButtonsHtml += `
+                        <button class="action-btn approve-btn" onclick="approveUser(${user.id})">Approuver</button>
+                    `;
+                }
+
+                const row = `
+                    <tr>
+                        <td><input type="checkbox" name="userSelect" value="${user.id}"></td>
+                        <td>${user.name}</td>
+                        <td>${user.email}</td>
+                        <td>${user.role}</td>
+                        <td>${user.region}</td>
+                        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                        <td>${user.date}</td>
+                        <td>
+                            <div class="action-menu">
+                                ${actionButtonsHtml}
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        // Initial render of the table when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            renderUsersTable(allUsers);
+        });
+
+        // Form submission
+        document.getElementById('createUserForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Nouveau utilisateur créé avec succès!');
+            closeModal('createUserModal');
+            // Here you would typically add the new user to the allUsers array and re-render the table
+            // For simplicity, we'll just close the modal.
+        });
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modals = document.getElementsByClassName('modal');
+            for (let modal of modals) {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            }
+        }
+    </script>
+</body>
+</html>

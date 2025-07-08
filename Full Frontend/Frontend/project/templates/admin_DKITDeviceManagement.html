@@ -1,0 +1,1047 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" />
+    <title>D-WEE Healthcare - Gestion Appareils D-KIT</title>
+    <style>
+      :root {
+    --primary-color: #25A8DF;
+    --primary-hover: #1E8FBF;
+    --secondary-color: #00A69C;
+    --text-color: #0A0648;
+    --text-muted: #1A1A1A;
+    --bg-color: #F4F1EE;
+    --bg-alt: #F4F1EE;
+    --border-color: rgba(26, 26, 26, 0.15);
+    --border-light: rgba(26, 26, 26, 0.08);
+    --success-color: #00A69C;
+    --warning-color: #25A8DF;
+    --danger-color: #d46161;
+    --shadow: 0 2px 8px 0 rgba(10, 6, 72, 0.08), 0 1px 4px 0 rgba(10, 6, 72, 0.04);
+    --shadow-lg: 0 8px 24px -4px rgba(10, 6, 72, 0.12), 0 4px 12px -2px rgba(10, 6, 72, 0.08);
+    --radius: 8px;
+    --radius-lg: 12px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg-color);
+    min-height: 100vh;
+}
+
+.container {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+      width: 250px;
+      background: white;
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
+      z-index: 1000;
+      box-shadow: var(--shadow);
+    }
+
+    .logo {
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .logo img {
+      width: 40px;
+      height: 40px;
+    }
+
+    .logo-text {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+
+    .logo-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 1rem 0;
+    }
+
+    .nav-item {
+      margin: 0.25rem 0;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1.5rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: all 0.2s ease;
+      font-size: 0.95rem;
+      border-radius: 0;
+      cursor: pointer;
+    }
+
+    .nav-link:hover {
+      background: var(--bg-alt);
+      color: var(--text-color);
+    }
+
+    .nav-link.active {
+      background: var(--primary-color);
+      color: white;
+      border-radius: var(--radius);
+      margin: 0.25rem 1rem;
+      padding: 0.75rem 1.25rem;
+    }
+     .nav-link.active:hover {
+        background: var(--primary-hover);
+    }
+
+    .nav-link i {
+      width: 18px;
+      text-align: center;
+    }
+
+    .sidebar-user {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .user-avatar {
+      width: 35px;
+      height: 35px;
+      background: var(--secondary-color);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .user-details {
+      flex: 1;
+    }
+
+    .user-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text-color);
+    }
+
+    .user-role {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .logout-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .logout-btn:hover {
+      background: var(--bg-alt);
+      color: var(--text-color);
+    }
+/* Main Content */
+.main-content {
+    flex: 1;
+    margin-left: 250px;
+    padding: 2rem;
+    background: var(--bg-color);
+    min-height: 100vh;
+}
+
+.alert-banner {
+    background: linear-gradient(90deg, var(--warning-color), var(--primary-hover));
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.alert-text {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.alert-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 6px 16px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.alert-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.btn-warning {
+    background: var(--warning-color);
+    color: white;
+}
+.btn-warning:hover {
+    background: var(--primary-hover);
+}
+
+.management-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.section-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-light);
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1.5rem;
+}
+
+.section-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: white;
+    font-weight: 600;
+}
+
+.create-section .section-icon {
+    background: linear-gradient(135deg, var(--success-color), var(--secondary-color));
+}
+
+.view-section .section-icon {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+}
+ .assign-section .section-icon { 
+    background: linear-gradient(135deg, var(--secondary-color), var(--success-color));
+}
+
+.section-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.btn {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    text-align: center;
+    display: inline-block;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--primary-hover);
+}
+
+.btn-secondary {
+    background: #f9fafb;
+    color: #374151;
+    border: 1px solid #d1d5db;
+}
+
+.btn-secondary:hover {
+    background: #f3f4f6;
+}
+
+.btn-danger {
+    background: var(--danger-color);
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #b91c1c;
+}
+
+.users-table-container, .devices-table-container {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-light);
+}
+
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.table-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.search-box {
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    width: 240px;
+}
+
+.search-box:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(37, 168, 223, 0.1);
+}
+
+.devices-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.devices-table th,
+.devices-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #f3f4f6;
+    font-size: 0.875rem;
+}
+
+.devices-table th {
+    background: #f9fafb;
+    font-weight: 600;
+    color: #374151;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.devices-table td {
+    color: var(--text-muted);
+}
+
+.status-badge {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.status-active, .status-operational {
+    background: #dcfce7;
+    color: var(--success-color);
+}
+
+.status-inactive {
+    background: #fee2e2;
+    color: var(--danger-color);
+}
+
+.status-maintenance {
+    background: #fef3c7;
+    color: var(--warning-color);
+}
+.status-pending {
+     background: #fef3c7;
+     color: var(--warning-color);
+}
+.status-rejected {
+    background: #fee2e2; 
+    color: var(--danger-color); 
+}
+
+.action-menu {
+    display: flex;
+    gap: 6px;
+}
+
+.action-btn {
+    padding: 4px 8px;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.edit-btn {
+    background: #dbeafe;
+    color: var(--primary-hover);
+}
+
+.edit-btn:hover {
+    background: #bfdbfe;
+}
+
+.delete-btn {
+    background: #fee2e2;
+    color: var(--danger-color);
+}
+
+.delete-btn:hover {
+    background: #fecaca;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+    background: white;
+    margin: 5% auto;
+    padding: 2rem;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: var(--shadow-lg);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.modal-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.close {
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-weight: bold;
+}
+
+.close:hover {
+    color: #374151;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #374151;
+    font-size: 0.875rem;
+}
+
+.form-input,
+.form-select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 0.875rem;
+}
+
+.form-input:focus,
+.form-select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(37, 168, 223, 0.1);
+}
+
+input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--primary-color);
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+       <aside class="sidebar">
+    <div class="logo">
+      <img src="https://dweehealthcare.com/wp-content/uploads/2023/08/D-wee-Final.png" alt="DWEE Logo" />
+      <div>
+        <div class="logo-text">D-WEE Healthcare</div>
+        <div class="logo-subtitle">Super Admin</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+  <div class="nav-item">
+    <a id="nav-dashboard" class="nav-link" href="{{ url_for('superadmin_dashboard') }}">
+      <i class="fas fa-home"></i> Tableau de bord
+    </a>
+  </div>
+  <div class="nav-item">
+    <a id="nav-users" class="nav-link" href="{{ url_for('admin_user_management') }}">
+      <i class="fas fa-users"></i> Gestion Utilisateurs
+    </a>
+  </div>
+  <div class="nav-item">
+    <a id="nav-salesreps" class="nav-link" href="{{ url_for('admin_sales_representative') }}">
+      <i class="fas fa-user-tie"></i> Représentants
+    </a>
+  </div>
+  <div class="nav-item">
+    <a id="nav-appointments" class="nav-link" href="{{ url_for('admin_appointment') }}">
+      <i class="fas fa-calendar-alt"></i> Rendez-vous
+    </a>
+  </div>
+  <div class="nav-item">
+    <a id="nav-devices" class="nav-link active" href="{{ url_for('admin_dkit_device_management') }}">
+      <i class="fas fa-microchip"></i> Appareils 
+    </a>
+  </div>
+  <div class="nav-item">
+    <a id="nav-reports" class="nav-link" href="{{ url_for('admin_reports_analytics') }}">
+      <i class="fas fa-chart-bar"></i> Rapports & Analytics
+    </a>
+  </div>
+  <div class="nav-item">
+    <a id="nav-system" class="nav-link" href="{{ url_for('admin_system_configuration') }}">
+      <i class="fas fa-cogs"></i> Configuration Système
+    </a>
+  </div>
+  <div class="nav-item">
+    <a id="nav-audit" class="nav-link" href="{{ url_for('admin_audit_logs') }}">
+      <i class="fas fa-clipboard-list"></i> Journaux d'Audit
+    </a>
+  </div>
+</nav>
+    
+    <div class="sidebar-user">
+      <div class="user-avatar">SA</div>
+      <div class="user-details">
+        <div class="user-name">Super Admin</div>
+        <div class="user-role">Administrateur</div>
+      </div>
+      <button class="logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i>
+      </button>
+    </div>
+  </aside>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Alert Banner (Optional for this page, can be removed or adapted) -->
+            <div class="alert-banner" style="display: none;"> <!-- Hidden by default -->
+                <div class="alert-text">
+                    <span>ℹ️</span>
+                    <span>Information importante concernant les appareils D-KIT.</span>
+                </div>
+                <button class="alert-btn">Détails</button>
+            </div>
+
+            <!-- Management Actions Grid -->
+            <div class="management-grid">
+                <div class="section-card create-section">
+                    <div class="section-header">
+                        <div class="section-icon">➕</div>
+                        <div class="section-title">Gérer les Appareils</div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" onclick="openAddDeviceModal()">
+                            Ajouter un Appareil 
+                        </button>
+                        <button class="btn btn-secondary" onclick="openEditSelectedDeviceModal()">
+                            Modifier Appareil Sélectionné
+                        </button>
+                         <button class="btn btn-danger" onclick="deleteSelectedDevice()">
+                            Supprimer Appareil Sélectionné
+                        </button>
+                    </div>
+                </div>
+
+                <div class="section-card assign-section">
+                    <div class="section-header">
+                        <div class="section-icon">🔗</div>
+                        <div class="section-title">Assignation & Statut</div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" onclick="openAssignDeviceModal()">
+                            Assigner Appareil à un Représentant
+                        </button>
+                        <button class="btn btn-secondary" onclick="openUpdateDeviceStatusModal()">
+                            Mettre à Jour Statut Appareil
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Devices List Table -->
+            <div class="devices-table-container">
+                <div class="table-header">
+                    <div class="table-title">Liste des Appareils D-KIT</div>
+                    <input type="text" class="search-box" placeholder="Rechercher un appareil..." onkeyup="searchDevices(this.value)">
+                </div>
+                
+                <table class="devices-table" id="devicesTable">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" onchange="selectAllDevices(this)"></th>
+                            <th>ID Appareil</th>
+                            <th>Modèle</th>
+                            <th>Représentant Assigné</th>
+                            <th>Localisation (Dernière Connue)</th>
+                            <th>Statut</th>
+                            <th>Date d'Ajout</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="devicesTableBody">
+                        <!-- Device rows will be populated by JavaScript -->
+                        <tr>
+                            <td colspan="8" style="text-align:center; padding: 20px;">Chargement des appareils...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Device Modal -->
+    <div id="deviceModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="deviceModalTitle">Ajouter un Appareil </h2>
+                <span class="close" onclick="closeModal('deviceModal')">&times;</span>
+            </div>
+            <form id="deviceForm">
+                <input type="hidden" id="deviceId">
+                <div class="form-group">
+                    <label class="form-label">type *</label>
+                    <select class="form-select" required>
+                        <option value="">Sélectionner le type</option>
+                        <option value="sales_rep">D kit</option>
+                        
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="deviceModel">Modèle *</label>
+                    <input type="text" id="deviceModel" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="deviceSerialNumber">Numéro de Série *</label>
+                    <input type="text" id="deviceSerialNumber" class="form-input" required>
+                </div>
+                 <div class="form-group">
+                    <label class="form-label" for="deviceStatus">Statut Initial *</label>
+                    <select id="deviceStatus" class="form-select" required>
+                        <option value="active">Actif</option>
+                        <option value="inactive">Inactif</option>
+                        <option value="maintenance">En Maintenance</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="deviceLocation">Localisation Initiale</label>
+                    <input type="text" id="deviceLocation" class="form-input" placeholder="Ex: Entrepôt Alger">
+                </div>
+                <div class="action-buttons">
+                    <button type="submit" class="btn btn-primary">Sauvegarder</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('deviceModal')">Annuler</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Assign Device Modal -->
+    <div id="assignDeviceModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Assigner Appareil D-KIT</h2>
+                <span class="close" onclick="closeModal('assignDeviceModal')">&times;</span>
+            </div>
+            <form id="assignDeviceForm">
+                <div class="form-group">
+                    <label class="form-label" for="assignDeviceSelect">Sélectionner Appareil *</label>
+                    <select id="assignDeviceSelect" class="form-select" required>
+                        <!-- Options populated by JS -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="assignSalesRepSelectForDevice">Assigner à Représentant *</label>
+                    <select id="assignSalesRepSelectForDevice" class="form-select" required>
+                        <!-- Options populated by JS -->
+                    </select>
+                </div>
+                <div class="action-buttons">
+                    <button type="submit" class="btn btn-primary">Assigner</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('assignDeviceModal')">Annuler</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Update Device Status Modal -->
+    <div id="updateDeviceStatusModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Mettre à Jour Statut Appareil</h2>
+                <span class="close" onclick="closeModal('updateDeviceStatusModal')">&times;</span>
+            </div>
+            <form id="updateDeviceStatusForm">
+                <div class="form-group">
+                    <label class="form-label" for="updateStatusDeviceSelect">Sélectionner Appareil *</label>
+                    <select id="updateStatusDeviceSelect" class="form-select" required>
+                        <!-- Options populated by JS -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="newDeviceStatus">Nouveau Statut *</label>
+                    <select id="newDeviceStatus" class="form-select" required>
+                        <option value="active">Actif</option>
+                        <option value="inactive">Inactif</option>
+                        <option value="maintenance">En Maintenance</option>
+                    </select>
+                </div>
+                 <div class="form-group">
+                    <label class="form-label" for="newDeviceLocation">Nouvelle Localisation (si applicable)</label>
+                    <input type="text" id="newDeviceLocation" class="form-input">
+                </div>
+                <div class="action-buttons">
+                    <button type="submit" class="btn btn-primary">Mettre à Jour</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('updateDeviceStatusModal')">Annuler</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <script>
+        let allDKITs = [
+            { id: "DKIT001", model: "D-KIT Pro v2", serialNumber: "SNPROV2-001", assignedRep: "Ahmed Benali", assignedRepId: 1, location: "CHU Mustapha, Alger", status: "active", addedDate: "01/05/2025" },
+            { id: "DKIT002", model: "D-KIT Standard", serialNumber: "SNSTD-001", assignedRep: "Fatma Mansouri", assignedRepId: 2, location: "Hôpital Central, Nord", status: "active", addedDate: "15/04/2025" },
+            { id: "DKIT003", model: "D-KIT Pro v2", serialNumber: "SNPROV2-002", assignedRep: null, assignedRepId: null, location: "Entrepôt Oran", status: "inactive", addedDate: "10/03/2025" },
+            { id: "DKIT004", model: "D-KIT Mini", serialNumber: "SNMINI-001", assignedRep: "Karim Ouali", assignedRepId: 3, location: "Hôpital Militaire, Oran", status: "maintenance", addedDate: "20/02/2025" }
+        ];
+
+        // Assume allSalesReps is available from another source or will be fetched.
+        // For now, a placeholder if salesRepresentative.html script is not loaded.
+        let allSalesReps = typeof allSalesReps !== 'undefined' ? allSalesReps : [
+            { id: 1, name: "Ahmed Benali" }, { id: 2, name: "Fatma Mansouri" }, { id: 3, name: "Karim Ouali" }, {id: 4, name: "Amina Khelifi"}
+        ];
+
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Add/Edit Device Modal
+        function openAddDeviceModal() {
+            document.getElementById('deviceModalTitle').textContent = 'Ajouter un Appareil D-KIT';
+            document.getElementById('deviceForm').reset();
+            document.getElementById('deviceId').value = '';
+            document.getElementById('deviceModal').style.display = 'block';
+        }
+
+        function openEditDeviceModal(deviceId) {
+            const device = allDKITs.find(d => d.id === deviceId);
+            if (device) {
+                document.getElementById('deviceModalTitle').textContent = 'Modifier Appareil D-KIT';
+                document.getElementById('deviceId').value = device.id;
+                document.getElementById('deviceModel').value = device.model;
+                document.getElementById('deviceSerialNumber').value = device.serialNumber;
+                document.getElementById('deviceStatus').value = device.status;
+                document.getElementById('deviceLocation').value = device.location;
+                document.getElementById('deviceModal').style.display = 'block';
+            }
+        }
+        
+        function openEditSelectedDeviceModal() {
+            const selected = getSelectedDevices();
+            if (selected.length === 0) {
+                alert("Veuillez sélectionner un appareil à modifier.");
+                return;
+            }
+            if (selected.length > 1) {
+                alert("Veuillez sélectionner un seul appareil à modifier.");
+                return;
+            }
+            openEditDeviceModal(selected[0]);
+        }
+
+
+        document.getElementById('deviceForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const id = document.getElementById('deviceId').value;
+            const model = document.getElementById('deviceModel').value;
+            const serialNumber = document.getElementById('deviceSerialNumber').value;
+            const status = document.getElementById('deviceStatus').value;
+            const location = document.getElementById('deviceLocation').value;
+
+            if (id) { // Editing
+                const index = allDKITs.findIndex(d => d.id === id);
+                if (index !== -1) {
+                    allDKITs[index] = { ...allDKITs[index], model, serialNumber, status, location };
+                    alert('Appareil modifié avec succès!');
+                }
+            } else { // Adding new
+                const newId = "DKIT" + String(allDKITs.length + 1).padStart(3, '0'); // Simple ID generation
+                allDKITs.push({ id: newId, model, serialNumber, status, location, assignedRep: null, assignedRepId: null, addedDate: new Date().toLocaleDateString('fr-FR') });
+                alert('Nouvel appareil ajouté avec succès!');
+            }
+            renderDKITsTable(allDKITs);
+            closeModal('deviceModal');
+        });
+        
+        function deleteDevice(deviceId) {
+            if (confirm(`Êtes-vous sûr de vouloir supprimer l'appareil ${deviceId}?`)) {
+                allDKITs = allDKITs.filter(d => d.id !== deviceId);
+                renderDKITsTable(allDKITs);
+                alert(`Appareil ${deviceId} supprimé.`);
+            }
+        }
+
+        function deleteSelectedDevice() {
+            const selected = getSelectedDevices();
+            if (selected.length === 0) {
+                alert("Veuillez sélectionner au moins un appareil à supprimer.");
+                return;
+            }
+            if (confirm(`Êtes-vous sûr de vouloir supprimer ${selected.length} appareil(s) ?`)) {
+                allDKITs = allDKITs.filter(d => !selected.includes(d.id));
+                renderDKITsTable(allDKITs);
+                alert(`${selected.length} appareil(s) supprimé(s).`);
+            }
+        }
+
+
+        // Assign Device Modal
+        function openAssignDeviceModal() {
+            const deviceSelect = document.getElementById('assignDeviceSelect');
+            const salesRepSelect = document.getElementById('assignSalesRepSelectForDevice');
+            deviceSelect.innerHTML = '<option value="">Sélectionner un appareil</option>';
+            salesRepSelect.innerHTML = '<option value="">Sélectionner un représentant</option>';
+
+            allDKITs.filter(d => d.status === 'active' || d.status === 'inactive').forEach(device => { // Assignable devices
+                const option = document.createElement('option');
+                option.value = device.id;
+                option.textContent = `${device.id} (${device.model}) - Actuellement: ${device.assignedRep || 'Non assigné'}`;
+                deviceSelect.appendChild(option);
+            });
+
+            allSalesReps.forEach(rep => {
+                const option = document.createElement('option');
+                option.value = rep.id;
+                option.textContent = rep.name;
+                salesRepSelect.appendChild(option);
+            });
+            document.getElementById('assignDeviceModal').style.display = 'block';
+        }
+
+        document.getElementById('assignDeviceForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const deviceId = document.getElementById('assignDeviceSelect').value;
+            const salesRepId = parseInt(document.getElementById('assignSalesRepSelectForDevice').value);
+            
+            const deviceIndex = allDKITs.findIndex(d => d.id === deviceId);
+            const salesRep = allSalesReps.find(sr => sr.id === salesRepId);
+
+            if (deviceIndex !== -1 && salesRep) {
+                allDKITs[deviceIndex].assignedRep = salesRep.name;
+                allDKITs[deviceIndex].assignedRepId = salesRep.id;
+                // Optionally update device location if rep has a default location
+                // allDKITs[deviceIndex].location = salesRep.region || 'Chez Représentant'; 
+                renderDKITsTable(allDKITs);
+                alert(`Appareil ${deviceId} assigné à ${salesRep.name}.`);
+                closeModal('assignDeviceModal');
+            } else {
+                alert("Erreur lors de l'assignation. Vérifiez les sélections.");
+            }
+        });
+
+        // Update Device Status Modal
+        function openUpdateDeviceStatusModal() {
+            const deviceSelect = document.getElementById('updateStatusDeviceSelect');
+            deviceSelect.innerHTML = '<option value="">Sélectionner un appareil</option>';
+             allDKITs.forEach(device => {
+                const option = document.createElement('option');
+                option.value = device.id;
+                option.textContent = `${device.id} (${device.model}) - Statut: ${device.status}`;
+                deviceSelect.appendChild(option);
+            });
+            document.getElementById('updateDeviceStatusForm').reset();
+            document.getElementById('updateDeviceStatusModal').style.display = 'block';
+        }
+
+        document.getElementById('updateDeviceStatusForm').addEventListener('submit', function(e){
+            e.preventDefault();
+            const deviceId = document.getElementById('updateStatusDeviceSelect').value;
+            const newStatus = document.getElementById('newDeviceStatus').value;
+            const newLocation = document.getElementById('newDeviceLocation').value;
+
+            const deviceIndex = allDKITs.findIndex(d => d.id === deviceId);
+            if(deviceIndex !== -1){
+                allDKITs[deviceIndex].status = newStatus;
+                if(newLocation) { // Only update location if provided
+                    allDKITs[deviceIndex].location = newLocation;
+                }
+                if(newStatus === 'inactive' || newStatus === 'maintenance'){ // Unassign if not active
+                    allDKITs[deviceIndex].assignedRep = null;
+                    allDKITs[deviceIndex].assignedRepId = null;
+                }
+                renderDKITsTable(allDKITs);
+                alert(`Statut de l'appareil ${deviceId} mis à jour.`);
+                closeModal('updateDeviceStatusModal');
+            } else {
+                alert("Appareil non trouvé.");
+            }
+        });
+
+
+        function renderDKITsTable(devices) {
+            const tbody = document.getElementById('devicesTableBody');
+            tbody.innerHTML = ''; 
+
+            if (devices.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding: 20px;">Aucun appareil D-KIT trouvé.</td></tr>`;
+                return;
+            }
+
+            devices.forEach(device => {
+                let statusClass = '';
+                switch (device.status) {
+                    case 'active': statusClass = 'status-active'; break;
+                    case 'inactive': statusClass = 'status-inactive'; break;
+                    case 'maintenance': statusClass = 'status-maintenance'; break;
+                    default: statusClass = '';
+                }
+                const statusText = device.status.charAt(0).toUpperCase() + device.status.slice(1);
+
+                const row = `
+                    <tr>
+                        <td><input type="checkbox" name="deviceSelect" value="${device.id}"></td>
+                        <td>${device.id}</td>
+                        <td>${device.model}</td>
+                        <td>${device.assignedRep || 'Non assigné'}</td>
+                        <td>${device.location || 'N/A'}</td>
+                        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                        <td>${device.addedDate}</td>
+                        <td>
+                            <div class="action-menu">
+                                <button class="action-btn edit-btn" onclick="openEditDeviceModal('${device.id}')">Modifier</button>
+                                <button class="action-btn delete-btn" onclick="deleteDevice('${device.id}')">Supprimer</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+        
+        function getSelectedDevices() {
+            const checkboxes = document.querySelectorAll('input[name="deviceSelect"]:checked');
+            return Array.from(checkboxes).map(cb => cb.value);
+        }
+
+        function selectAllDevices(checkbox) {
+            const checkboxes = document.querySelectorAll('input[name="deviceSelect"]');
+            checkboxes.forEach(cb => cb.checked = checkbox.checked);
+        }
+
+        function searchDevices(query) {
+            const lowerCaseQuery = query.toLowerCase();
+            if (!lowerCaseQuery) {
+                renderDKITsTable(allDKITs);
+                return;
+            }
+            const filtered = allDKITs.filter(d => 
+                d.id.toLowerCase().includes(lowerCaseQuery) ||
+                d.model.toLowerCase().includes(lowerCaseQuery) ||
+                (d.assignedRep && d.assignedRep.toLowerCase().includes(lowerCaseQuery)) ||
+                (d.location && d.location.toLowerCase().includes(lowerCaseQuery)) ||
+                d.status.toLowerCase().includes(lowerCaseQuery)
+            );
+            renderDKITsTable(filtered);
+        }
+
+
+        window.onclick = function(event) {
+            const modals = document.getElementsByClassName('modal');
+            for (let modal of modals) {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderDKITsTable(allDKITs);
+            // Potentially fetch sales reps here if using a real backend
+        });
+    </script>
+</body>
+</html>

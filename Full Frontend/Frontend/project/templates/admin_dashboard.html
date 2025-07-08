@@ -1,0 +1,778 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Super Admin Dashboard - D-WEE Healthcare</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" />
+  
+ <style>
+    :root {
+      --primary-color: #25A8DF;
+      --primary-hover: #1E8FBF;
+      --secondary-color: #00A69C;
+      --text-color: #0A0648;
+      --text-muted: #1A1A1A;
+      --bg-color: #F4F1EE;
+      --bg-alt: #F4F1EE;
+      --border-color: rgba(26, 26, 26, 0.15);
+      --border-light: rgba(26, 26, 26, 0.08);
+      --success-color: #00A69C;
+      --warning-color: #25A8DF;
+      --danger-color: #d46161;
+      --shadow: 0 2px 8px 0 rgba(10, 6, 72, 0.08), 0 1px 4px 0 rgba(10, 6, 72, 0.04);
+      --shadow-lg: 0 8px 24px -4px rgba(10, 6, 72, 0.12), 0 4px 12px -2px rgba(10, 6, 72, 0.08);
+      --radius: 8px;
+      --radius-lg: 12px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--bg-color);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar Styles */
+    .sidebar {
+      width: 250px;
+      background: white;
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
+      z-index: 1000;
+      box-shadow: var(--shadow);
+    }
+
+    .logo {
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .logo img {
+      width: 40px;
+      height: 40px;
+    }
+
+    .logo-text {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+
+    .logo-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 1rem 0;
+    }
+
+    .nav-item {
+      margin: 0.25rem 0;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1.5rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: all 0.2s ease;
+      font-size: 0.95rem;
+      border-radius: 0;
+      cursor: pointer;
+    }
+
+    .nav-link:hover {
+      background: var(--bg-alt);
+      color: var(--text-color);
+    }
+
+    .nav-link.active {
+      background: var(--primary-color);
+      color: white;
+      border-radius: var(--radius);
+      margin: 0.25rem 1rem;
+      padding: 0.75rem 1.25rem;
+    }
+     .nav-link.active:hover {
+        background: var(--primary-hover);
+    }
+
+    .nav-link i {
+      width: 18px;
+      text-align: center;
+    }
+
+    .sidebar-user {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .user-avatar {
+      width: 35px;
+      height: 35px;
+      background: var(--secondary-color);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .user-details {
+      flex: 1;
+    }
+
+    .user-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text-color);
+    }
+
+    .user-role {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .logout-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .logout-btn:hover {
+      background: var(--bg-alt);
+      color: var(--text-color);
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      margin-left: 250px;
+      padding: 2rem;
+      background: var(--bg-color);
+      overflow-y: auto;
+    }
+
+    /* Alert Banner */
+    .alert-banner {
+      background: rgba(37, 168, 223, 0.1);
+      border: 1px solid var(--warning-color);
+      border-radius: var(--radius);
+      padding: 1rem 1.5rem;
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: var(--shadow);
+    }
+
+    .alert-content {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: var(--text-color);
+    }
+
+    .alert-icon {
+      color: var(--warning-color);
+    }
+
+    .alert-btn {
+      background: var(--warning-color);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .alert-btn:hover {
+      background: var(--primary-hover);
+    }
+
+    /* Page Header */
+    .page-header {
+      margin-bottom: 2rem;
+    }
+
+    .page-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--text-color);
+      margin-bottom: 0.5rem;
+    }
+
+    .page-subtitle {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      border: 1px solid var(--border-light);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .stat-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+
+    .stat-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      color: white;
+    }
+
+    .stat-icon.users { background: var(--primary-color); }
+    .stat-icon.sales { background: var(--secondary-color); }
+    .stat-icon.devices { background: var(--warning-color); }
+    .stat-icon.reports { background: var(--success-color); }
+
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text-color);
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .stat-change {
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+    }
+
+    .stat-change.positive {
+      background: rgba(0, 166, 156, 0.1);
+      color: var(--success-color);
+    }
+
+    .stat-change.negative {
+      background: rgba(212, 97, 97, 0.1);
+      color: var(--danger-color);
+    }
+
+    /* Content Cards */
+    .content-card {
+      background: white;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-light);
+      margin-bottom: 2rem;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .card-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      justify-content: space-between; 
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-color);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .card-icon {
+      color: var(--primary-color);
+      font-size: 1.2rem;
+    }
+
+    .card-body {
+      padding: 1.5rem;
+    }
+
+    /* Button Styles */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.25rem;
+      border: none;
+      border-radius: var(--radius);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+
+    .btn-primary {
+      background: var(--primary-color);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-secondary {
+      background: var(--bg-alt);
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-secondary:hover {
+      background: var(--border-light);
+    }
+
+    .btn-success {
+      background: var(--success-color);
+      color: white;
+    }
+
+    .btn-success:hover {
+      background: var(--secondary-color);
+    }
+
+    .btn-danger {
+      background: var(--danger-color);
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: #c55555;
+    }
+
+    /* Table Styles */
+    .table-container {
+      overflow-x: auto;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .table th,
+    .table td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .table th {
+      background: var(--bg-alt);
+      font-weight: 600;
+      color: var(--text-color);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .table td {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .table tbody tr:hover {
+      background: var(--bg-alt);
+    }
+
+    /* Status Badges */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .status-active { 
+      background: rgba(0, 166, 156, 0.1);
+      color: var(--success-color);
+    }
+    
+    .status-inactive { 
+      background: rgba(212, 97, 97, 0.1);
+      color: var(--danger-color);
+    }
+    
+    .status-pending { 
+      background: rgba(37, 168, 223, 0.1);
+      color: var(--warning-color);
+    }
+    
+    .status-approved { 
+      background: rgba(37, 168, 223, 0.1);
+      color: var(--primary-color);
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .action-btn {
+      padding: 0.5rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 0.8rem;
+    }
+
+    .action-btn.view {
+      background: rgba(37, 168, 223, 0.1);
+      color: var(--primary-color);
+    }
+
+    .action-btn.edit {
+      background: rgba(37, 168, 223, 0.1);
+      color: var(--warning-color);
+    }
+
+    .action-btn.delete {
+      background: rgba(212, 97, 97, 0.1);
+      color: var(--danger-color);
+    }
+
+    .action-btn.approve {
+      background: rgba(0, 166, 156, 0.1);
+      color: var(--success-color);
+    }
+
+    .action-btn:hover {
+      transform: scale(1.05);
+    }
+
+    /* Grid Layout */
+    .content-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 2rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 100%;
+        position: static;
+        height: auto;
+        overflow-y: visible;
+      }
+      body {
+        flex-direction: column;
+      }
+      
+      .main-content {
+        margin-left: 0;
+        padding: 1rem;
+      }
+      
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <div class="logo">
+      <img src="https://dweehealthcare.com/wp-content/uploads/2023/08/D-wee-Final.png" alt="DWEE Logo" />
+      <div>
+        <div class="logo-text">D-WEE Healthcare</div>
+        <div class="logo-subtitle">Super Admin</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+  <div class="nav-item">
+    <a id="nav-dashboard" class="nav-link" href="admin_dashboard.html">
+      <i class="fas fa-home"></i> Tableau de bord
+    </a>
+  </div>
+  <div class="nav-item">
+    <a id="nav-users" class="nav-link" href="admin_userManagement.html">
+      <i class="fas fa-users"></i> Gestion Utilisateurs
+    </a>
+  </div>
+  <div class="nav-item">
+    <a id="nav-salesreps" class="nav-link" href="admin_salesRepresentative.html">
+      <i class="fas fa-user-tie"></i> Représentants
+    </a>
+  </div>
+  <div class="nav-item">
+    <a id="nav-appointments" class="nav-link" href="admin_appointment.html">
+      <i class="fas fa-calendar-alt"></i> Rendez-vous
+    </a>
+  </div>
+  <div class="nav-item">
+    <a id="nav-devices" class="nav-link" href="admin_DKITDeviceManagement.html">
+      <i class="fas fa-microchip"></i> Appareils 
+    </a>
+  </div>
+  <div class="nav-item">
+    <a id="nav-reports" class="nav-link" href="admin_ReportsAnalytics.html">
+      <i class="fas fa-chart-bar"></i> Rapports & Analytics
+    </a>
+  </div>
+  <div class="nav-item">
+    <a id="nav-system" class="nav-link" href="admin_SystemConfiguration.html">
+      <i class="fas fa-cogs"></i> Configuration Système
+    </a>
+  </div>
+  <div class="nav-item">
+    <a id="nav-audit" class="nav-link active" href="admin_AuditLogs.html">
+      <i class="fas fa-clipboard-list"></i> Journaux d'Audit
+    </a>
+  </div>
+</nav>
+    
+    <div class="sidebar-user">
+      <div class="user-avatar">SA</div>
+      <div class="user-details">
+        <div class="user-name">Super Admin</div>
+        <div class="user-role">Administrateur</div>
+      </div>
+      <button class="logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i>
+      </button>
+    </div>
+  </aside>
+
+  <main class="main-content">
+    <!-- Dashboard Content -->
+    <div class="alert-banner">
+      <div class="alert-content">
+        <i class="fas fa-exclamation-triangle alert-icon"></i>
+        <span>5 nouvelles demandes de représentants en attente de validation</span>
+      </div>
+      <button class="alert-btn" onclick="navigateToPage('salesRepresentative.html', document.getElementById('nav-salesreps'))">Examiner</button>
+    </div>
+
+    <div class="stats-grid">
+      <div class="stat-card" onclick="navigateToPage('admin_userManagement.html', document.getElementById('nav-users'))">
+        <div class="stat-header">
+          <div class="stat-icon users">
+            <i class="fas fa-users"></i>
+          </div>
+          <div class="stat-change positive">+12%</div>
+        </div>
+        <div class="stat-number">1,247</div>
+        <div class="stat-label">Utilisateurs Total</div>
+      </div>
+      
+      <div class="stat-card" onclick="navigateToPage('salesRepresentative.html', document.getElementById('nav-salesreps'))">
+        <div class="stat-header">
+          <div class="stat-icon sales">
+            <i class="fas fa-user-tie"></i>
+          </div>
+          <div class="stat-change positive">+3</div>
+        </div>
+        <div class="stat-number">28</div>
+        <div class="stat-label">Représentants Actifs</div>
+      </div>
+      
+      <div class="stat-card" onclick="navigateToPage('DKITDeviceManagement.html', document.getElementById('nav-devices'))">
+        <div class="stat-header">
+          <div class="stat-icon devices">
+            <i class="fas fa-microchip"></i>
+          </div>
+          <div class="stat-change negative">-2</div>
+        </div>
+        <div class="stat-number">156</div>
+        <div class="stat-label">Appareils D-KIT</div>
+      </div>
+      
+      <div class="stat-card" onclick="navigateToPage('ReportsAnalytics.html', document.getElementById('nav-reports'))">
+        <div class="stat-header">
+          <div class="stat-icon reports">
+            <i class="fas fa-chart-line"></i>
+          </div>
+          <div class="stat-change positive">+8%</div>
+        </div>
+        <div class="stat-number">75%</div>
+        <div class="stat-label">Taux d'utilisation des appareils actifs</div>
+      </div>
+    </div>
+
+    <div class="content-grid">
+      <div class="content-card">
+        <div class="card-header">
+          <div class="card-title">
+            <i class="card-icon fas fa-clock"></i>
+            Activités Récentes
+          </div>
+        </div>
+        <div class="table-container">
+          <table class="table">
+            <thead>
+              <tr>
+                <th>Action</th>
+                <th>Utilisateur</th>
+                <th>Date</th>
+                <th>Statut</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Nouveau représentant</td>
+                <td>Ahmed Benali</td>
+                <td>30/05/2025</td>
+                <td><span class="status-badge status-pending"><span class="status-dot"></span>En attente</span></td>
+              </tr>
+              <tr>
+                <td>Attribution D-KIT</td>
+                <td>Dr. Fatma Mansouri</td>
+                <td>29/05/2025</td>
+                <td><span class="status-badge status-approved"><span class="status-dot"></span>Approuvé</span></td>
+              </tr>
+              <tr>
+                <td>Maintenance appareil</td>
+                <td>DKIT-089</td>
+                <td>28/05/2025</td>
+                <td><span class="status-badge status-active"><span class="status-dot"></span>Terminé</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="content-card">
+        <div class="card-header">
+          <div class="card-title">
+            <i class="card-icon fas fa-chart-pie"></i>
+            Performance Globale
+          </div>
+        </div>
+        <div class="card-body">
+          <div style="text-align: center; padding: 2rem; color: #64748b;">
+            <i class="fas fa-chart-pie" style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;"></i>
+            <p>Graphique de performance en temps réel</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>
+    // Navigation function to handle page redirects
+    function navigateToPage(filename, navElement) {
+      // Set the active navigation state
+      setActiveNavigation(navElement);
+      
+      // Navigate to the specified HTML file
+      window.location.href = filename;
+    }
+
+    // Function to set active navigation state
+    function setActiveNavigation(clickedElement) {
+      // Remove active class from all nav links
+      const navLinks = document.querySelectorAll('.sidebar-nav .nav-link');
+      navLinks.forEach(link => {
+        link.classList.remove('active');
+      });
+      
+      // Add active class to clicked element
+      if (clickedElement) {
+        clickedElement.classList.add('active');
+      }
+    }
+
+    // Logout function
+    function logout() {
+      if (confirm("Êtes-vous sûr de vouloir vous déconnecter?")) {
+        // Add your logout logic here
+        // For example: window.location.href = 'login.html';
+        alert("Déconnexion réussie!");
+      }
+    }
+
+    // Initialize dashboard on page load
+    document.addEventListener('DOMContentLoaded', () => {
+      // Set dashboard as active by default
+      setActiveNavigation(document.getElementById('nav-dashboard'));
+    });
+
+    // Add smooth transitions for better UX
+    document.querySelectorAll('.nav-link').forEach(link => {
+      link.addEventListener('click', function() {
+        // Add a small loading indicator (optional)
+        this.style.opacity = '0.7';
+        setTimeout(() => {
+          this.style.opacity = '1';
+        }, 200);
+      });
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" />
+    <title>D-WEE Healthcare - Rapports & Analytics</title>
+    <style>
+       :root {
+    --primary-color: #25A8DF;
+    --primary-hover: #1E8FBF;
+    --secondary-color: #00A69C;
+    --text-color: #0A0648;
+    --text-muted: #1A1A1A;
+    --bg-color: #F4F1EE;
+    --bg-alt: #F4F1EE;
+    --border-color: rgba(26, 26, 26, 0.15);
+    --border-light: rgba(26, 26, 26, 0.08);
+    --success-color: #00A69C;
+    --warning-color: #25A8DF;
+    --danger-color: #d46161;
+    --shadow: 0 2px 8px 0 rgba(10, 6, 72, 0.08), 0 1px 4px 0 rgba(10, 6, 72, 0.04);
+    --shadow-lg: 0 8px 24px -4px rgba(10, 6, 72, 0.12), 0 4px 12px -2px rgba(10, 6, 72, 0.08);
+    --radius: 8px;
+    --radius-lg: 12px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg-color);
+    min-height: 100vh;
+}
+
+.container {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+      width: 250px;
+      background: white;
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
+      z-index: 1000;
+      box-shadow: var(--shadow);
+    }
+
+    .logo {
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .logo img {
+      width: 40px;
+      height: 40px;
+    }
+
+    .logo-text {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+
+    .logo-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 1rem 0;
+    }
+
+    .nav-item {
+      margin: 0.25rem 0;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1.5rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: all 0.2s ease;
+      font-size: 0.95rem;
+      border-radius: 0;
+      cursor: pointer;
+    }
+
+    .nav-link:hover {
+      background: var(--bg-alt);
+      color: var(--text-color);
+    }
+
+    .nav-link.active {
+      background: var(--primary-color);
+      color: white;
+      border-radius: var(--radius);
+      margin: 0.25rem 1rem;
+      padding: 0.75rem 1.25rem;
+    }
+     .nav-link.active:hover {
+        background: var(--primary-hover);
+    }
+
+    .nav-link i {
+      width: 18px;
+      text-align: center;
+    }
+
+    .sidebar-user {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .user-avatar {
+      width: 35px;
+      height: 35px;
+      background: var(--secondary-color);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .user-details {
+      flex: 1;
+    }
+
+    .user-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text-color);
+    }
+
+    .user-role {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .logout-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .logout-btn:hover {
+      background: var(--bg-alt);
+      color: var(--text-color);
+    }
+/* Main Content */
+.main-content {
+    flex: 1;
+    margin-left: 250px;
+    padding: 2rem;
+    background: var(--bg-color);
+    min-height: 100vh;
+}
+.page-header {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.reports-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+
+.report-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-light);
+}
+
+.report-card-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1rem;
+}
+
+.report-card-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+    color: white;
+}
+
+.sales-icon { 
+    background: linear-gradient(135deg, var(--warning-color), var(--primary-hover)); 
+}
+
+.user-activity-icon { 
+    background: linear-gradient(135deg, var(--success-color), var(--secondary-color)); 
+}
+
+.dkit-usage-icon { 
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-hover)); 
+}
+
+.system-stats-icon { 
+    background: linear-gradient(135deg, var(--secondary-color), var(--success-color)); 
+}
+
+.report-card-title {
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.report-card-content p {
+    font-size: 0.875rem;
+    color: var(--text-muted);
+    margin-bottom: 0.5rem;
+    line-height: 1.5;
+}
+
+.report-card-content .metric {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-color);
+    display: inline-block;
+    margin-right: 0.25rem;
+}
+
+.report-card-content ul {
+    list-style: disc;
+    margin-left: 1.5rem;
+    font-size: 0.875rem;
+    color: var(--text-muted);
+}
+
+.report-card-footer {
+    margin-top: 1rem;
+    text-align: right;
+}
+
+.btn-details {
+    font-size: 0.8rem;
+    padding: 6px 12px;
+    background: #e5e7eb;
+    color: #374151;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+}
+
+.btn-details:hover {
+    background: #d1d5db;
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+    <div class="logo">
+      <img src="https://dweehealthcare.com/wp-content/uploads/2023/08/D-wee-Final.png" alt="DWEE Logo" />
+      <div>
+        <div class="logo-text">D-WEE Healthcare</div>
+        <div class="logo-subtitle">Super Admin</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+  <div class="nav-item">
+    <a id="nav-dashboard" class="nav-link" href="{{ url_for('superadmin_dashboard') }}">
+      <i class="fas fa-home"></i> Tableau de bord
+    </a>
+  </div>
+  <div class="nav-item">
+    <a id="nav-users" class="nav-link" href="{{ url_for('admin_user_management') }}">
+      <i class="fas fa-users"></i> Gestion Utilisateurs
+    </a>
+  </div>
+  <div class="nav-item">
+    <a id="nav-salesreps" class="nav-link" href="{{ url_for('admin_sales_representative') }}">
+      <i class="fas fa-user-tie"></i> Représentants
+    </a>
+  </div>
+  <div class="nav-item">
+    <a id="nav-appointments" class="nav-link" href="{{ url_for('admin_appointment') }}">
+      <i class="fas fa-calendar-alt"></i> Rendez-vous
+    </a>
+  </div>
+  <div class="nav-item">
+    <a id="nav-devices" class="nav-link" href="{{ url_for('admin_dkit_device_management') }}">
+      <i class="fas fa-microchip"></i> Appareils 
+    </a>
+  </div>
+  <div class="nav-item">
+    <a id="nav-reports" class="nav-link active" href="{{ url_for('admin_reports_analytics') }}">
+      <i class="fas fa-chart-bar"></i> Rapports & Analytics
+    </a>
+  </div>
+  <div class="nav-item">
+    <a id="nav-system" class="nav-link" href="{{ url_for('admin_system_configuration') }}">
+      <i class="fas fa-cogs"></i> Configuration Système
+    </a>
+  </div>
+  <div class="nav-item">
+    <a id="nav-audit" class="nav-link" href="{{ url_for('admin_audit_logs') }}">
+      <i class="fas fa-clipboard-list"></i> Journaux d'Audit
+    </a>
+  </div>
+</nav>
+    
+    <div class="sidebar-user">
+      <div class="user-avatar">SA</div>
+      <div class="user-details">
+        <div class="user-name">Super Admin</div>
+        <div class="user-role">Administrateur</div>
+      </div>
+      <button class="logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i>
+      </button>
+    </div>
+  </aside>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <h2 class="page-header">Rapports & Données Analytiques</h2>
+
+            <div class="reports-grid">
+                <!-- Sales Metrics Card -->
+                <div class="report-card">
+                    <div class="report-card-header">
+                        <div class="report-card-icon sales-icon">💰</div>
+                        <h3 class="report-card-title">Métriques de Vente</h3>
+                    </div>
+                    <div class="report-card-content">
+                        <p><span class="metric">1,250</span>Unités D-KIT vendues (Ce mois)</p>
+                        <p><strong>Top Région:</strong> Alger (450 unités)</p>
+                        <p><strong>Top Représentant:</strong> Amina Khelifi (75 unités)</p>
+                    </div>
+                    <div class="report-card-footer">
+                        <button class="btn-details" onclick="viewDetailedSalesReport()">Voir détails</button>
+                    </div>
+                </div>
+
+                <!-- User Activity Card -->
+                <div class="report-card">
+                    <div class="report-card-header">
+                        <div class="report-card-icon user-activity-icon">🚶</div>
+                        <h3 class="report-card-title">Activité Utilisateur</h3>
+                    </div>
+                    <div class="report-card-content">
+                        <p><span class="metric">150</span>Utilisateurs actifs (Dernières 24h)</p>
+                        <p><span class="metric">25</span>Nouveaux enregistrements (Cette semaine)</p>
+                        <p><strong>Rôle le plus actif:</strong> Représentant Commercial</p>
+                    </div>
+                    <div class="report-card-footer">
+                        <button class="btn-details" onclick="viewDetailedUserActivityReport()">Voir détails</button>
+                    </div>
+                </div>
+
+                <!-- D-KIT Usage Card -->
+                <div class="report-card">
+                    <div class="report-card-header">
+                        <div class="report-card-icon dkit-usage-icon">📲</div>
+                        <h3 class="report-card-title">Utilisation des D-KITs</h3>
+                    </div>
+                    <div class="report-card-content">
+                        <p><span class="metric">75%</span>Taux d'utilisation des appareils actifs</p>
+                        <p><span class="metric">5</span>Appareils en maintenance</p>
+                        <p><strong>Modèle le plus utilisé:</strong> D-KIT Pro v2</p>
+                        <p><strong>Rep. avec plus d'assignations:</strong> Ahmed Benali (3 appareils)</p>
+                    </div>
+                    <div class="report-card-footer">
+                        <button class="btn-details" onclick="viewDetailedDKITUsageReport()">Voir détails</button>
+                    </div>
+                </div>
+                
+                <!-- System-Wide Statistics Card -->
+                <div class="report-card">
+                    <div class="report-card-header">
+                        <div class="report-card-icon system-stats-icon">🌐</div>
+                        <h3 class="report-card-title">Statistiques Système</h3>
+                    </div>
+                    <div class="report-card-content">
+                        <p><span class="metric">500</span>Utilisateurs totaux</p>
+                        <p><span class="metric">50</span>Représentants Commerciaux</p>
+                        <p><span class="metric">120</span>Appareils D-KIT enregistrés</p>
+                    </div>
+                    <div class="report-card-footer">
+                        <button class="btn-details" onclick="viewDetailedSystemStats()">Voir détails</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Placeholder functions for "Voir détails" buttons
+        function viewDetailedSalesReport() {
+            alert("Affichage des rapports de vente détaillés (à implémenter).");
+        }
+
+        function viewDetailedUserActivityReport() {
+            alert("Affichage des rapports d'activité utilisateur détaillés (à implémenter).");
+        }
+
+        function viewDetailedDKITUsageReport() {
+            alert("Affichage des rapports d'utilisation D-KIT détaillés (à implémenter).");
+        }
+
+        function viewDetailedSystemStats() {
+            alert("Affichage des statistiques système détaillées (à implémenter).");
+        }
+    </script>
+</body>
+</html>

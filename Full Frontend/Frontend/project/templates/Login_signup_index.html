@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>D-WEE - Plateforme de Santé Communautaire</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" />
+  <link rel="stylesheet" href="../static/Login_ForgotMDP_style.css">
+  <script src="../static/js/location-loader.js"></script>
+  <style>
+    .flash-messages {
+      margin-bottom: 15px;
+    }
+    
+    /* Default alert styling (for errors) */
+    .alert {
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin: 5px 0;
+      font-size: 14px;
+      font-weight: 500;
+      border: 1px solid;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    /* Error messages (red) */
+    .alert.error {
+      background-color: #f8d7da;
+      color: #721c24;
+      border-color: #f5c6cb;
+    }
+    
+    /* Success messages (green) */
+    .alert.success {
+      background-color: #d4edda;
+      color: #155724;
+      border-color: #c3e6cb;
+    }
+    
+    /* Default styling for backwards compatibility */
+    .alert:not(.error):not(.success) {
+      background-color: #f8d7da;
+      color: #721c24;
+      border-color: #f5c6cb;
+    }
+    
+    /* Add icons to messages */
+    .alert.error::before {
+      content: "⚠️";
+      font-size: 16px;
+    }
+    
+    .alert.success::before {
+      content: "✅";
+      font-size: 16px;
+    }
+    
+    /* Form row styling for phone number */
+    .form-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 15px;
+      align-items: stretch;
+    }
+    
+    .form-row select, .form-row input {
+      flex: 1;
+      height: 45px;
+      padding: 12px 15px;
+      border: 2px solid #e1e5e9;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+      background-color: #fff;
+      transition: all 0.3s ease;
+    }
+    
+    .form-row select:focus, .form-row input:focus {
+      outline: none;
+      border-color: #007bff;
+      box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+    }
+    
+    /* Phone prefix specific styling */
+    .form-row select {
+      flex: 0 0 140px;
+      font-weight: 500;
+    }
+    
+    .form-row input[name="phone"] {
+      flex: 1;
+    }
+    
+    /* Country and Province select styling */
+    select[name="country"], select[name="province"] {
+      width: 100%;
+      height: 45px;
+      padding: 12px 15px;
+      border: 2px solid #e1e5e9;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+      background-color: #fff;
+      background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3e%3c/svg%3e");
+      background-position: right 12px center;
+      background-repeat: no-repeat;
+      background-size: 16px;
+      appearance: none;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-bottom: 15px;
+    }
+    
+    select[name="country"]:focus, select[name="province"]:focus {
+      outline: none;
+      border-color: #007bff;
+      box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+    }
+    
+    select[name="country"]:hover, select[name="province"]:hover {
+      border-color: #007bff;
+    }
+    
+    /* Disabled state for province select */
+    select[name="province"]:disabled {
+      background-color: #f8f9fa;
+      color: #6c757d;
+      cursor: not-allowed;
+      border-color: #dee2e6;
+    }
+    
+    /* Enhanced form styling */
+    .register-form input[type="text"],
+    .register-form input[type="email"],
+    .register-form input[type="password"],
+    .login-form input[type="email"],
+    .login-form input[type="password"],
+    .forgot-password-form input[type="email"] {
+      width: 100%;
+      height: 45px;
+      padding: 12px 15px;
+      border: 2px solid #e1e5e9;
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+      background-color: #fff;
+      transition: all 0.3s ease;
+      margin-bottom: 15px;
+      box-sizing: border-box;
+    }
+    
+    .register-form input:focus,
+    .login-form input:focus,
+    .forgot-password-form input:focus {
+      outline: none;
+      border-color: #007bff;
+      box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+    }
+    
+    .register-form input::placeholder,
+    .login-form input::placeholder,
+    .forgot-password-form input::placeholder {
+      color: #6c757d;
+      font-size: 14px;
+    }
+    
+  
+    /* Remove red validation borders */
+    input:invalid,
+    select:invalid {
+      border-color: #e1e5e9 !important;
+      box-shadow: none !important;
+    }
+    
+    /* Only show validation on focus or after interaction */
+    input:invalid:focus,
+    select:invalid:focus {
+      border-color: #dc3545;
+    }
+    
+    input:valid:focus,
+    select:valid:focus {
+      border-color: #007bff;
+    }
+    
+    /* Mobile responsiveness */
+    @media (max-width: 480px) {
+      .form-row {
+        flex-direction: column;
+        gap: 10px;
+      }
+      
+      .form-row select {
+        flex: none;
+        width: 100%;
+      }
+      
+      select[name="country"], 
+      select[name="province"],
+      input {
+        font-size: 16px; /* Prevents zoom on iOS */
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-container" id="loginContainer">
+    <!-- Left side - Login/Register -->
+    <div class="login-section">
+      <div class="login-page">
+        <div class="form">
+          <!-- Brand Header -->
+          <div class="brand-header">
+            <div class="brand-logo">
+              <img src="https://dweehealthcare.com/wp-content/uploads/2023/08/D-wee-Final.png" alt="DWEE Logo" />
+            </div>
+            <p class="brand-subtitle">Community Healthcare Platform</p>
+          </div>
+
+          <!-- Flash Messages -->
+          {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+              <div class="flash-messages">
+                {% for category, message in messages %}
+                  <div class="alert {{ category }}">{{ message }}</div>
+                {% endfor %}
+              </div>
+            {% endif %}
+          {% endwith %}
+
+          <!-- Registration Form -->
+          <form class="register-form" action="/" method="POST" style="display: none;">
+            <h2><i class="fas fa-user-plus"></i> Créer un compte</h2>
+            <input type="text" name="first_name" placeholder="Prénom *" required />
+            <input type="text" name="last_name" placeholder="Nom de famille *" required />
+            <input type="email" name="email" placeholder="Email *" required />
+            <input type="password" name="password" placeholder="Mot de passe *" required />
+            
+            <!-- Country Selection -->
+            <select id="country" name="country" required>
+              <option value="">Select Country</option>
+            </select>
+            
+            <!-- Province Selection -->
+            <select id="province" name="province" required>
+              <option value="">Select State/Province</option>
+            </select>
+            
+            <!-- Phone Number -->
+            <div class="form-row">
+              <select id="phone_prefix" name="phone_prefix" required>
+                <option value="">Select Phone Code</option>
+              </select>
+              <input type="text" name="phone" placeholder="Numéro de téléphone *" required />
+            </div>
+            
+            <input type="text" name="address" placeholder="Adresse *" required />
+            <input type="hidden" name="form_type" value="register" />
+            <button type="submit">Créer</button>
+            <p class="message">Déjà inscrit ? <a href="#" onclick="showLoginForm()">Connectez-vous!</a></p>
+          </form>
+
+          <!-- Login Form -->
+          <form class="login-form" action="/" method="POST">
+            <h2><i class="fas fa-sign-in-alt"></i> Se connecter</h2>
+            <input type="email" name="email" placeholder="Email" required />
+            <input type="password" name="password" placeholder="Mot de passe" required />
+            <input type="hidden" name="form_type" value="login" />
+            <button type="submit">Se connecter</button>
+            <a href="#" class="forgot-password-link" onclick="showForgotPasswordForm()">Mot de passe oublié ?</a>
+            <p class="message">Pas encore inscrit ? <a href="#" onclick="showRegisterForm()">Inscrivez-vous ici</a></p>
+          </form>
+
+          <!-- Forgot Password Form -->
+          <form class="forgot-password-form" method="POST">
+            <h2><i class="fas fa-key"></i> Mot de passe oublié</h2>
+            <p style="margin-bottom: 20px; font-size: 13px; color: #1A1A1A;">Entrez votre email pour recevoir un lien de réinitialisation</p>
+            <input type="email" name="email" placeholder="Email *" required />
+            <input type="hidden" name="form_type" value="forgot" />
+            <button type="submit">Envoyer le lien</button>
+            <p class="message">Vous vous souvenez de votre mot de passe ? <a href="#" onclick="showLoginForm()">Connectez-vous!</a></p>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right side - Image and quote -->
+    <div class="image-section">
+      <div class="image-container">
+        <img src="https://dweehealthcare.com/wp-content/uploads/2025/01/IMG_0069-scaled.jpg" alt="DWEE Healthcare" class="hero-image" />
+        <div class="quote-section">
+          <p class="quote-text">
+            "It is no measure of health to be well adjusted to a profoundly sick society."
+          </p>
+          <p class="quote-author">-- Jiddu Krishnamurti</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Province data
+    const provinces = {
+      Tunisia: [
+        'Tunis', 'Ariana', 'Ben Arous', 'Manouba', 'Nabeul', 'Zaghouan', 
+        'Bizerte', 'Béja', 'Jendouba', 'Le Kef', 'Siliana', 'Sousse', 
+        'Monastir', 'Mahdia', 'Sfax', 'Kairouan', 'Kasserine', 'Sidi Bouzid', 
+        'Gabès', 'Médenine', 'Tataouine', 'Gafsa', 'Tozeur', 'Kébili'
+      ],
+      Canada: [
+        'Alberta', 'British Columbia', 'Manitoba', 'New Brunswick', 
+        'Newfoundland and Labrador', 'Northwest Territories', 'Nova Scotia', 
+        'Nunavut', 'Ontario', 'Prince Edward Island', 'Quebec', 
+        'Saskatchewan', 'Yukon'
+      ]
+    };
+
+    function updateProvinces() {
+      const countrySelect = document.getElementById('country');
+      const provinceSelect = document.getElementById('province');
+      const phonePrefix = document.getElementById('phone_prefix');
+      
+      const selectedCountry = countrySelect.value;
+      
+      // Clear existing options
+      provinceSelect.innerHTML = '<option value="">Sélectionnez votre province/gouvernorat *</option>';
+      
+      if (selectedCountry && provinces[selectedCountry]) {
+        provinces[selectedCountry].forEach(province => {
+          const option = document.createElement('option');
+          option.value = province;
+          option.textContent = province;
+          provinceSelect.appendChild(option);
+        });
+        
+        // Enable province select and auto-select phone prefix
+        provinceSelect.disabled = false;
+        
+        if (selectedCountry === 'Tunisia') {
+          phonePrefix.value = '+216';
+        } else if (selectedCountry === 'Canada') {
+          phonePrefix.value = '+1';
+        }
+      } else {
+        provinceSelect.disabled = true;
+        phonePrefix.value = '';
+      }
+    }
+
+    function showLoginForm() {
+      document.querySelector('.login-form').style.display = 'block';
+      document.querySelector('.register-form').style.display = 'none';
+      document.querySelector('.forgot-password-form').style.display = 'none';
+    }
+
+    function showRegisterForm() {
+      document.querySelector('.login-form').style.display = 'none';
+      document.querySelector('.register-form').style.display = 'block';
+      document.querySelector('.forgot-password-form').style.display = 'none';
+    }
+
+    function showForgotPasswordForm() {
+      document.querySelector('.login-form').style.display = 'none';
+      document.querySelector('.register-form').style.display = 'none';
+      document.querySelector('.forgot-password-form').style.display = 'block';
+    }
+
+    // Show login form on load
+    document.addEventListener('DOMContentLoaded', function () {
+      showLoginForm();
+    });
+
+    // Optional: Auto-hide flash messages
+    setTimeout(() => {
+      const flashes = document.querySelector('.flash-messages');
+      if (flashes) flashes.style.display = 'none';
+    }, 8000);
+  </script>
+</body>
+</html>

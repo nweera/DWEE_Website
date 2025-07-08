@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>D-WEE - Dashboard Utilisateur</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='userCSS.css') }}" />
+</head>
+<body>
+    
+    <!-- Sidebar Navigation -->
+    <nav class="sidebar">
+         <div class="logo">
+            <img src="https://dweehealthcare.com/wp-content/uploads/2023/08/D-wee-Final.png" alt="DWEE Logo" />
+            <div>
+                <div class="logo-text">D-WEE Healthcare</div>
+                <div class="logo-subtitle">Compte Client</div>
+            </div>
+        </div>
+        <ul class="nav-links">
+            <li class="active">
+                <a href="{{ url_for('user_dashboard') }}"><i class="fas fa-home"></i>Tableau de bord</a>
+            </li>            
+            <li>
+                <a href="{{ url_for('user_dkits') }}"><i class="fas fa-box"></i>Mes Dkits</a>
+            </li>
+            <li>
+                <a href="{{ url_for('user_calendar') }}"><i class="fas fa-calendar-alt"></i>RDV maintenance</a>
+            </li>
+            <li>
+                <a href="{{ url_for('user_profile') }}"><i class="fas fa-user"></i>Mon Profil</a>
+            </li>
+            <li>
+                <a href="{{ url_for('user_support') }}"><i class="fas fa-headset"></i>Support</a>
+            </li>
+        </ul>
+       <div class="user-info">
+            <i class="fas fa-user-circle avatar"></i>
+            <a href="{{ url_for('user_profile') }}" class="user-name">
+                {% if user %}
+                    {{ user.first_name }} {{ user.last_name }}
+                {% else %}
+                    Utilisateur
+                {% endif %}
+            </a>
+            <span class="sales-badge" style="display: none;">Commercial</span>
+            <a href="{{ url_for('logout') }}" class="logout-btn"><i class="fas fa-sign-out-alt"></i></a>
+        </div>
+
+        <a href="{{ url_for('user_commercial_registration') }}" class="role-switch" id="becomeSales">
+            <i class="fas fa-user-tie"></i>
+            Devenir Commercial
+        </a>    
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Dashboard Header -->
+        <div class="dashboard-header">
+            <div class="welcome-section">
+                <h1><i class="fas fa-tachometer-alt"></i> Tableau de Bord</h1>
+                <p>Bienvenue, <strong>
+                    {% if user %}
+                        {{ user.first_name }} {{ user.last_name }}
+                    {% else %}
+                        Utilisateur
+                    {% endif %}
+                </strong> - Gérez vos D-KITs et maintenances en toute simplicité</p>
+            </div>
+        </div>
+
+        <!-- Main Dashboard Grid -->
+        <div class="dashboard-grid">
+            <!-- D-KIT Status Panel -->
+            <div class="dashboard-panel">
+                <div class="panel-header">
+                    <h3><i class="fas fa-cube"></i> Mes D-KITs</h3>
+                    <a href="{{ url_for('user_dkits') }}" class="view-all-btn">Voir tout</a>
+                </div>
+                <div class="panel-content">
+                    {% set active_devices = devices | selectattr('status', 'equalto', 'active') | list %}
+                    {% if active_devices %}
+                        {% for device in active_devices %}
+                        <div class="dkit-item">
+                            <div class="dkit-info">
+                                <div class="dkit-id">D-KIT #{{ device.serial_number }}</div>
+                            </div>
+                            <div class="dkit-status">
+                                <span class="status-badge status-{{ device.status }}">
+                                    <i class="fas fa-check-circle"></i>
+                                    Actif
+                                </span>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="no-data">
+                            <p>Aucun D-KIT actif enregistré</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+
+            <!-- Maintenance Schedule Panel -->
+            <div class="dashboard-panel">
+                <div class="panel-header">
+                    <h3><i class="fas fa-calendar-alt"></i> Prochaines Maintenances</h3>
+                    <a href="{{ url_for('user_calendar') }}" class="view-all-btn">Planning</a>
+                </div>
+                <div class="panel-content">
+                    {% if appointments %}
+                        {% for appointment in appointments if appointment.status == 'confirmed' %}
+                            <div class="maintenance-item">
+                                <div class="maintenance-date">
+                                    <div class="date-day">{{ appointment.datetime.strftime('%d') }}</div>
+                                    <div class="date-month">{{ appointment.datetime.strftime('%B') }}</div>
+                                </div>
+                                <div class="maintenance-details">
+                                    <h4>Maintenance Programmée</h4>
+                                    <p>{{ appointment.datetime.strftime('%H:%M') }}</p>
+                                </div>
+                                <div class="maintenance-status">
+                                    <span class="status-badge status-confirmed">Confirmée</span>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="no-data">
+                            <p>Aucune maintenance programmée</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Notification Banner -->
+        {% if notifications %}
+            {% for notification in notifications %}
+            <div class="notification-banner">
+                <div class="notification-content">
+                    <div class="notification-icon">
+                        <i class="fas fa-calendar-check"></i>
+                    </div>
+                    <div class="notification-text">
+                        {{ notification.message }}
+                    </div>
+                    <div class="notification-actions">
+                        <a href="{{ url_for('user_calendar') }}" class="btn-primary">Voir</a>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        {% endif %}
+
+      <!-- Quick Actions -->
+        <section class="section" id="quick-actions">
+            <h2><i class="fas fa-bolt"></i> Actions Rapides</h2>
+            <div class="action-buttons">
+                <a href="{{ url_for('user_calendar') }}" class="action-btn schedule">
+                    <div class="btn-icon">
+                        <i class="fas fa-calendar-plus"></i>
+                    </div>
+                    <div class="btn-content">
+                        <h4>Prendre RDV</h4>
+                        <p>Planifier une maintenance</p>
+                    </div>
+                </a>
+                <a href="{{ url_for('user_support') }}" class="action-btn support">
+                    <div class="btn-icon">
+                        <i class="fas fa-headset"></i>
+                    </div>
+                    <div class="btn-content">
+                        <h4>Support Technique</h4>
+                        <p>Assistance 24h/24</p>
+                    </div>
+                </a>
+            </div>
+        </section>
+
+        <!-- Modal de déconnexion -->
+        <div id="logoutModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 class="modal-title">Confirmation de déconnexion</h2>
+                    <button class="close" onclick="closeLogoutModal()">
+                    <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Êtes-vous sûr de vouloir vous déconnecter ?</p>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-outline" onclick="closeLogoutModal()">Annuler</button>
+                    <button class="btn btn-primary" onclick="confirmLogout()">Se déconnecter</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Sales Section (visible only for sales representatives) -->
+        <section class="section" id="sales-section" style="display: none;">
+            <h2><i class="fas fa-chart-line"></i> Espace Commercial</h2>
+            <div class="sales-dashboard">
+                <!-- D-KIT Validation Requests -->
+                <div class="validation-requests">
+                    <h3>Demandes de validation D-KIT</h3>
+                    <div id="validationRequestsList">
+                        <!-- Validation requests will be loaded dynamically -->
+                    </div>
+                </div>
+            </div>        
+        </section>
+    </main>
+
+    <script>
+        // Set current date
+        function setCurrentDate() {
+            const now = new Date();
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            };
+            const dateString = now.toLocaleDateString('fr-FR', options);
+            const dateElement = document.getElementById('currentDate');
+            if (dateElement) {
+                dateElement.textContent = dateString;
+            }
+        }
+
+        // Handle active navigation state
+        function setActiveNavItem() {
+            // Get all navigation links
+            const navLinks = document.querySelectorAll('.nav-links li a');
+            
+            // Get the current page path
+            const currentPath = window.location.pathname;
+            
+            // Remove active class from all links first
+            navLinks.forEach(link => {
+                link.parentElement.classList.remove('active');
+            });
+            
+            // Find the matching link and add active class
+            navLinks.forEach(link => {
+                if (link.getAttribute('href') === currentPath) {
+                    link.parentElement.classList.add('active');
+                }
+            });
+        }
+
+        // Notification banner functionality
+        function initializeNotifications() {
+            const banner = document.querySelector('.notification-banner');
+            if (!banner) return;
+            
+            const primaryBtn = banner.querySelector('.btn-primary');
+            const secondaryBtn = banner.querySelector('.btn-secondary');
+
+            if (primaryBtn) {
+                primaryBtn.addEventListener('click', function() {
+                    // Redirect to calendar for scheduling
+                    window.location.href = "{{ url_for('user_calendar') }}";
+                });
+            }
+
+            if (secondaryBtn) {
+                secondaryBtn.addEventListener('click', function() {
+                    // Hide the notification banner
+                    banner.style.display = 'none';
+                });
+            }
+        }
+
+        // User role management
+        let userRole = 'user';
+        let salesStatus = 'none';
+
+        function updateUIForRole() {
+            const salesSection = document.getElementById('sales-section');
+            const salesBadge = document.querySelector('.sales-badge');
+            const becomeSales = document.getElementById('becomeSales');
+
+            if (userRole === 'sales') {
+                if (salesSection) salesSection.style.display = 'block';
+                if (salesBadge) salesBadge.style.display = 'inline-block';
+                if (becomeSales) becomeSales.style.display = 'none';
+            } else {
+                if (salesStatus === 'pending' && becomeSales) {
+                    becomeSales.classList.add('validation-pending');
+                    becomeSales.innerHTML = '<i class="fas fa-clock"></i> Demande en cours';
+                }
+            }
+        }
+
+        // Initialize everything when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            setCurrentDate();
+            setActiveNavItem();
+            initializeNotifications();
+            updateUIForRole();
+        });
+
+        // Logout functionality
+        function logout() {
+            const modal = document.getElementById('logoutModal');
+            modal.style.display = 'flex';
+        }
+
+        function closeLogoutModal() {
+            const modal = document.getElementById('logoutModal');
+            modal.style.display = 'none';
+        }
+
+        function confirmLogout() {
+            // Redirect to logout route
+            window.location.href = "{{ url_for('logout') }}";
+        }
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('logoutModal');
+            if (event.target == modal) {
+                closeLogoutModal();
+            }
+        }
+    </script>
+</body>
+</html>

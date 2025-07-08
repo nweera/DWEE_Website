@@ -1,0 +1,640 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>D-WEE - Profil Utilisateur</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='userCSS.css') }}" />
+    <style>
+        /* Simple Profile Styles */
+        .profile-section {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 1rem;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items:center;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #eee;
+        }
+
+        .profile-avatar {
+            width: 60px;
+            height: 60px;
+            background: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .profile-title h1 {
+            margin: 0;
+            font-size: 1.5rem;
+            color: var(--text-color);
+        }
+
+        .profile-subtitle {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .profile-info-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            grid-template-rows: repeat(2, auto);
+            gap: 1rem;
+        }
+
+        .profile-info-item {
+            padding: 1rem;
+            border: 1px solid #eee;
+            border-radius: 6px;
+        }
+
+        .profile-info-label {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.85rem;
+            color: #666;
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-info-value {
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .profile-actions {
+            margin-top: 2rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .action-btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .action-btn:hover {
+            background: var(--primary-hover);
+        }
+
+        .action-btn.secondary {
+            background: #f5f5f5;
+            color: var(--text-color);
+        }
+
+        .action-btn.secondary:hover {
+            background: #e5e5e5;
+        }        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .modal-title {
+            margin: 0;
+            font-size: 1.2rem;
+        }
+
+        .close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .close:hover {
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 1rem;
+            justify-content: flex-end;
+            margin-top: 1.5rem;
+        }
+
+        .btn {
+            padding: 0.75rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-hover);
+        }
+
+        .btn-outline {
+            background: white;
+            color: #666;
+            border: 1px solid #ddd;
+        }
+
+        .btn-outline:hover {
+            background: #f5f5f5;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .profile-info-grid {
+                grid-template-columns: 1fr;
+                grid-template-rows: auto;
+            }
+            
+            .profile-actions {
+                flex-direction: column;
+            }
+        }
+
+        .profile-image {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        /* Add these styles for password input groups */
+        .password-input-group {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .password-input-group .form-control {
+            padding-right: 40px;
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 10px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .password-toggle:hover {
+            color: #333;
+        }
+    </style>
+</head>
+<body class="dashboard">  <!-- Sidebar Navigation -->
+      <nav class="sidebar">
+         <div class="logo">
+            <img src="https://dweehealthcare.com/wp-content/uploads/2023/08/D-wee-Final.png" alt="DWEE Logo" />
+            <div>
+                <div class="logo-text">D-WEE Healthcare</div>
+                <div class="logo-subtitle">Compte Client</div>
+            </div>
+        </div>
+        <ul class="nav-links">
+            <li>
+                <a href="{{ url_for('user_dashboard') }}"><i class="fas fa-home"></i>Tableau de bord</a>
+            </li>            
+            <li>
+                <a href="{{ url_for('user_dkits') }}"><i class="fas fa-box"></i>Mes Dkits</a>
+            </li>
+            <li>
+                <a href="{{ url_for('user_calendar') }}"><i class="fas fa-calendar-alt"></i>RDV maintenance</a>
+            </li>
+            <li>
+                <a href="{{ url_for('user_profile') }}"><i class="fas fa-user"></i>Mon Profil</a>
+            </li>
+            <li>
+                <a href="{{ url_for('user_support') }}"><i class="fas fa-headset"></i>Support</a>
+            </li>
+        </ul>
+       <div class="user-info">
+            <i class="fas fa-user-circle avatar"></i>
+            <a href="{{ url_for('user_profile') }}" class="user-name">{{ user.first_name }} {{ user.last_name }}</a>
+            <span class="sales-badge" style="display: none;">Commercial</span>
+            <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i></button>
+        </div>
+
+        <a href="{{ url_for('user_commercial_registration') }}" class="role-switch" id="becomeSales"><i class="fas fa-user-tie"></i>
+            Devenir Commercial
+        </a>    
+    </nav>
+
+
+  <!-- Main Content -->
+  <div class="main-content">  <!-- Main Content -->
+    <div class="page-header">
+      <div>
+        <h1><i class="page-title"></i> Mon Profil</h1>
+        <p class="page-subtitle">Gérez vos informations personnelles</p>
+      </div>
+    </div>
+
+    <div class="profile-section">
+        <div class="profile-header">
+            <div class="profile-title">
+                <h1>{{ user.first_name }} {{ user.last_name }}</h1>
+                <div class="profile-subtitle">
+                    {% if user.role_id == 2 %}
+                        Commercial
+                    {% else %}
+                        Compte client
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-info-grid">
+            <div class="profile-info-item">
+                <div class="profile-info-label">
+                    <i class="fas fa-user"></i>
+                    Prénom
+                </div>
+                <div class="profile-info-value" id="firstName">{{ user.first_name }}</div>
+            </div>
+
+            <div class="profile-info-item">
+                <div class="profile-info-label">
+                    <i class="fas fa-user"></i>
+                    Nom
+                </div>
+                <div class="profile-info-value" id="lastName">{{ user.last_name }}</div>
+            </div>
+
+            <div class="profile-info-item">
+                <div class="profile-info-label">
+                    <i class="fas fa-envelope"></i>
+                    Adresse e-mail
+                </div>
+                <div class="profile-info-value" id="email">{{ user.email }}</div>
+            </div>
+
+            <div class="profile-info-item">
+                <div class="profile-info-label">
+                    <i class="fas fa-phone"></i>
+                    Numéro de téléphone
+                </div>
+
+                <div class="profile-info-value" id="phone">
+                    {{ user.phone_country_code }}{{ user.phone_number }}
+                </div>
+            </div>
+
+            <div class="profile-info-item">
+                <div class="profile-info-label">
+                    <i class="fas fa-map-marker-alt"></i>
+                    Adresse
+                </div>
+                <div class="profile-info-value" id="address">
+                    {{ user.address_country }}, {{ user.address_province }}, {{ user.address_detail }}
+                </div>
+            </div>
+
+            <div class="profile-info-item">
+                <div class="profile-info-label">
+                    <i class="fas fa-calendar-alt"></i>
+                    Membre depuis
+                </div>
+                <div class="profile-info-value">
+                    {{ user.created_at.strftime('%d %B %Y') if user.created_at else '' }}
+                </div>
+            </div>
+        </div>
+
+        <div class="profile-actions">
+            <button class="action-btn" onclick="openEditModal()">
+                <i class="fas fa-edit"></i>
+                Modifier le profil
+            </button>
+            <button class="action-btn secondary" onclick="changePassword()">
+                <i class="fas fa-lock"></i>
+                Changer le mot de passe
+            </button>
+        </div>
+    </div>    <!-- Modal d'édition -->
+    <div id="editModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Modifier le profil</h2>
+                <button class="close" onclick="closeEditModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="editProfileForm" method="POST" action="{{ url_for('update_profile') }}">
+    <div class="form-group">
+        <label for="editFirstName">Prénom</label>
+        <input type="text" id="editFirstName" name="first_name" class="form-control" required value="{{ user.first_name }}">
+    </div>
+    <div class="form-group">
+        <label for="editLastName">Nom</label>
+        <input type="text" id="editLastName" name="last_name" class="form-control" required value="{{ user.last_name }}">
+    </div>
+    <div class="form-group">
+        <label for="editEmail">Adresse e-mail</label>
+        <input type="email" id="editEmail" name="email" class="form-control" required value="{{ user.email }}">
+    </div>
+    <div class="form-group">
+        <label for="editPhone">Numéro de téléphone</label>
+        <div style="display: flex; gap: 8px;">
+            <input type="text" class="form-control" style="width: 70px;" value="{{ user.phone_country_code }}" readonly tabindex="-1">
+            <input type="tel" id="editPhone" name="phone" class="form-control" required value="{{ user.phone_number }}">
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-outline" onclick="closeEditModal()">Annuler</button>
+        <button type="submit" class="btn btn-primary">Enregistrer</button>
+    </div>
+</form>
+        </div>
+    </div>
+
+    <!-- Modal de changement de mot de passe -->
+    <div id="passwordModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Changer le mot de passe</h2>
+                <button class="close" onclick="closePasswordModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <form id="changePasswordForm" onsubmit="handlePasswordChange(event)">
+                <div class="form-group">
+                    <label for="currentPassword">Mot de passe actuel</label>
+                    <div class="password-input-group">
+                        <input type="password" id="currentPassword" class="form-control" required>
+                        <button type="button" class="password-toggle" onclick="togglePasswordVisibility('currentPassword')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="newPassword">Nouveau mot de passe</label>
+                    <div class="password-input-group">
+                        <input type="password" id="newPassword" class="form-control" required 
+                               minlength="8" pattern="(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}"
+                               title="Le mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule et un chiffre">
+                        <button type="button" class="password-toggle" onclick="togglePasswordVisibility('newPassword')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="confirmPassword">Confirmer le nouveau mot de passe</label>
+                    <div class="password-input-group">
+                        <input type="password" id="confirmPassword" class="form-control" required>
+                        <button type="button" class="password-toggle" onclick="togglePasswordVisibility('confirmPassword')">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline" onclick="closePasswordModal()">Annuler</button>
+                    <button type="submit" class="btn btn-primary">Changer le mot de passe</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal de déconnexion -->
+    <div id="logoutModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Confirmation de déconnexion</h2>
+                <button class="close" onclick="closeLogoutModal()">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>Êtes-vous sûr de vouloir vous déconnecter ?</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" onclick="closeLogoutModal()">Annuler</button>
+                <button class="btn btn-primary" onclick="confirmLogout()">Se déconnecter</button>
+            </div>
+        </div>
+    </div>
+
+    <script>        function openEditModal() {
+    document.getElementById('editModal').style.display = 'flex';
+}
+
+        function closeEditModal() {
+            const modal = document.getElementById('editModal');
+            modal.style.display = 'none';
+        }
+
+        function saveProfile(event) {
+            event.preventDefault();
+            
+            // Mettre à jour les valeurs du profil
+            document.getElementById('email').textContent = document.getElementById('editEmail').value;
+            document.getElementById('phone').textContent = document.getElementById('editPhone').value;
+            document.getElementById('address').textContent = document.getElementById('editAddress').value;
+
+            // Fermer le modal
+            closeEditModal();
+
+            // Afficher un message de succès
+            alert('Profil mis à jour avec succès!');
+        }
+
+        function changePassword() {
+            const modal = document.getElementById('passwordModal');
+            modal.style.display = 'flex';
+        }
+
+        function closePasswordModal() {
+            const modal = document.getElementById('passwordModal');
+            modal.style.display = 'none';
+            document.getElementById('changePasswordForm').reset();
+        }
+
+        function handlePasswordChange(event) {
+            event.preventDefault();
+            
+            const currentPassword = document.getElementById('currentPassword').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+
+            // Vérifier si les nouveaux mots de passe correspondent
+            if (newPassword !== confirmPassword) {
+                alert('Les nouveaux mots de passe ne correspondent pas.');
+                return;
+            }
+
+            // Vérifier la complexité du mot de passe
+            const passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$/;
+            if (!passwordRegex.test(newPassword)) {
+                alert('Le nouveau mot de passe doit contenir au moins 8 caractères, une majuscule, une minuscule et un chiffre.');
+                return;
+            }
+
+            // Simuler la vérification du mot de passe actuel
+            // Dans un environnement réel, ceci serait vérifié côté serveur
+            if (currentPassword === 'votre_mot_de_passe_actuel') {
+                // Fermer le modal
+                closePasswordModal();
+                
+                // Afficher le message de succès
+                const successMessage = document.createElement('div');
+                successMessage.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    background: #00A69C;
+                    color: white;
+                    padding: 1rem 1.5rem;
+                    border-radius: 8px;
+                    z-index: 1001;
+                    display: flex;
+                    align-items: center;
+                    gap: 0.5rem;
+                    animation: slideIn 0.3s ease;
+                `;
+                successMessage.innerHTML = `
+                    <i class="fas fa-check-circle"></i>
+                    Mot de passe changé avec succès!
+                `;
+                document.body.appendChild(successMessage);
+
+                // Supprimer le message après 3 secondes
+                setTimeout(() => {
+                    successMessage.remove();
+                }, 3000);
+            } else {
+                alert('Le mot de passe actuel est incorrect.');
+            }
+        }
+
+        function togglePasswordVisibility(inputId) {
+            const input = document.getElementById(inputId);
+            const icon = event.currentTarget.querySelector('i');
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+
+        // Handle active navigation state
+        function setActiveNavItem() {
+            const currentPath = window.location.pathname;
+            const navLinks = document.querySelectorAll('.nav-links li a');
+            
+            navLinks.forEach(link => {
+                // Remove any existing active class from parent li
+                link.parentElement.classList.remove('active');
+                
+                // If the link's href matches the current path, add active class
+                if (currentPath.endsWith(link.getAttribute('href'))) {
+                    link.parentElement.classList.add('active');
+                }
+            });
+        }
+
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            setActiveNavItem();
+        });
+
+        function logout() {
+            // Afficher la fenêtre modale de confirmation
+            const modal = document.getElementById('logoutModal');
+            modal.style.display = 'flex';
+        }
+
+        function closeLogoutModal() {
+            const modal = document.getElementById('logoutModal');
+            modal.style.display = 'none';
+        }
+
+        function confirmLogout() {
+            window.location.href = "{{ url_for('logout') }}";
+        }
+
+        // Fermer la modale si l'utilisateur clique en dehors
+        window.onclick = function(event) {
+            const modal = document.getElementById('logoutModal');
+            if (event.target == modal) {
+                closeLogoutModal();
+            }
+        }
+    </script>
+</body>
+</html>

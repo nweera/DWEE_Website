@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>D-WEE Healthcare - Chatbot</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="../static/userCSS.css" />
+  </head>
+  <body class="dashboard">
+    <!-- Sidebar Navigation -->
+    <!-- Sidebar Navigation -->
+
+    <nav class="sidebar">
+      <div class="logo">
+        <img
+          src="https://dweehealthcare.com/wp-content/uploads/2023/08/D-wee-Final.png"
+          alt="DWEE Logo"
+        />
+        <div>
+          <div class="logo-text">D-WEE Healthcare</div>
+          <div class="logo-subtitle">Compte Client</div>
+        </div>
+      </div>
+      <ul class="nav-links">
+        <li>
+          <a href="user_dashboard.html"
+            ><i class="fas fa-home"></i>Tableau de bord</a
+          >
+        </li>
+        <li>
+          <a href="user_dkits.html"><i class="fas fa-box"></i>Mes Dkits</a>
+        </li>
+
+        <li>
+          <a href="user_calendar.html"
+            ><i class="fas fa-calendar-alt"></i>RDV maintenance</a
+          >
+        </li>
+        <li>
+          <a href="user_profile.html"><i class="fas fa-user"></i>Mon Profil</a>
+        </li>
+        <li>
+          <a href="user_support.html"><i class="fas fa-headset"></i>Support</a>
+        </li>
+      </ul>
+      <div class="user-info">
+        <i class="fas fa-user-circle avatar"></i>
+        <a href="user_profile.html" class="user-name">Mahmoud Ben Salah</a>
+        <span class="sales-badge" style="display: none">Commercial</span>
+        <button class="logout-btn" onclick="logout()">
+          <i class="fas fa-sign-out-alt"></i>
+        </button>
+      </div>
+
+      <a
+        href="user_commercial-registration.html"
+        class="role-switch"
+        id="becomeSales"
+        ><i class="fas fa-user-tie"></i>
+        Devenir Commercial
+      </a>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <div class="page-header">
+        <div>
+          <h1 class="page-title">Assistant D-WEE</h1>
+          <p class="page-subtitle">
+            Votre assistant intelligent pour toutes vos questions
+          </p>
+        </div>
+      </div>
+      <div class="chat-container">
+        <div class="chat-messages" id="chatMessages">
+          <div class="message bot">
+            <i class="fas fa-robot"></i>
+            <div class="message-content">
+              <p>
+                Bonjour! Je suis l'assistant D-WEE. Comment puis-je vous aider
+                aujourd'hui?
+              </p>
+            </div>
+          </div>
+        </div>
+        <div class="typing-indicator" id="typingIndicator">
+          <span></span>
+          <span></span>
+          <span></span>
+        </div>
+        <div class="chat-input">
+          <input
+            type="text"
+            id="chatInput"
+            placeholder="Tapez votre message ici..."
+          />
+          <button id="sendMessage"><i class="fas fa-paper-plane"></i></button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Chatbot knowledge base
+      const chatbotResponses = {
+        greetings: ["bonjour", "salut", "hello", "bonsoir", "hi"],
+        maintenance: [
+          "maintenance",
+          "entretien",
+          "réparation",
+          "problème",
+          "panne",
+        ],
+        dkit: ["dkit", "d-kit", "appareil", "équipement", "fauteuil"],
+        contact: [
+          "contact",
+          "support",
+          "aide",
+          "assistance",
+          "téléphone",
+          "email",
+          "appeler",
+        ],
+        schedule: [
+          "rendez-vous",
+          "rdv",
+          "planifier",
+          "programmer",
+          "calendrier",
+        ],
+      };
+
+      const chatbotAnswers = {
+        greetings: [
+          "Bonjour! Je suis l'assistant D-WEE. Comment puis-je vous aider?",
+          "Salut! Je suis là pour répondre à vos questions sur D-WEE.",
+          "Bonjour! Que puis-je faire pour vous aujourd'hui?",
+        ],
+        maintenance: [
+          "Pour la maintenance de votre D-KIT, voici les options disponibles :\n" +
+            "1. Planifier une maintenance préventive\n" +
+            "2. Signaler un problème technique\n" +
+            "3. Consulter l'historique des maintenances\n" +
+            "Que souhaitez-vous faire?",
+          "Je peux vous aider avec la maintenance. Voulez-vous planifier un rendez-vous ou signaler un problème?",
+        ],
+        dkit: [
+          "Concernant votre D-KIT, je peux vous aider avec :\n" +
+            "1. L'enregistrement d'un nouveau D-KIT\n" +
+            "2. La consultation des informations techniques\n" +
+            "3. Le suivi des maintenances\n" +
+            "Que souhaitez-vous savoir?",
+          "Je peux vous fournir des informations sur votre D-KIT. Quel aspect vous intéresse?",
+        ],
+        contact: [
+          "Voici nos coordonnées :\n" +
+            "📞 Téléphone : +216 52 431 472\n" +
+            "📧 Email : contact@dweehealthcare.com\n" +
+            "Horaires : 8H - 18H (Lun-Ven), 8H - 12H (Sam)",
+          "Notre équipe support est disponible par téléphone au +216 52 431 472 ou par email à contact@dweehealthcare.com",
+        ],
+        schedule: [
+          "Pour planifier un rendez-vous, vous pouvez :\n" +
+            "1. Utiliser notre calendrier en ligne\n" +
+            "2. Nous contacter par téléphone\n" +
+            "Que préférez-vous?",
+          "Je peux vous aider à planifier un rendez-vous. Souhaitez-vous voir les disponibilités?",
+        ],
+        default: [
+          "Je ne suis pas sûr de comprendre. Pouvez-vous reformuler votre question?",
+          "Désolé, je n'ai pas bien compris. Voulez-vous des informations sur la maintenance, le D-KIT ou contacter le support?",
+          "Je ne peux pas répondre à cette question. Puis-je vous rediriger vers notre support?",
+        ],
+      };
+
+      function getChatbotResponse(message) {
+        const lowercaseMessage = message.toLowerCase();
+
+        // Check each category of keywords
+        for (const [category, keywords] of Object.entries(chatbotResponses)) {
+          if (keywords.some((keyword) => lowercaseMessage.includes(keyword))) {
+            const answers = chatbotAnswers[category];
+            return answers[Math.floor(Math.random() * answers.length)];
+          }
+        }
+
+        // If no category matches, return a default response
+        return chatbotAnswers.default[
+          Math.floor(Math.random() * chatbotAnswers.default.length)
+        ];
+      }
+
+      function showTypingIndicator() {
+        const indicator = document.getElementById("typingIndicator");
+        indicator.style.display = "flex";
+      }
+
+      function hideTypingIndicator() {
+        const indicator = document.getElementById("typingIndicator");
+        indicator.style.display = "none";
+      }
+
+      function addMessage(message, isUser = true) {
+        const messageDiv = document.createElement("div");
+        messageDiv.className = `message ${isUser ? "user" : "bot"}`;
+
+        // Format message with line breaks
+        const formattedMessage = message.replace(/\n/g, "<br>");
+
+        messageDiv.innerHTML = `
+                <i class="fas fa-${isUser ? "user" : "robot"}"></i>
+                <div class="message-content">
+                    <p>${formattedMessage}</p>
+                </div>
+            `;
+        chatMessages.appendChild(messageDiv);
+        chatMessages.scrollTop = chatMessages.scrollHeight;
+      }
+
+      const chatInput = document.getElementById("chatInput");
+      const sendButton = document.getElementById("sendMessage");
+      const chatMessages = document.getElementById("chatMessages");
+
+      sendButton.addEventListener("click", () => {
+        const message = chatInput.value.trim();
+        if (message) {
+          addMessage(message);
+          chatInput.value = "";
+
+          // Show typing indicator
+          showTypingIndicator();
+
+          // Get and display bot response after a short delay
+          setTimeout(() => {
+            hideTypingIndicator();
+            const response = getChatbotResponse(message);
+            addMessage(response, false);
+          }, 1000);
+        }
+      });
+
+      chatInput.addEventListener("keypress", (e) => {
+        if (e.key === "Enter") {
+          sendButton.click();
+        }
+      });
+    </script>
+  </body>
+</html>

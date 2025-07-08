@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" />
+    <title>D-WEE Healthcare - Journaux d'Audit</title>
+    <style>
+       :root {
+    --primary-color: #25A8DF;
+    --primary-hover: #1E8FBF;
+    --secondary-color: #00A69C;
+    --text-color: #0A0648;
+    --text-muted: #1A1A1A;
+    --bg-color: #F4F1EE;
+    --bg-alt: #F4F1EE;
+    --border-color: rgba(26, 26, 26, 0.15);
+    --border-light: rgba(26, 26, 26, 0.08);
+    --success-color: #00A69C;
+    --warning-color: #25A8DF;
+    --danger-color: #d46161;
+    --shadow: 0 2px 8px 0 rgba(10, 6, 72, 0.08), 0 1px 4px 0 rgba(10, 6, 72, 0.04);
+    --shadow-lg: 0 8px 24px -4px rgba(10, 6, 72, 0.12), 0 4px 12px -2px rgba(10, 6, 72, 0.08);
+    --radius: 8px;
+    --radius-lg: 12px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg-color);
+    min-height: 100vh;
+}
+
+.container {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+      width: 250px;
+      background: white;
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
+      z-index: 1000;
+      box-shadow: var(--shadow);
+    }
+
+    .logo {
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .logo img {
+      width: 40px;
+      height: 40px;
+    }
+
+    .logo-text {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+
+    .logo-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 1rem 0;
+    }
+
+    .nav-item {
+      margin: 0.25rem 0;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1.5rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: all 0.2s ease;
+      font-size: 0.95rem;
+      border-radius: 0;
+      cursor: pointer;
+    }
+
+    .nav-link:hover {
+      background: var(--bg-alt);
+      color: var(--text-color);
+    }
+
+    .nav-link.active {
+      background: var(--primary-color);
+      color: white;
+      border-radius: var(--radius);
+      margin: 0.25rem 1rem;
+      padding: 0.75rem 1.25rem;
+    }
+     .nav-link.active:hover {
+        background: var(--primary-hover);
+    }
+
+    .nav-link i {
+      width: 18px;
+      text-align: center;
+    }
+
+    .sidebar-user {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .user-avatar {
+      width: 35px;
+      height: 35px;
+      background: var(--secondary-color);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .user-details {
+      flex: 1;
+    }
+
+    .user-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text-color);
+    }
+
+    .user-role {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .logout-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .logout-btn:hover {
+      background: var(--bg-alt);
+      color: var(--text-color);
+    }
+/* Main Content */
+.main-content {
+    flex: 1;
+    margin-left: 250px;
+    padding: 2rem;
+    background: var(--bg-color);
+    min-height: 100vh;
+}
+
+.page-header {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-light);
+}
+
+.audit-table-container {
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-light);
+}
+
+.table-controls {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.search-box, .filter-select {
+    padding: 8px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    font-size: 0.875rem;
+}
+.search-box { width: 240px; }
+.filter-select { min-width: 180px; }
+
+.audit-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.audit-table th,
+.audit-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-light);
+    font-size: 0.875rem;
+    vertical-align: top;
+}
+
+.audit-table th {
+    background: var(--bg-alt);
+    font-weight: 600;
+    color: var(--text-color);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.audit-table td {
+    color: var(--text-muted);
+}
+.audit-table td .details {
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    max-width: 300px; /* Limit width of details */
+    word-wrap: break-word;
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+       <aside class="sidebar">
+    <div class="logo">
+      <img src="https://dweehealthcare.com/wp-content/uploads/2023/08/D-wee-Final.png" alt="DWEE Logo" />
+      <div>
+        <div class="logo-text">D-WEE Healthcare</div>
+        <div class="logo-subtitle">Super Admin</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+  <div class="nav-item">
+    <a id="nav-dashboard" class="nav-link" href="{{ url_for('superadmin_dashboard') }}">
+      <i class="fas fa-home"></i> Tableau de bord
+    </a>
+  </div>
+  <div class="nav-item">
+    <a id="nav-users" class="nav-link" href="{{ url_for('admin_user_management') }}">
+      <i class="fas fa-users"></i> Gestion Utilisateurs
+    </a>
+  </div>
+  <div class="nav-item">
+    <a id="nav-salesreps" class="nav-link" href="{{ url_for('admin_sales_representative') }}">
+      <i class="fas fa-user-tie"></i> Représentants
+    </a>
+  </div>
+  <div class="nav-item">
+    <a id="nav-appointments" class="nav-link" href="{{ url_for('admin_appointment') }}">
+      <i class="fas fa-calendar-alt"></i> Rendez-vous
+    </a>
+  </div>
+  <div class="nav-item">
+    <a id="nav-devices" class="nav-link" href="{{ url_for('admin_dkit_device_management') }}">
+      <i class="fas fa-microchip"></i> Appareils 
+    </a>
+  </div>
+  <div class="nav-item">
+    <a id="nav-reports" class="nav-link" href="{{ url_for('admin_reports_analytics') }}">
+      <i class="fas fa-chart-bar"></i> Rapports & Analytics
+    </a>
+  </div>
+  <div class="nav-item">
+    <a id="nav-system" class="nav-link" href="{{ url_for('admin_system_configuration') }}">
+      <i class="fas fa-cogs"></i> Configuration Système
+    </a>
+  </div>
+  <div class="nav-item">
+    <a id="nav-audit" class="nav-link active" href="{{ url_for('admin_audit_logs') }}">
+      <i class="fas fa-clipboard-list"></i> Journaux d'Audit
+    </a>
+  </div>
+</nav>
+    
+    <div class="sidebar-user">
+      <div class="user-avatar">SA</div>
+      <div class="user-details">
+        <div class="user-name">Super Admin</div>
+        <div class="user-role">Administrateur</div>
+      </div>
+      <button class="logout-btn" onclick="logout()">
+        <i class="fas fa-sign-out-alt"></i>
+      </button>
+    </div>
+  </aside>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <h2 class="page-header">Journaux d'Audit du Système</h2>
+
+            <div class="audit-table-container">
+                <div class="table-controls">
+                    <input type="text" id="auditSearchBox" class="search-box" placeholder="Rechercher par utilisateur, action...">
+                    <div>
+                        <label for="userFilter" style="margin-right: 5px; font-size:0.875rem;">Utilisateur:</label>
+                        <select id="userFilter" class="filter-select">
+                            <option value="">Tous les Utilisateurs</option>
+                            <!-- Options populated by JS -->
+                        </select>
+                    </div>
+                    <div>
+                        <label for="actionFilter" style="margin-right: 5px; font-size:0.875rem;">Action:</label>
+                        <select id="actionFilter" class="filter-select">
+                            <option value="">Toutes les Actions</option>
+                            <!-- Options populated by JS -->
+                        </select>
+                    </div>
+                     <input type="date" id="dateFilter" class="filter-select">
+                </div>
+                
+                <table class="audit-table" id="auditLogTable">
+                    <thead>
+                        <tr>
+                            <th>Date & Heure</th>
+                            <th>Utilisateur</th>
+                            <th>Action</th>
+                            <th>Détails</th>
+                            <th>Adresse IP</th>
+                        </tr>
+                    </thead>
+                    <tbody id="auditLogTableBody">
+                        <!-- Log entries will be populated by JavaScript -->
+                        <tr>
+                            <td colspan="5" style="text-align:center; padding: 20px;">Chargement des journaux d'audit...</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <!-- Pagination (Placeholder) -->
+                <div style="text-align: center; margin-top: 1.5rem;">
+                    <button class="btn btn-secondary">< Précédent</button>
+                    <span style="margin: 0 10px; font-size: 0.875rem;">Page 1 sur X</span>
+                    <button class="btn btn-secondary">Suivant ></button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const sampleAuditLogs = [
+            { timestamp: "2025-05-30 09:50:15", user: "admin@dwee.com", action: "LOGIN_SUCCESS", details: "Connexion réussie.", ipAddress: "192.168.1.10" },
+            { timestamp: "2025-05-30 09:48:20", user: "admin@dwee.com", action: "CREATE_FILE", details: "Fichier 'ReportsAnalytics.html' créé.", ipAddress: "192.168.1.10" },
+            { timestamp: "2025-05-30 09:42:30", user: "sales_rep1@dwee.com", action: "DEVICE_ASSIGN", details: "Appareil DKIT001 assigné à sales_rep1@dwee.com.", ipAddress: "203.0.113.45" },
+            { timestamp: "2025-05-30 09:39:05", user: "admin@dwee.com", action: "USER_UPDATE", details: "Profil utilisateur 'Ahmed Benali' mis à jour (région assignée).", ipAddress: "192.168.1.10" },
+            { timestamp: "2025-05-29 15:22:00", user: "system", action: "CONFIG_UPDATE", details: "Politique de confidentialité mise à jour.", ipAddress: "N/A" },
+            { timestamp: "2025-05-29 14:05:10", user: "fatma.mansouri@dwee.com", action: "REP_REG_APPROVED", details: "Inscription du représentant 'Karim Ouali' approuvée.", ipAddress: "198.51.100.2" },
+        ];
+
+        function populateFilters(logs) {
+            const userFilter = document.getElementById('userFilter');
+            const actionFilter = document.getElementById('actionFilter');
+            
+            const users = [...new Set(logs.map(log => log.user))];
+            const actions = [...new Set(logs.map(log => log.action))];
+
+            users.forEach(user => {
+                const option = document.createElement('option');
+                option.value = user;
+                option.textContent = user;
+                userFilter.appendChild(option);
+            });
+
+            actions.forEach(action => {
+                const option = document.createElement('option');
+                option.value = action;
+                option.textContent = action;
+                actionFilter.appendChild(option);
+            });
+        }
+
+        function renderAuditLogs(logs) {
+            const tbody = document.getElementById('auditLogTableBody');
+            tbody.innerHTML = ''; 
+
+            if (logs.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding: 20px;">Aucun journal d'audit trouvé pour les critères sélectionnés.</td></tr>`;
+                return;
+            }
+
+            logs.forEach(log => {
+                const row = `
+                    <tr>
+                        <td>${log.timestamp}</td>
+                        <td>${log.user}</td>
+                        <td>${log.action}</td>
+                        <td><div class="details">${log.details}</div></td>
+                        <td>${log.ipAddress}</td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+        }
+
+        function filterAndRenderLogs() {
+            const searchText = document.getElementById('auditSearchBox').value.toLowerCase();
+            const selectedUser = document.getElementById('userFilter').value;
+            const selectedAction = document.getElementById('actionFilter').value;
+            const selectedDate = document.getElementById('dateFilter').value;
+
+            let filteredLogs = sampleAuditLogs;
+
+            if (searchText) {
+                filteredLogs = filteredLogs.filter(log => 
+                    log.user.toLowerCase().includes(searchText) ||
+                    log.action.toLowerCase().includes(searchText) ||
+                    log.details.toLowerCase().includes(searchText) ||
+                    log.ipAddress.toLowerCase().includes(searchText)
+                );
+            }
+            if (selectedUser) {
+                filteredLogs = filteredLogs.filter(log => log.user === selectedUser);
+            }
+            if (selectedAction) {
+                filteredLogs = filteredLogs.filter(log => log.action === selectedAction);
+            }
+            if (selectedDate) { // Simple date match (YYYY-MM-DD)
+                filteredLogs = filteredLogs.filter(log => log.timestamp.startsWith(selectedDate));
+            }
+
+            renderAuditLogs(filteredLogs);
+        }
+        
+        document.getElementById('auditSearchBox').addEventListener('keyup', filterAndRenderLogs);
+        document.getElementById('userFilter').addEventListener('change', filterAndRenderLogs);
+        document.getElementById('actionFilter').addEventListener('change', filterAndRenderLogs);
+        document.getElementById('dateFilter').addEventListener('change', filterAndRenderLogs);
+
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderAuditLogs(sampleAuditLogs);
+            populateFilters(sampleAuditLogs);
+        });
+    </script>
+</body>
+</html>
