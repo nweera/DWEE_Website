@@ -1,0 +1,2006 @@
+<!DOCTYPE html>
+
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" />
+    <title>D-WEE Healthcare - Gestion Appareils D-KIT</title>
+    <style>
+      :root {
+    --primary-color: #25A8DF;
+    --primary-hover: #1E8FBF;
+    --secondary-color: #00A69C;
+    --text-color: #0A0648;
+    --text-muted: #1A1A1A;
+    --bg-color: #F4F1EE;
+    --bg-alt: #F4F1EE;
+    --border-color: rgba(26, 26, 26, 0.15);
+    --border-light: rgba(26, 26, 26, 0.08);
+    --success-color: #00A69C;
+    --warning-color: #25A8DF;
+    --danger-color: #d46161;
+    --shadow: 0 2px 8px 0 rgba(10, 6, 72, 0.08), 0 1px 4px 0 rgba(10, 6, 72, 0.04);
+    --shadow-lg: 0 8px 24px -4px rgba(10, 6, 72, 0.12), 0 4px 12px -2px rgba(10, 6, 72, 0.08);
+    --radius: 8px;
+    --radius-lg: 12px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg-color);
+    min-height: 100vh;
+}
+
+.badge {
+    display: inline-block;
+    padding: 3px 8px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    border-radius: 4px;
+    margin-right: 4px;
+}
+
+.badge-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.badge-secondary {
+    background-color: #6c757d;
+    color: white;
+}
+
+.badge-info {
+    background-color: var(--secondary-color);
+    color: white;
+}
+
+.container {
+    display: flex;
+    min-height: 100vh;
+}
+
+.sidebar {
+      width: 250px;
+      background: white;
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
+      z-index: 1000;
+      box-shadow: var(--shadow);
+    }
+
+    .logo {
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .logo img {
+      width: 40px;
+      height: 40px;
+    }
+
+    .logo-text {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+
+    .logo-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 1rem 0;
+    }
+
+    .nav-item {
+      margin: 0.25rem 0;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1.5rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: all 0.2s ease;
+      font-size: 0.95rem;
+      border-radius: 0;
+      cursor: pointer;
+    }
+
+    .nav-link:hover {
+      background: var(--bg-alt);
+      color: var(--text-color);
+    }
+
+    .nav-link.active {
+      background: var(--primary-color);
+      color: white;
+      border-radius: var(--radius);
+      margin: 0.25rem 1rem;
+      padding: 0.75rem 1.25rem;
+    }
+     .nav-link.active:hover {
+        background: var(--primary-hover);
+    }
+
+    .nav-link i {
+      width: 18px;
+      text-align: center;
+    }
+
+    .sidebar-user {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .user-avatar {
+      width: 35px;
+      height: 35px;
+      background: var(--secondary-color);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .user-details {
+      flex: 1;
+    }
+
+    .user-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text-color);
+    }
+
+    .user-role {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .logout-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .logout-btn:hover {
+      background: var(--bg-alt);
+      color: var(--text-color);
+    }
+/* Main Content */
+.main-content {
+    flex: 1;
+    margin-left: 250px;
+    padding: 2rem;
+    background: var(--bg-color);
+    min-height: 100vh;
+}
+
+.alert-banner {
+    background: linear-gradient(90deg, var(--warning-color), var(--primary-hover));
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    margin-bottom: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.alert-text {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.alert-btn {
+    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    color: white;
+    padding: 6px 16px;
+    border-radius: 6px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    font-weight: 500;
+}
+
+.alert-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+.btn-warning {
+    background: var(--warning-color);
+    color: white;
+}
+.btn-warning:hover {
+    background: var(--primary-hover);
+}
+
+.management-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.section-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-light);
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1.5rem;
+}
+
+.section-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: white;
+    font-weight: 600;
+}
+
+.create-section .section-icon {
+    background: linear-gradient(135deg, var(--success-color), var(--secondary-color));
+}
+
+.view-section .section-icon {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+}
+ .assign-section .section-icon { 
+    background: linear-gradient(135deg, var(--secondary-color), var(--success-color));
+}
+
+.section-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.btn {
+    padding: 10px 16px;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    text-align: center;
+    display: inline-block;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--primary-hover);
+}
+
+.btn-secondary {
+    background: #f9fafb;
+    color: #374151;
+    border: 1px solid #d1d5db;
+}
+
+.btn-secondary:hover {
+    background: #f3f4f6;
+}
+
+.btn-danger {
+    background: var(--danger-color);
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #b91c1c;
+}
+
+.users-table-container, .devices-table-container {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-light);
+}
+
+.table-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.table-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.search-box {
+    padding: 8px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    width: 240px;
+}
+
+.search-box:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(37, 168, 223, 0.1);
+}
+
+.devices-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+}
+
+.devices-table th,
+.devices-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid #f3f4f6;
+    font-size: 0.875rem;
+}
+
+.devices-table th {
+    background: #f9fafb;
+    font-weight: 600;
+    color: #374151;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.devices-table td {
+    color: var(--text-muted);
+}
+
+.status-badge {
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.status-active, .status-operational {
+    background: #dcfce7;
+    color: var(--success-color);
+}
+
+.status-inactive {
+    background: #fee2e2;
+    color: var(--danger-color);
+}
+
+.status-maintenance {
+    background: #fef3c7;
+    color: var(--warning-color);
+}
+.status-pending {
+     background: #fef3c7;
+     color: var(--warning-color);
+}
+.status-rejected {
+    background: #fee2e2; 
+    color: var(--danger-color); 
+}
+
+.action-menu {
+    display: flex;
+    gap: 6px;
+}
+
+.action-btn {
+    padding: 4px 8px;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.edit-btn {
+    background: #dbeafe;
+    color: var(--primary-hover);
+}
+
+.edit-btn:hover {
+    background: #bfdbfe;
+}
+
+.delete-btn {
+    background: #fee2e2;
+    color: var(--danger-color);
+}
+
+.delete-btn:hover {
+    background: #fecaca;
+}
+
+.validate-btn {
+    background: #d1fae5;
+    color: var(--success-color);
+}
+
+.validate-btn:hover {
+    background: #a7f3d0;
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    align-items: center;
+    justify-content: center;
+}
+
+.modal-content {
+    background: white;
+    margin: auto;
+    padding: 2rem;
+    border-radius: 12px;
+    width: 90%;
+    max-width: 500px;
+    box-shadow: var(--shadow-lg);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.modal-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.close {
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-weight: bold;
+}
+
+.close:hover {
+    color: #374151;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: #374151;
+    font-size: 0.875rem;
+}
+
+.form-input,
+.form-select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    font-size: 0.875rem;
+}
+
+.form-input:focus,
+.form-select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(37, 168, 223, 0.1);
+}
+
+input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--primary-color);
+}
+
+/* Ajout des styles pour la barre de recherche en haut du fichier, dans la section head */
+.search-container {
+    position: relative;
+    width: 100%;
+}
+.form-input {
+    width: 100%;
+    padding: 8px 12px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    transition: border-color 0.3s;
+}
+.form-input:focus {
+    border-color: #4a90e2;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+}
+.search-result {
+    margin-top: 5px;
+    min-height: 24px;
+    font-size: 0.9em;
+}
+
+/* Stock form styles */
+.stock-form-container {
+    background-color: white;
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow);
+}
+
+.form-row {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.form-group {
+    flex: 1;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+.form-input {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+}
+
+.alert {
+    padding: 12px;
+    border-radius: var(--radius);
+    margin-bottom: 20px;
+}
+
+.alert-success {
+    background-color: rgba(0, 166, 156, 0.1);
+    color: var(--success-color);
+}
+
+.alert-error {
+    background-color: rgba(212, 97, 97, 0.1);
+    color: var(--danger-color);
+}
+
+/* Search results dropdown styling */
+.search-results-dropdown {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: white;
+    border: 1px solid var(--border-color);
+    border-top: none;
+    border-radius: 0 0 var(--radius) var(--radius);
+    box-shadow: var(--shadow);
+    max-height: 200px;
+    overflow-y: auto;
+    z-index: 1000;
+}
+
+.search-result-item {
+    padding: 8px 12px;
+    cursor: pointer;
+    border-bottom: 1px solid #f3f4f6;
+    transition: background-color 0.2s ease;
+}
+
+.search-result-item:hover {
+    background-color: #f9fafb;
+}
+
+.search-result-item:last-child {
+    border-bottom: none;
+}
+
+.search-container {
+    position: relative;
+}
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Sidebar -->
+       <aside class="sidebar">
+    <div class="logo">
+      <img src="https://dweehealthcare.com/wp-content/uploads/2023/08/D-wee-Final.png" alt="DWEE Logo" />
+      <div>
+        <div class="logo-text">D-WEE Healthcare</div>
+        <div class="logo-subtitle">Super Admin</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+  <div class="nav-item">
+    <a id="nav-dashboard" class="nav-link" href="{{ url_for('superadmin_dashboard') }}">
+        <i class="fas fa-home"></i> Tableau de bord
+    </a>
+  </div>
+  <div class="nav-item">
+    <a id="nav-users" class="nav-link" href="{{ url_for('admin_user_management') }}">
+      <i class="fas fa-users"></i> Gestion Utilisateurs
+    </a>
+  </div>
+  
+  <div class="nav-item">
+    <a id="nav-appointments" class="nav-link" href="{{ url_for('admin_appointment') }}">
+      <i class="fas fa-calendar-alt"></i> Rendez-vous
+    </a>
+  </div>
+  <div class="nav-item">
+    <a id="nav-devices" class="nav-link" href="{{ url_for('admin_dkit_device_management') }}">
+      <i class="fas fa-microchip"></i> Appareils 
+    </a>
+  </div>
+</nav>
+    
+    <div class="sidebar-user">
+      <div class="user-avatar">SA</div>
+      <div class="user-details">
+        <div class="user-name">Super Admin</div>
+        <div class="user-role">Administrateur</div>
+      </div>
+      <button class="logout-btn" onclick="confirmLogout()">
+        <i class="fas fa-sign-out-alt"></i>
+      </button>
+    </div>
+  </aside>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Alert Banner (Optional for this page, can be removed or adapted) -->
+            <div class="alert-banner" style="display: none;"> <!-- Hidden by default -->
+                <div class="alert-text">
+                    <span>ℹ️</span>
+                    <span>Information importante concernant les appareils D-KIT.</span>
+                </div>
+                <button class="alert-btn">Détails</button>
+            </div>
+
+            <!-- Management Actions Grid -->
+            <div class="management-grid">
+                <div class="section-card create-section">
+                    <div class="section-header">
+                        <div class="section-icon">➕</div>
+                        <div class="section-title">Gérer les Appareils</div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" id="addDeviceButton" type="button" onclick="openAddDeviceModal()">
+                            Ajouter un Appareil
+                        </button>
+                    </div>
+                </div><div class="section-card assign-section">
+                    <div class="section-header">
+                        <div class="section-icon">🔗</div>
+                        <div class="section-title">Assignation & Statut</div>
+                    </div>                    <div class="action-buttons">                        <button class="btn btn-warning" id="assignDeviceToClientButton" onclick="openAssignDeviceToClientModal()">
+                            Assigner Appareil à un Client
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Devices List Table -->            <div class="devices-table-container">
+                <div class="table-header">
+                    <div class="table-title">Stock</div>
+                </div>
+                  <table class="devices-table" id="devicesTable">
+                    <thead>
+                        <tr>
+                            <th><input type="checkbox" onchange="selectAllDevices(this)"></th>
+                            <th>ID Appareil</th>
+                            <th>Modèle</th>
+                            <th>Numéro de Série</th>
+                            <th>Statut</th>
+                            <th>Date d'Ajout</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="devicesTableBody">
+                        <!-- Device rows will be populated by JavaScript -->
+                        <tr>
+                            <td colspan="7" style="text-align:center; padding: 20px;">Chargement des appareils...</td>
+                        </tr>
+                    </tbody>
+                </table>            </div>
+
+            <!-- Client-Assigned DKITs Table -->
+            <div class="devices-table-container" style="margin-top: 2rem;">
+                <div class="table-header">
+                    <div class="table-title">D-KITs Assignés aux Clients</div>
+                </div>
+                <table class="devices-table" id="clientDKITsTable">                    <thead>
+                        <tr>
+                            <th>ID Appareil</th>
+                            <th>Modèle</th>
+                            <th>Numéro de Série</th>
+                            <th>Client</th>
+                            <th>Date d'Affectation</th>
+                            <th>Date Fin de Garantie</th>
+                            <th>Localisation</th>
+                            <th>Statut</th>
+                            <th>Validation</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="clientDKITsTableBody">
+                        <!-- Client-assigned device rows will be populated by JavaScript -->
+                        <tr>
+                            <td colspan="10" style="text-align:center; padding: 20px;">Chargement des appareils assignés aux clients...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Device Modal -->
+    <div id="deviceModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="deviceModalTitle">Ajouter un Appareil </h2>
+                <span class="close" onclick="closeModal('deviceModal')">&times;</span>
+            </div>
+            <form id="deviceForm">
+                <input type="hidden" id="deviceId">
+                
+                <!-- ID field (read-only) - Only shown when editing -->
+                <div class="form-group" id="deviceIdGroup" style="display: none;">
+                    <label class="form-label" for="deviceIdDisplay">ID Appareil</label>
+                    <input type="text" id="deviceIdDisplay" class="form-input" readonly style="background-color: #f5f5f5; color: #666;">
+                </div>
+                
+                <!-- Model field -->
+                <div class="form-group">
+                    <label class="form-label" for="deviceModel">Modèle *</label>
+                    <input type="text" id="deviceModel" class="form-input" required placeholder="Ex: D-KIT Pro v2">
+                </div>
+                
+                <!-- Serial Number field -->
+                <div class="form-group">
+                    <label class="form-label" for="deviceSerialNumber">Numéro de Série *</label>
+                    <input type="text" id="deviceSerialNumber" class="form-input" required placeholder="Ex: SNPROV2-001">
+                </div>
+                
+                
+                <!-- Creation date field (read-only) - Only shown when editing -->
+                <div class="form-group" id="deviceCreationDateGroup" style="display: none;">
+                    <label class="form-label" for="deviceCreationDate">Date de Création</label>
+                    <input type="text" id="deviceCreationDate" class="form-input" readonly style="background-color: #f5f5f5; color: #666;">
+                </div>
+                
+                <div class="action-buttons">
+                    <button type="submit" class="btn btn-primary">Sauvegarder</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('deviceModal')">Annuler</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Assign Device Modal -->
+    <div id="assignDeviceModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Assigner Appareil D-KIT</h2>
+                <span class="close" onclick="closeModal('assignDeviceModal')">&times;</span>
+            </div>
+            <form id="assignDeviceForm">
+                <div class="form-group">
+                    <label class="form-label" for="assignDeviceSelect">Sélectionner Appareil *</label>
+                    <select id="assignDeviceSelect" class="form-select" required>
+                        <!-- Options populated by JS -->
+                    </select>
+                </div>
+                
+                <div class="action-buttons">
+                    <button type="submit" class="btn btn-primary">Assigner</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('assignDeviceModal')">Annuler</button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Assign Device to Client Modal -->
+    <div id="assignDeviceToClientModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Assigner Appareil D-KIT à un Client</h2>
+                <span class="close" onclick="closeModal('assignDeviceToClientModal')">&times;</span>
+            </div>
+            <form id="assignDeviceToClientForm">
+                <div class="form-group">
+                    <label class="form-label" for="assignDeviceToClientSearch">Sélectionner Appareil (numéro de série) *</label>
+                    <div class="search-container">
+                        <input type="text" id="assignDeviceToClientSearch" class="form-input" placeholder="Entrez le numéro de série" required>
+                        <div id="deviceSearchResult" class="search-result"></div>
+                    </div>
+                    <input type="hidden" id="assignDeviceToClientSelect" name="deviceId">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="assignClientSearch">Assigner à Client *</label>
+                    <div class="search-container">
+                        <input type="text" id="assignClientSearch" class="form-input" placeholder="Entrez le nom ou l'email du client" required>
+                        <div id="clientSearchResult" class="search-result"></div>
+                    </div>
+                    <input type="hidden" id="assignClientSelect" name="clientId">
+                </div>
+                <div class="action-buttons">
+                    <button type="submit" class="btn btn-primary">Assigner</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('assignDeviceToClientModal')">Annuler</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Edit Client-Assigned Device Modal -->
+    <div id="editClientDeviceModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Modifier Détails Appareil Client</h2>
+                <span class="close" onclick="closeModal('editClientDeviceModal')">&times;</span>
+            </div>
+            <form id="editClientDeviceForm">
+                <input type="hidden" id="editClientDeviceId">
+                <div class="form-group">
+                    <label class="form-label" for="editClientDeviceClient">Client</label>
+                    <select id="editClientDeviceClient" class="form-select" required>
+                        <!-- Options populated by JS -->
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="editClientDeviceLocation">Localisation</label>
+                    <input type="text" id="editClientDeviceLocation" class="form-input" placeholder="Localisation chez le client">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="editClientDeviceStatus">Statut</label>
+                    <select id="editClientDeviceStatus" class="form-select" required>
+                        <option value="active">Actif</option>
+                        <option value="inactive">Inactif</option>
+                        <option value="maintenance">En Maintenance</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="editClientDeviceWarrantyEnd">Date Fin de Garantie</label>
+                    <input type="text" id="editClientDeviceWarrantyEnd" class="form-input" placeholder="DD/MM/YYYY">
+                </div>
+                <div class="action-buttons">
+                    <button type="submit" class="btn btn-primary">Sauvegarder</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeModal('editClientDeviceModal')">Annuler</button>
+                </div>
+            </form>
+        </div>
+    </div>
+      <script>
+        // Define critical functions first
+        function openModal(modalId) {
+            console.log(`Opening modal: ${modalId}`);
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                // Force display style for the modal
+                modal.style.display = 'flex';
+                modal.style.visibility = 'visible';
+                modal.style.opacity = '1';
+                console.log(`Modal displayed: ${modalId}`);
+                
+                // Ensure the close button works
+                const closeBtn = modal.querySelector('.close');
+                if (closeBtn) {
+                    closeBtn.onclick = function() {
+                        closeModal(modalId);
+                    };
+                }
+            } else {
+                console.error(`Modal with ID ${modalId} not found!`);
+            }        }
+        
+        function closeModal(modalId) {
+            console.log(`Closing modal: ${modalId}`);
+            const modal = document.getElementById(modalId);
+            if (modal) {
+                modal.style.display = 'none';
+                modal.style.visibility = 'hidden';
+                modal.style.opacity = '0';
+                console.log(`Modal hidden: ${modalId}`);
+            } else {
+                console.error(`Modal with ID ${modalId} not found when trying to close!`);
+            }
+        }        // Assign Device to Client Modal
+        function openAssignDeviceToClientModal() {
+            console.log("Opening client assignment modal"); // Debug
+            const modal = document.getElementById('assignDeviceToClientModal');
+            if (!modal) {
+                console.error("Modal not found in DOM");
+                return;
+            }
+            
+            // Clear the search inputs
+            const deviceSearch = document.getElementById('assignDeviceToClientSearch');
+            const clientSearch = document.getElementById('assignClientSearch');
+            const deviceResult = document.getElementById('deviceSearchResult');
+            const clientResult = document.getElementById('clientSearchResult');
+            const hiddenDeviceId = document.getElementById('assignDeviceToClientSelect');
+            const hiddenClientId = document.getElementById('assignClientSelect');
+            
+            if (deviceSearch) deviceSearch.value = '';
+            if (clientSearch) clientSearch.value = '';
+            if (deviceResult) deviceResult.textContent = '';
+            if (clientResult) clientResult.textContent = '';
+            if (hiddenDeviceId) hiddenDeviceId.value = '';
+            if (hiddenClientId) hiddenClientId.value = '';
+            
+            // Show modal
+            modal.style.display = 'flex';
+            modal.style.visibility = 'visible';
+            modal.style.opacity = '1';
+            
+            console.log("Modal opened with cleared search inputs");
+        }
+
+
+
+        // Add Device Modal - Make globally accessible
+        window.openAddDeviceModal = function() {
+            console.log("Opening add device modal");
+            document.getElementById('deviceModalTitle').textContent = 'Ajouter un Appareil D-KIT';
+            document.getElementById('deviceForm').reset();
+            
+            // Clear all form fields for new device
+            document.getElementById('deviceModel').value = '';
+            document.getElementById('deviceSerialNumber').value = '';
+            
+            // Hide read-only fields for new device
+            document.getElementById('deviceIdGroup').style.display = 'none';
+            document.getElementById('deviceCreationDateGroup').style.display = 'none';
+            
+            // Clear any device ID attribute
+            document.getElementById('deviceForm').removeAttribute('data-device-id');
+            
+            openModal('deviceModal');
+        }
+
+        // Test function to verify modal is working
+        window.testEditModal = function() {
+            console.log("Testing edit modal with dummy data");
+            openEditDeviceModal('test-id');
+        }
+
+        // Edit Device Modal - Make globally accessible
+        window.openEditDeviceModal = async function(deviceId) {
+            try {
+                console.log(`Opening edit modal for device: ${deviceId}`);
+                
+                if (!deviceId) {
+                    alert('ID de l\'appareil manquant');
+                    return;
+                }
+                
+                // Show loading state
+                document.getElementById('deviceModalTitle').textContent = 'Chargement...';
+                
+                openModal('deviceModal');
+                
+                // First try to find the device in local data
+                const localDevice = allDKITs.find(d => d.id === deviceId);
+                if (localDevice) {
+                    console.log('Found device in local data:', localDevice);
+                    
+                    // Update modal title
+                    document.getElementById('deviceModalTitle').textContent = 'Modifier Appareil D-KIT';
+                    
+                    // Fill form fields - only modifiable fields
+                    document.getElementById('deviceModel').value = localDevice.model || '';
+                    document.getElementById('deviceSerialNumber').value = localDevice.serialNumber || '';
+                    
+                    // Show and fill read-only fields for editing
+                    document.getElementById('deviceIdGroup').style.display = 'block';
+                    document.getElementById('deviceIdDisplay').value = localDevice.id || '';
+                    
+                    document.getElementById('deviceCreationDateGroup').style.display = 'block';
+                    document.getElementById('deviceCreationDate').value = localDevice.addedDate || '';
+                    
+                    // Store the device ID for form submission
+                    document.getElementById('deviceForm').setAttribute('data-device-id', localDevice.id);
+                    
+                    console.log('Device data loaded from local data successfully');
+                    return;
+                }
+                
+                // If not found locally, fetch from backend
+                const response = await fetch(`/api/admin/stock/${deviceId}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (result.success && result.device) {
+                    const device = result.device;
+                    
+                    // Update modal title
+                    document.getElementById('deviceModalTitle').textContent = 'Modifier Appareil D-KIT';
+                    
+                    // Fill form fields - only modifiable fields
+                    document.getElementById('deviceModel').value = device.model || '';
+                    document.getElementById('deviceSerialNumber').value = device.serial_number || '';
+                    
+                    // Show and fill read-only fields for editing
+                    document.getElementById('deviceIdGroup').style.display = 'block';
+                    document.getElementById('deviceIdDisplay').value = device.id || '';
+                    
+                    document.getElementById('deviceCreationDateGroup').style.display = 'block';
+                    document.getElementById('deviceCreationDate').value = device.creation_date || '';
+                    
+                    // Store the device ID for form submission
+                    document.getElementById('deviceForm').setAttribute('data-device-id', device.id);
+                    
+                    console.log('Device data loaded successfully from API:', device);
+                } else {
+                    alert(`Erreur lors du chargement des données: ${result.message || 'Appareil non trouvé'}`);
+                    closeModal('deviceModal');
+                }
+            } catch (error) {
+                console.error('Error loading device data:', error);
+                alert('Erreur lors de la communication avec le serveur.');
+                closeModal('deviceModal');
+            }
+        }
+        
+        // Get devices from server-side data
+        let allDKITs = [];
+        try {
+            // Parse the server-side data safely, using an empty array as default if undefined
+            const devicesData = '{{ devices|default("[]")|tojson|safe }}';
+            allDKITs = JSON.parse(devicesData);
+            console.log("Loaded devices from server:", allDKITs);
+        } catch (e) {
+            console.error("Error parsing devices data:", e);
+            // Fallback to empty array if parsing fails
+            allDKITs = [];
+        }            // Handle case when no devices are provided
+        if (!allDKITs || allDKITs.length === 0) {
+            console.log("No devices found");
+            // Empty array when no devices are found
+            allDKITs = [];
+        }
+          // Get clients from server-side data        let allClients = [];
+        try {
+            // Parse the server-side data safely, using an empty array as default if undefined
+            const clientsData = '{{ clients|default("[]")|tojson|safe }}';
+            allClients = JSON.parse(clientsData);
+            console.log("Loaded clients from server:", allClients);
+        } catch (e) {
+            console.error("Error parsing clients data:", e);
+            // Fallback to empty array if parsing fails
+            allClients = [];
+        }
+        
+        // No placeholder data for clients
+        if (!allClients || allClients.length === 0) {
+            allClients = [];
+        }
+        
+        // API helper functions
+        const api = {
+            // Add a new device
+
+            addDevice: async function(deviceData) {
+                try {
+                    const response = await fetch('/api/admin/devices', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(deviceData)
+                    });
+                    return await response.json();
+                } catch (error) {
+                    console.error('Error adding device:', error);
+                    return { success: false, message: 'Network error' };
+                }
+            },
+            
+            // Delete a device by serial number
+            deleteDeviceBySerial: async function(serialNumber) {
+                try {
+                    const response = await fetch(`/api/admin/devices/serial/${serialNumber}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    });
+                    return await response.json();
+                } catch (error) {
+                    console.error('Error deleting device:', error);
+                    return { success: false, message: 'Network error' };
+                }
+            },
+            
+            // Assign a device to a client
+            assignDevice: async function(deviceId, clientId, assignmentData = {}) {
+                try {
+                    const response = await fetch(`/api/admin/devices/${deviceId}/assign`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ 
+                            clientId,
+                            ...assignmentData
+                        })
+                    });
+                    return await response.json();
+                } catch (error) {
+                    console.error('Error assigning device:', error);
+                    return { success: false, message: 'Network error' };
+                }
+            },
+            
+            // Unassign a device from a client
+            unassignDevice: async function(deviceId) {
+                try {
+                    const response = await fetch(`/api/admin/devices/${deviceId}/unassign`, {
+                        method: 'POST'
+                    });
+                    return await response.json();
+                } catch (error) {
+                    console.error('Error unassigning device:', error);
+                    return { success: false, message: 'Network error' };
+                }
+            }
+        };        // Function to unassign a device from client in the database
+        async function unassignClientDeviceFromDB(deviceId) {
+            if (confirm(`Êtes-vous sûr de vouloir désassigner l'appareil ${deviceId} du client?`)) {
+                try {
+                    const response = await fetch(`/api/admin/devices/${deviceId}/unassign`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        }
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        alert(`Appareil ${deviceId} désassigné du client avec succès.`);
+                        // Refresh both tables
+                        renderDKITsTable();
+                        renderClientDKITsTable();
+                    } else {
+                        alert(`Erreur lors de la désassignation: ${result.message}`);
+                    }
+                } catch (error) {
+                    console.error('Error unassigning device:', error);
+                    alert('Une erreur est survenue lors de la désassignation.');
+                }
+            }
+        }
+
+        // Updated unassign function for backward compatibility
+        function unassignClientDevice(deviceId) {
+            // Call the database version
+            unassignClientDeviceFromDB(deviceId);
+        }// Removed function openAssignDeviceModal and its event listener as we no longer assign to representatives
+
+        document.getElementById('assignDeviceToClientForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            console.log("Assign Device form submitted");
+            
+            const deviceId = document.getElementById('assignDeviceToClientSelect').value;
+            const clientId = parseInt(document.getElementById('assignClientSelect').value);
+            
+            if (!deviceId || !clientId) {
+                alert("Veuillez sélectionner un appareil et un client.");
+                return;
+            }
+            
+            console.log(`Assigning device ${deviceId} to client ${clientId}`);
+            
+            try {
+                // Call the API to assign device to client in database
+                const response = await fetch(`/api/admin/devices/${deviceId}/assign`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ 
+                        clientId: clientId,
+                        assignmentDate: new Date().toISOString(),
+                        warrantyEndDate: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000).toISOString() // 1 year warranty
+                    })
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    const client = allClients.find(c => c.id === clientId);
+                    alert(`Appareil ${deviceId} assigné à ${client ? client.name : 'client'} avec succès.`);
+                    closeModal('assignDeviceToClientModal');
+                    
+                    // Refresh both tables to show updated data
+                    renderDKITsTable();
+                    renderClientDKITsTable();
+                } else {
+                    alert(`Erreur lors de l'assignation: ${result.message}`);
+                }
+            } catch (error) {
+                console.error('Error assigning device:', error);
+                alert('Une erreur est survenue lors de l\'assignation.');
+            }
+        });
+        
+        // Edit Client-Assigned Device Modal
+        async function openEditClientDeviceModal(deviceId) {
+            try {
+                // Fetch device assignment details from database
+                const response = await fetch(`/api/admin/devices/${deviceId}/assignment`);
+                const result = await response.json();
+                
+                if (!result.success) {
+                    alert(`Erreur lors du chargement des données: ${result.message}`);
+                    return;
+                }
+                
+                const device = result.device;
+                
+                // Set the device ID
+                document.getElementById('editClientDeviceId').value = device.device_id || device.id;
+                
+                // Populate client dropdown
+                const clientSelect = document.getElementById('editClientDeviceClient');
+                clientSelect.innerHTML = '';
+                allClients.forEach(client => {
+                    const option = document.createElement('option');
+                    option.value = client.id;
+                    option.textContent = client.name;
+                    clientSelect.appendChild(option);
+                });
+                
+                // Set selected client
+                clientSelect.value = device.client_id || '';
+                
+                // Set other fields
+                document.getElementById('editClientDeviceLocation').value = device.location || '';
+                document.getElementById('editClientDeviceStatus').value = device.status || 'active';
+                
+                // Format warranty end date
+                const warrantyEndDate = device.warranty_end_date ? new Date(device.warranty_end_date).toLocaleDateString('fr-FR') : '';
+                document.getElementById('editClientDeviceWarrantyEnd').value = warrantyEndDate;
+                
+                // Show the modal
+                openModal('editClientDeviceModal');
+                
+            } catch (error) {
+                console.error('Error loading device assignment details:', error);
+                alert('Erreur lors du chargement des données d\'assignation.');
+            }
+        }
+        
+        function setupEditClientDeviceForm() {
+            document.getElementById('editClientDeviceForm').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                
+                const deviceId = document.getElementById('editClientDeviceId').value;
+                const clientId = parseInt(document.getElementById('editClientDeviceClient').value);
+                const location = document.getElementById('editClientDeviceLocation').value;
+                const status = document.getElementById('editClientDeviceStatus').value;
+                const warrantyEndDate = document.getElementById('editClientDeviceWarrantyEnd').value;
+                
+                try {
+                    // Convert warranty end date to ISO format if provided
+                    let warrantyEndISO = null;
+                    if (warrantyEndDate) {
+                        const [day, month, year] = warrantyEndDate.split('/');
+                        if (day && month && year) {
+                            warrantyEndISO = new Date(parseInt(year), parseInt(month) - 1, parseInt(day)).toISOString();
+                        }
+                    }
+                    
+                    const response = await fetch(`/api/admin/devices/${deviceId}/assignment`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            clientId: clientId,
+                            location: location,
+                            status: status,
+                            warrantyEndDate: warrantyEndISO
+                        })
+                    });
+                    
+                    const result = await response.json();
+                    
+                    if (result.success) {
+                        alert(`Détails de l'appareil ${deviceId} mis à jour avec succès.`);
+                        closeModal('editClientDeviceModal');
+                        
+                        // Refresh both tables
+                        renderDKITsTable();
+                        renderClientDKITsTable();
+                    } else {
+                        alert(`Erreur lors de la mise à jour: ${result.message}`);
+                    }
+                } catch (error) {
+                    console.error('Error updating device assignment:', error);
+                    alert('Une erreur est survenue lors de la mise à jour.');
+                }
+            });
+        }
+        
+        function renderDKITsTable(devices) {
+
+
+            console.log("Rendering table with devices:", devices);
+            const tbody = document.getElementById('devicesTableBody');
+            if (!tbody) {
+                console.error("Could not find devicesTableBody element!");
+                return;
+            }
+            
+            tbody.innerHTML = '';
+            
+            // Filter out devices for the stock table (all devices, regardless of assignment)
+            const stockDevices = devices || [];
+            
+            if (stockDevices.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 20px;">Aucun appareil D-KIT trouvé.</td></tr>`;
+                return;
+            }
+            
+            stockDevices.forEach(device => {
+                if (!device) return; // Skip null/undefined devices
+                
+                let statusClass = '';
+                const status = device.status || 'inactive';
+                switch (status) {
+                    case 'active': statusClass = 'status-active'; break;
+                    case 'inactive': statusClass = 'status-inactive'; break;
+                    case 'maintenance': statusClass = 'status-maintenance'; break;
+                    default: statusClass = '';
+                }
+                const statusText = status.charAt(0).toUpperCase() + status.slice(1);
+                const assignedClient = device.assignedClient ? `<span class="badge badge-info">Client: ${device.assignedClient}</span>` : '';
+                const assignmentDisplay = assignedClient || '<span class="badge badge-secondary">Non assigné</span>';
+                
+                // Debug logging for device IDs
+                console.log(`Rendering device with ID: ${device.id}, Serial: ${device.serialNumber}`);
+                
+                const row = `
+                    <tr>
+                        <td><input type="checkbox" name="deviceSelect" value="${device.id || ''}"></td>
+                        <td>${device.id || ''}</td>
+                        <td>${device.model || 'N/A'}</td>
+                        <td>${device.serialNumber || 'N/A'}</td>
+                        <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                        <td>${device.addedDate || 'N/A'}</td>
+                        <td>
+                            <div class="action-menu">
+                                <button class="action-btn edit-btn" data-device-id="${device.id || ''}" data-action="edit">Modifier</button>
+                                <button class="action-btn delete-btn" data-serial-number="${device.serialNumber || ''}" data-action="delete">Supprimer</button>
+                            </div>
+                            <div style="font-size:0.85em;margin-top:6px;">${assignmentDisplay}</div>
+                        </td>
+                    </tr>
+                `;
+                tbody.innerHTML += row;
+            });
+            
+            // Now render the client-assigned devices table independently
+            renderClientDKITsTable();
+        }
+        
+        async function renderClientDKITsTable(devices = null) {
+            const tbody = document.getElementById('clientDKITsTableBody');
+            if (!tbody) {
+                console.error("Could not find clientDKITsTableBody element!");
+                return;
+            }
+            
+            tbody.innerHTML = '<tr><td colspan="10" style="text-align:center; padding: 20px;">Chargement des appareils assignés...</td></tr>';
+            
+            try {
+                // Fetch client-assigned devices from the database
+                const response = await fetch('/api/admin/devices/assigned');
+                const result = await response.json();
+                
+                if (!result.success) {
+                    tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; padding: 20px; color: red;">Erreur: ${result.message}</td></tr>`;
+                    return;
+                }
+                
+                const clientDevices = result.devices || [];
+                
+                if (clientDevices.length === 0) {
+                    tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; padding: 20px;">Aucun appareil D-KIT assigné à des clients.</td></tr>`;
+                    return;
+                }
+                
+                tbody.innerHTML = '';
+                
+                clientDevices.forEach(device => {
+                    let statusClass = '';
+                    const status = device.status || 'inactive';
+                    switch (status) {
+                        case 'active': statusClass = 'status-active'; break;
+                        case 'inactive': statusClass = 'status-inactive'; break;
+                        case 'maintenance': statusClass = 'status-maintenance'; break;
+                        default: statusClass = '';
+                    }
+                    const statusText = status.charAt(0).toUpperCase() + status.slice(1);
+                    
+                    // Format dates properly
+                    const assignmentDate = device.assignment_date ? new Date(device.assignment_date).toLocaleDateString('fr-FR') : 'N/A';
+                    const warrantyEndDate = device.warranty_end_date ? new Date(device.warranty_end_date).toLocaleDateString('fr-FR') : 'N/A';
+                    
+                    // Validation status
+                    const isValidated = device.validated === 1;
+                    const validationClass = isValidated ? 'status-active' : 'status-inactive';
+                    const validationText = isValidated ? 'Validé' : 'Non Validé';
+                    
+                    // Action button - only show "Accepter" for non-validated devices
+                    let actionButton = '';
+                    if (!isValidated) {
+                        actionButton = `<button class="action-btn validate-btn" onclick="validateDevice('${device.device_id || device.id}')">Accepter</button>`;
+                    } else {
+                        actionButton = `<span style="color: #00A69C; font-weight: 500;">Accepté</span>`;
+                    }
+                    
+                    const row = `
+                        <tr>
+                            <td>${device.device_id || device.id}</td>
+                            <td>${device.model || 'N/A'}</td>
+                            <td>${device.serial_number || 'N/A'}</td>
+                            <td>${device.client_name || 'N/A'}</td>
+                            <td>${assignmentDate}</td>
+                            <td>${warrantyEndDate}</td>
+                            <td>${device.location || 'N/A'}</td>
+                            <td><span class="status-badge ${statusClass}">${statusText}</span></td>
+                            <td><span class="status-badge ${validationClass}">${validationText}</span></td>
+                            <td>
+                                <div class="action-menu">
+                                    ${actionButton}
+                                </div>
+                            </td>
+                        </tr>
+                    `;
+                    tbody.innerHTML += row;
+                });
+                
+            } catch (error) {
+                console.error('Error loading client-assigned devices:', error);
+                tbody.innerHTML = `<tr><td colspan="10" style="text-align:center; padding: 20px; color: red;">Erreur lors du chargement des données</td></tr>`;
+            }
+        }
+        
+        function getSelectedDevices() {
+            const checkboxes = document.querySelectorAll('input[name="deviceSelect"]:checked');
+            return Array.from(checkboxes).map(cb => cb.value);
+        }
+
+        function selectAllDevices(checkbox) {
+            const checkboxes = document.querySelectorAll('input[name="deviceSelect"]');
+            checkboxes.forEach(cb => cb.checked = checkbox.checked);
+        }
+
+        // Function to validate/accept a device
+        async function validateDevice(deviceId) {
+            if (!confirm('Êtes-vous sûr de vouloir accepter/valider cet appareil ?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch(`/api/admin/devices/${deviceId}/validate`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    alert('Appareil validé avec succès !');
+                    // Refresh the client-assigned devices table
+                    renderClientDKITsTable();
+                } else {
+                    alert('Erreur lors de la validation : ' + result.message);
+                }
+            } catch (error) {
+                console.error('Error validating device:', error);
+                alert('Erreur lors de la validation de l\'appareil');
+            }
+        }
+
+        function searchDevices(query) {
+            const lowerCaseQuery = query.toLowerCase();
+            if (!lowerCaseQuery) {
+                renderDKITsTable(allDKITs);
+                return;
+            }
+            const filtered = allDKITs.filter(d => 
+                d.id.toLowerCase().includes(lowerCaseQuery) ||
+                d.model.toLowerCase().includes(lowerCaseQuery) ||
+                (d.serialNumber && d.serialNumber.toLowerCase().includes(lowerCaseQuery)) ||
+                (d.assignedClient && d.assignedClient.toLowerCase().includes(lowerCaseQuery)) ||
+                (d.location && d.location.toLowerCase().includes(lowerCaseQuery)) ||
+                d.status.toLowerCase().includes(lowerCaseQuery)
+            );
+            renderDKITsTable(filtered);        }
+        
+        window.onclick = function(event) {
+            const modals = document.getElementsByClassName('modal');
+            for (let modal of modals) {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                }
+            }
+        };
+        
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log("Initial data from server-side:", allDKITs);
+            
+            // First render with data from server-side render
+            renderDKITsTable(allDKITs);
+            
+            // Load client-assigned devices independently
+            renderClientDKITsTable();
+            
+            try {
+                // Then try to fetch fresh data from API
+                const response = await fetch('/api/admin/devices');
+                const result = await response.json();
+                if (result.success && result.devices.length > 0) {
+                    // Map server data to our format
+                    allDKITs = result.devices.map(device => ({
+                        id: device.id,
+                        model: device.model,
+                        serialNumber: device.serial_number,
+                        status: device.status || 'inactive',
+                        addedDate: device.creation_date,
+                        assignedClient: null,
+                        assignedClientId: null,
+                        assignmentDate: null,
+                        warrantyEndDate: null,
+                        location: 'Stock - Entrepôt'
+                    }));
+                    console.log('Fresh devices loaded from API:', allDKITs);
+                    
+                    // Re-render stock table with fresh data
+                    renderDKITsTable(allDKITs);
+                    
+                    // Also refresh the client-assigned devices table
+                    renderClientDKITsTable();
+                }
+            } catch (error) {
+                console.error('Error loading devices from server API:', error);
+            }
+            
+            // Set up event listeners for forms
+            setupEditClientDeviceForm();
+
+            // Set up device form submission event listener
+            const deviceForm = document.getElementById('deviceForm');
+            if (deviceForm) {
+                deviceForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    console.log("Device form submitted");
+                    
+                    const deviceId = deviceForm.getAttribute('data-device-id');
+                    const model = document.getElementById('deviceModel').value;
+                    const serialNumber = document.getElementById('deviceSerialNumber').value;
+                    
+                    console.log("Form values:", { deviceId, model, serialNumber });
+
+                    // Validate required fields
+                    if (!model || !serialNumber) {
+                        alert('Veuillez remplir tous les champs requis (Modèle et Numéro de Série).');
+                        return;
+                    }
+
+                    // Disable submit button to prevent double submission
+                    const submitBtn = e.target.querySelector('button[type="submit"]');
+                    const originalText = submitBtn.textContent;
+                    submitBtn.textContent = 'Sauvegarde...';
+                    submitBtn.disabled = true;
+
+                    try {
+                        if (deviceId) { // Editing existing device
+                            console.log(`Updating device ${deviceId}`);
+                            const response = await fetch(`/api/admin/stock/${deviceId}`, {
+                                method: 'PUT',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                    model: model,
+                                    serial_number: serialNumber
+                                })
+                            });
+                            
+                            const result = await response.json();
+                            
+                            if (result.success) {
+                                alert('Appareil modifié avec succès dans le stock!');
+                                closeModal('deviceModal');
+                                // Reload the page to refresh the table with updated data
+                                window.location.reload();
+                            } else {
+                                alert(`Erreur: ${result.message}`);
+                            }
+                        } else { // Adding new device to stock
+                            console.log('Adding new device to stock');
+                            const response = await fetch('/api/admin/stock/add', {
+                                method: 'POST',
+                                headers: {
+                                    'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                    model: model,
+                                    serial_number: serialNumber,
+                                    status: 'available'
+                                })
+                            });
+                            
+                            const result = await response.json();
+                            
+                            if (result.success) {
+                                alert('Nouvel appareil ajouté avec succès au stock!');
+                                closeModal('deviceModal');
+                                // Reload the page to refresh the table with new data
+                                window.location.reload();
+                            } else {
+                                alert(`Erreur: ${result.message}`);
+                            }
+                        }
+                    } catch (error) {
+                        console.error('Error submitting device form:', error);
+                        alert('Une erreur est survenue lors de la communication avec le serveur. Veuillez réessayer plus tard.');
+                    } finally {
+                        // Re-enable submit button
+                        submitBtn.textContent = originalText;
+                        submitBtn.disabled = false;
+                        // Clear the device ID for next use
+                        deviceForm.removeAttribute('data-device-id');
+                    }
+                });
+            }
+
+            // Add event listeners for modal buttons using IDs            console.log("Attempting to find add device button");
+            const addBtn = document.getElementById('addDeviceButton');
+            if (addBtn) {
+                console.log("Found Add Device button - it has an HTML onclick attribute");
+                // Do not add event listener, as it will override the onclick attribute
+                // Just verify that the button has the onclick attribute
+                if (!addBtn.hasAttribute('onclick')) {
+                    console.log("Button missing onclick attribute, adding it");
+                    addBtn.setAttribute('onclick', 'openAddDeviceModal()');
+                }
+            } else {
+                console.error("Add Device button not found");            }
+            
+            const assignBtn = document.getElementById('assignDeviceToClientButton');
+            if (assignBtn) {
+                console.log("Found Assign Device button - it has an HTML onclick attribute");
+                // Check if it has the onclick attribute, if not add it
+                if (!assignBtn.hasAttribute('onclick')) {
+                    console.log("Assign button missing onclick attribute, adding it");
+                    assignBtn.setAttribute('onclick', 'openAssignDeviceToClientModal()');
+                }
+                
+                // Add a backup event listener for redundancy
+                assignBtn.addEventListener('click', function(e) {
+                    console.log("Assign Device button clicked via event listener");
+                    e.preventDefault();
+                    e.stopPropagation();
+                    openAssignDeviceToClientModal();
+                });
+            } else {
+                console.error("Assign Device button not found");
+            }
+            
+            if (document.getElementById('assignDeviceToClientForm')) {
+                document.getElementById('assignDeviceToClientForm').addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    // Rest of the handler code will remain intact
+                });
+            }
+            
+            // Note: renderClientDKITsTable is already called inside renderDKITsTable
+            // Potentially fetch sales reps here if using a real backend
+        });        // Additional utility functions
+        function confirmLogout() {
+            if (confirm("Êtes-vous sûr de vouloir vous déconnecter?")) {
+                window.location.href = "{{ url_for('logout') }}";
+            }
+        }
+
+        // Debug modal functionality
+        console.log("Debug: Adding modal functions");
+        
+        // Diagnose modal issues  
+        document.querySelectorAll('.modal').forEach(modal => {
+            console.log(`Found modal with ID: ${modal.id}`);
+        });            // When DOM is ready, do one final check on the button
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log("DOM fully loaded - doing final button check");
+            
+            // Check Add Device button
+            const addDeviceButton = document.getElementById('addDeviceButton');
+            if (addDeviceButton) {
+                // Make sure the button has text content
+                if (!addDeviceButton.textContent.trim()) {
+                    addDeviceButton.textContent = "Ajouter un Appareil";
+                }
+                
+                // Make absolutely sure it has the onclick
+                addDeviceButton.setAttribute('onclick', 'openAddDeviceModal()');
+                console.log("Add Device button ready with onclick:", addDeviceButton.getAttribute('onclick'));
+                
+                // Direct binding as fallback
+                addDeviceButton.addEventListener('click', function(e) {
+                    console.log("Add Device button clicked via event listener");
+                    openAddDeviceModal();
+                });
+            } else {
+                console.error("Still can't find add device button!");
+            }
+            
+            // Check Assign Device button
+            const assignDeviceButton = document.getElementById('assignDeviceToClientButton');
+            if (assignDeviceButton) {
+                // Make sure the button has text content
+                if (!assignDeviceButton.textContent.trim()) {
+                    assignDeviceButton.textContent = "Assigner Appareil à un Client";
+                }
+                
+                // Make absolutely sure it has the onclick
+                assignDeviceButton.setAttribute('onclick', 'openAssignDeviceToClientModal()');
+                console.log("Assign Device button ready with onclick:", assignDeviceButton.getAttribute('onclick'));
+                
+                // Direct binding as fallback
+                assignDeviceButton.addEventListener('click', function(e) {
+                    console.log("Assign Device button clicked via event listener");
+                    openAssignDeviceToClientModal();
+                });
+            } else {
+                console.error("Still can't find assign device button!");
+            }
+            
+            // Verify all modals are in the DOM
+            const modals = ['deviceModal', 'assignDeviceModal', 'assignDeviceToClientModal', 'editClientDeviceModal'];
+            modals.forEach(modalId => {
+                const modal = document.getElementById(modalId);
+                if (modal) {
+                    console.log(`Modal found in DOM: ${modalId}`);
+                } else {
+                    console.error(`Modal NOT found in DOM: ${modalId}`);
+                }
+            });
+        });
+        
+        // Add event delegation for dynamically created buttons
+        document.addEventListener('click', function(e) {
+            const target = e.target;
+            
+            // Handle edit button clicks
+            if (target.classList.contains('edit-btn') && target.dataset.action === 'edit') {
+                e.preventDefault();
+                const deviceId = target.dataset.deviceId;
+                console.log('Edit button clicked via event delegation for device:', deviceId);
+                if (deviceId) {
+                    openEditDeviceModal(deviceId);
+                } else {
+                    alert('ID de l\'appareil manquant');
+                }
+            }
+            
+            // Handle delete button clicks
+            if (target.classList.contains('delete-btn') && target.dataset.action === 'delete') {
+                e.preventDefault();
+                const serialNumber = target.dataset.serialNumber;
+                console.log('Delete button clicked via event delegation for serial:', serialNumber);
+                if (serialNumber) {
+                    deleteDevice(serialNumber);
+                } else {
+                    alert('Numéro de série manquant');
+                }
+            }
+        });
+        
+        // Function to delete a device by serial number
+        function deleteDevice(serialNumber) {
+            if (confirm(`Êtes-vous sûr de vouloir supprimer l'appareil avec le numéro de série ${serialNumber}?`)) {
+                api.deleteDeviceBySerial(serialNumber)
+                    .then(result => {
+                        if (result.success) {
+                            alert(`Appareil supprimé avec succès: ${result.message}`);
+                            // Reload the page to refresh data from stock table
+                            window.location.reload();
+                        } else {
+                            alert(`Erreur lors de la suppression: ${result.message}`);
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error deleting device:', error);
+                        alert('Une erreur est survenue lors de la suppression de l\'appareil.');
+                    });
+            }
+        }
+    // Recherche et validation du numéro de série D-KIT
+const serialInput = document.getElementById('assignDeviceToClientSearch');
+const resultDiv = document.getElementById('deviceSearchResult');
+const hiddenDeviceId = document.getElementById('assignDeviceToClientSelect');
+
+serialInput.addEventListener('input', async function() {
+    const serial = serialInput.value.trim();
+    resultDiv.textContent = '';
+    hiddenDeviceId.value = '';
+    if (serial.length < 3) {
+        resultDiv.textContent = '';
+        return;
+    }
+    try {
+        const res = await fetch(`/api/admin/devices/check/${encodeURIComponent(serial)}`);
+        const data = await res.json();
+        if (data.success && data.exists) {
+            resultDiv.textContent = `D-KIT trouvé : ${data.device.serial_number} (${data.device.model})`;
+            resultDiv.style.color = 'green';
+            hiddenDeviceId.value = data.device.id;
+        } else {
+            resultDiv.textContent = 'D-KIT non trouvé';
+            resultDiv.style.color = 'red';
+            hiddenDeviceId.value = '';
+        }
+    } catch (e) {
+        resultDiv.textContent = 'Erreur lors de la vérification';
+        resultDiv.style.color = 'red';
+        hiddenDeviceId.value = '';
+    }
+});
+
+// Recherche et validation des utilisateurs (clients)
+const clientInput = document.getElementById('assignClientSearch');
+const clientResultDiv = document.getElementById('clientSearchResult');
+const hiddenClientId = document.getElementById('assignClientSelect');
+let clientTimeout;
+
+clientInput.addEventListener('input', function() {
+    const searchTerm = clientInput.value.trim();
+    clientResultDiv.textContent = '';
+    hiddenClientId.value = '';
+    
+    // Clear previous timeout
+    clearTimeout(clientTimeout);
+    
+    if (searchTerm.length < 3) {
+        return;
+    }
+    
+    // Add a small delay to avoid too many requests while typing
+    clientTimeout = setTimeout(async function() {
+        try {
+            const res = await fetch(`/api/admin/users/search/${encodeURIComponent(searchTerm)}`);
+            const data = await res.json();
+            
+            // Clear previous results
+            clientResultDiv.innerHTML = '';
+            
+            if (data.success && data.exists) {
+                // Create a results dropdown
+                const resultsContainer = document.createElement('div');
+                resultsContainer.className = 'search-results-dropdown';
+                
+                data.users.forEach(user => {
+                    const resultItem = document.createElement('div');
+                    resultItem.className = 'search-result-item';
+                    resultItem.textContent = `${user.name} (${user.email})`;
+                    resultItem.style.padding = '8px';
+                    resultItem.style.cursor = 'pointer';
+                    resultItem.style.borderBottom = '1px solid #eee';
+                    
+                    resultItem.addEventListener('mouseover', function() {
+                        this.style.backgroundColor = '#f5f5f5';
+                    });
+                    
+                    resultItem.addEventListener('mouseout', function() {
+                        this.style.backgroundColor = 'transparent';
+                    });
+                    
+                    resultItem.addEventListener('click', function() {
+                        clientInput.value = `${user.name} (${user.email})`;
+                        hiddenClientId.value = user.id;
+                        clientResultDiv.innerHTML = '';
+                        clientResultDiv.textContent = 'Client sélectionné';
+                        clientResultDiv.style.color = 'green';
+                    });
+                    
+                    resultsContainer.appendChild(resultItem);
+                });
+                
+                clientResultDiv.appendChild(resultsContainer);
+            } else {
+                clientResultDiv.textContent = 'Aucun client trouvé';
+                clientResultDiv.style.color = 'red';
+            }
+        } catch (e) {
+            clientResultDiv.textContent = 'Erreur lors de la recherche';
+            clientResultDiv.style.color = 'red';
+        }
+    }, 300);
+});
+</script>
+</body>
+</html>

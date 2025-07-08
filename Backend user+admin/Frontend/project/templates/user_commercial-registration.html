@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>D-WEE - Inscription Commercial</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="../static/userCSS.css" />
+    <style>
+      /* Professional Commercial Registration Form */
+      body.dashboard {
+        background: #f8f9fa;
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        margin: 0;
+        padding: 20px;
+        line-height: 1.6;
+      }
+
+      .main-content {
+        max-width: 500px;
+        margin: 80px auto 40px;
+        background: white;
+        border-radius: 6px;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        border: 1px solid #e9ecef;
+      }
+
+      .form-header {
+        text-align: center;
+        padding: 40px 30px 30px;
+        border-bottom: 1px solid #e9ecef;
+      }
+
+      .form-header img {
+        height: 40px;
+        margin-bottom: 20px;
+      }
+
+      .form-header h1 {
+        margin: 0 0 8px 0;
+        font-size: 24px;
+        font-weight: 600;
+        color: #2c3e50;
+      }
+
+      .form-header p {
+        margin: 0;
+        color: #6c757d;
+        font-size: 14px;
+      }
+
+      #commercialForm {
+        padding: 30px;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: 500;
+        color: #495057;
+        font-size: 14px;
+      }
+
+      .form-group label.required::after {
+        content: " *";
+        color: #dc3545;
+      }
+
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid #ced4da;
+        border-radius: 4px;
+        font-size: 14px;
+        box-sizing: border-box;
+        transition: border-color 0.15s ease-in-out;
+      }
+
+      .form-group input:focus,
+      .form-group select:focus,
+      .form-group textarea:focus {
+        outline: none;
+        border-color: #007bff;
+        box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.1);
+      }
+
+      .form-group textarea {
+        resize: vertical;
+        min-height: 70px;
+      }
+
+      .help-text {
+        font-size: 12px;
+        color: #6c757d;
+        margin-top: 4px;
+      }
+
+      .error {
+        color: #dc3545;
+        font-size: 12px;
+        margin-top: 4px;
+        display: none;
+      }
+
+      .submit-btn {
+        width: 100%;
+        padding: 14px;
+        background: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        font-size: 16px;
+        font-weight: 500;
+        cursor: pointer;
+        margin-top: 10px;
+        transition: background-color 0.15s ease-in-out;
+      }
+
+      .submit-btn:hover {
+        background: #0056b3;
+      }
+
+      .success-message {
+        display: none;
+        background: #d4edda;
+        color: #155724;
+        padding: 12px;
+        margin: 20px 30px;
+        border-radius: 4px;
+        text-align: center;
+        border: 1px solid #c3e6cb;
+        font-size: 14px;
+      }
+
+      .return-btn {
+        position: fixed;
+        top: 20px;
+        left: 20px;
+        display: inline-flex;
+        align-items: center;
+        padding: 8px 12px;
+        background: #6c757d;
+        color: white;
+        text-decoration: none;
+        border-radius: 4px;
+        font-size: 13px;
+        z-index: 1000;
+        transition: background-color 0.15s ease-in-out;
+      }
+
+      .return-btn:hover {
+        background: #545b62;
+        text-decoration: none;
+        color: white;
+      }
+
+      .return-btn i {
+        margin-right: 6px;
+      }
+
+      .alert-success {
+        background: #d4edda;
+        color: #155724;
+        border: 1px solid #c3e6cb;
+        margin: 20px 30px;
+        border-radius: 4px;
+        padding: 12px;
+        text-align: center;
+        font-size: 14px;
+      }
+      .alert-error {
+        background: #f8d7da;
+        color: #721c24;
+        border: 1px solid #f5c6cb;
+        margin: 20px 30px;
+        border-radius: 4px;
+        padding: 12px;
+        text-align: center;
+        font-size: 14px;
+      }
+
+      /* Mobile responsive */
+      @media (max-width: 768px) {
+        body.dashboard {
+          padding: 15px;
+        }
+
+        .main-content {
+          margin-top: 60px;
+          margin-bottom: 20px;
+        }
+
+        .form-header {
+          padding: 30px 20px 20px;
+        }
+
+        .form-header h1 {
+          font-size: 20px;
+        }
+
+        #commercialForm {
+          padding: 20px;
+        }
+
+        .success-message {
+          margin: 15px 20px;
+        }
+      }
+    </style>
+  </head>
+  <body class="dashboard">
+    <!-- Return Arrow -->
+    <a href="{{ url_for('user_dashboard') }}" class="return-btn">
+      <i class="fas fa-arrow-left"></i>
+      Retour
+    </a>
+    <!-- Main Content -->
+    <div class="main-content">
+      <div class="form-header">
+        <img
+          src="https://dweehealthcare.com/wp-content/uploads/2023/08/D-wee-Final.png"
+          alt="D-WEE Logo"
+        />
+        <h1>Inscription Commercial</h1>
+        <p>
+          Remplissez le formulaire pour devenir représentant commercial D-WEE.
+        </p>
+      </div>
+
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert alert-{{ 'success' if category == 'success' else 'error' }} alert-{{ category }}">
+              {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+      {% if registration_success %}
+        <div class="alert alert-success">Inscription commerciale réussie ! Votre demande a été envoyée.</div>
+      {% endif %}
+
+      <div class="success-message" id="successMessage">
+        Votre demande d'inscription a été envoyée avec succès. Elle sera
+        examinée par notre équipe.
+      </div>
+
+      <form id="commercialForm" method="POST" action="{{ url_for('user_commercial_registration') }}">
+        <div class="form-group">
+          <label for="raisonSociale" class="required">Raison sociale</label>
+          <input type="text" id="raisonSociale" name="raisonSociale" required />
+          <div class="error" id="raisonSocialeError">
+            Ce champ est obligatoire
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="matriculeFiscale" class="required"
+            >Matricule fiscale</label
+          >
+          <input
+            type="text"
+            id="matriculeFiscale"
+            name="matriculeFiscale"
+            required
+          />
+          <div class="error" id="matriculeError">
+            Format de matricule fiscale invalide
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="adresse" class="required">Adresse</label>
+          <textarea id="adresse" name="adresse" rows="3" required></textarea>
+          <div class="error" id="adresseError">Ce champ est obligatoire</div>
+        </div>
+
+        <div class="form-group">
+          <label for="telephone" class="required">Téléphone</label>
+          <input type="tel" id="telephone" name="telephone" required />
+          <div class="error" id="telephoneError">
+            Numéro de téléphone invalide
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email" class="required">Email</label>
+          <input type="email" id="email" name="email" required />
+          <div class="error" id="emailError">Adresse email invalide</div>
+        </div>
+
+        <div class="form-group">
+          <label for="secteurActivite" class="required"
+            >Secteur d'activité</label
+          >
+          <select id="secteurActivite" name="secteurActivite" required>
+            <option value="">Sélectionnez un secteur</option>
+            <option value="pharmacie">Pharmacie</option>
+            <option value="hopital">Hôpital</option>
+            <option value="clinique">Clinique</option>
+            <option value="Parapharmacie">Parapharmacie</option>
+            <option value="autre">Autre</option>
+          </select>
+          <div class="error" id="secteurError">Ce champ est obligatoire</div>
+        </div>
+
+        <div class="form-group">
+          <label for="motivation">Motivation</label>
+          <textarea
+            id="motivation"
+            name="motivation"
+            rows="4"
+            placeholder="Expliquez pourquoi vous souhaitez devenir représentant D-WEE."
+          ></textarea>
+        </div>
+        <button type="submit" class="submit-btn">Soumettre la demande</button>
+      </form>
+    </div>
+
+    <script>
+      // Form validation and submission
+      document
+        .getElementById("commercialForm")
+        .addEventListener("submit", function (e) {
+          // Only prevent default if invalid, otherwise allow normal submit
+          // Reset all errors
+          document.querySelectorAll(".error").forEach((error) => {
+            error.style.display = "none";
+          });
+
+          let isValid = true;
+
+          // Validate required fields
+          const requiredFields = [
+            "raisonSociale",
+            "matriculeFiscale",
+            "adresse",
+            "telephone",
+            "email",
+            "secteurActivite",
+          ];
+          requiredFields.forEach((field) => {
+            const input = document.getElementById(field);
+            if (!input.value.trim()) {
+              document.getElementById(field + "Error").style.display = "block";
+              isValid = false;
+            }
+          });
+
+          // Validate matricule fiscale format
+          const matricule = document.getElementById("matriculeFiscale").value;
+          const matriculePattern = /^\d{7}\/[A-Z]\/[A-Z]\/[A-Z]\/\d{3}$/;
+          if (matricule && !matriculePattern.test(matricule)) {
+            document.getElementById("matriculeError").style.display = "block";
+            isValid = false;
+          }
+
+          // Validate phone number
+          const phone = document.getElementById("telephone").value;
+          const phonePattern = /^\+216\s?\d{2}\s?\d{3}\s?\d{3}$/;
+          if (phone && !phonePattern.test(phone)) {
+            document.getElementById("telephoneError").style.display = "block";
+            isValid = false;
+          }
+
+          // Validate email
+          const email = document.getElementById("email").value;
+          const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (email && !emailPattern.test(email)) {
+            document.getElementById("emailError").style.display = "block";
+            isValid = false;
+          }
+
+          if (!isValid) {
+            e.preventDefault(); // Only prevent if invalid
+          }
+          // If valid, allow normal form submission to backend
+        });
+
+      // Real-time validation
+      document
+        .getElementById("matriculeFiscale")
+        .addEventListener("input", function (e) {
+          const matriculePattern = /^\d{7}\/[A-Z]\/[A-Z]\/[A-Z]\/\d{3}$/;
+          if (this.value && !matriculePattern.test(this.value)) {
+            document.getElementById("matriculeError").style.display = "block";
+          } else {
+            document.getElementById("matriculeError").style.display = "none";
+          }
+        });
+
+      document
+        .getElementById("telephone")
+        .addEventListener("input", function (e) {
+          const phonePattern = /^\+216\s?\d{2}\s?\d{3}\s?\d{3}$/;
+          if (this.value && !phonePattern.test(this.value)) {
+            document.getElementById("telephoneError").style.display = "block";
+          } else {
+            document.getElementById("telephoneError").style.display = "none";
+          }
+        });
+
+      document.getElementById("email").addEventListener("input", function (e) {
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (this.value && !emailPattern.test(this.value)) {
+          document.getElementById("emailError").style.display = "block";
+        } else {
+          document.getElementById("emailError").style.display = "none";
+        }
+      });
+      // Mobile sidebar toggle (if needed)
+      const sidebarToggle = document.querySelector(".sidebar-toggle");
+      if (sidebarToggle) {
+        sidebarToggle.addEventListener("click", function () {
+          document.querySelector(".sidebar").classList.toggle("active");
+        });
+      }
+    </script>
+  </body>
+</html>

@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+{# 
+  Ce modèle attend les variables suivantes:
+  
+  - page_title: Le titre de la page (Tableau de Bord)
+  - user_name: Le nom de l'utilisateur connecté
+  - user_initials: Les initiales de l'utilisateur connecté
+  - user_role: Le rôle de l'utilisateur connecté (Administrateur)
+  
+  - nav_items: Une liste d'éléments de navigation, chacun avec:
+    - id: L'ID de l'élément de navigation
+    - name: Le nom de l'élément de navigation
+    - url: L'URL de l'élément de navigation
+    - icon: Le nom de l'icône Font Awesome
+    - active: Si l'élément de navigation est actif
+  
+  - pending_requests_count: Le nombre de demandes en attente
+  - pending_requests_text: Le texte à afficher pour les demandes en attente
+  - pending_requests_url: L'URL pour naviguer lors du clic sur le bouton "Examiner"
+  - pending_requests_action: Le texte pour le bouton d'action
+  
+  - stats: Une liste de cartes statistiques, chacune avec:
+    - icon: Le nom de l'icône Font Awesome
+    - icon_class: La classe CSS pour l'icône
+    - change: La valeur de changement (nombre positif ou négatif)
+    - change_text: Le texte de changement formaté (ex: "+5" ou "-3")
+    - value: La valeur statistique principale à afficher
+    - label: L'étiquette pour la statistique
+    - url: L'URL pour naviguer lors du clic sur la carte
+  
+  - recent_activities: Une liste d'activités récentes, chacune avec:
+    - action: L'action effectuée
+    - user: L'utilisateur qui a effectué l'action
+    - date: La date de l'action
+    - status_class: La classe CSS pour le badge de statut
+    - status_text: Le texte pour le badge de statut
+  
+  - activities_card:
+    - title: Le titre de la carte d'activités (Activités Récentes)
+    - icon: Le nom de l'icône Font Awesome pour la carte d'activités
+  
+  - performance_chart:
+    - title: Le titre de la carte de graphique de performance (Métriques de Performance)
+    - icon: Le nom de l'icône Font Awesome pour le graphique
+    - label: L'étiquette pour la métrique de performance (Taux de Croissance)
+    - value: La valeur de la métrique de performance
+    - main_value: La valeur principale pour le graphique
+    - secondary_value: La valeur secondaire pour le graphique
+    - type: Le type de graphique à afficher
+    - main_label: L'étiquette pour la valeur principale du graphique (Actif)
+    - secondary_label: L'étiquette pour la valeur secondaire du graphique (Inactif)
+    - main_color: La couleur pour la valeur principale du graphique
+    - secondary_color: La couleur pour la valeur secondaire du graphique
+  
+  - logout_confirm_message: Le message à afficher lors de la confirmation de déconnexion
+#}
+<html lang="fr">
+<head><meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>{{ page_title|default('Tableau de Bord Admin - D-WEE Healthcare') }}</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  
+ <style>
+    :root {
+      --primary-color: #25A8DF;
+      --primary-hover: #1E8FBF;
+      --secondary-color: #00A69C;
+      --text-color: #0A0648;
+      --text-muted: #1A1A1A;
+      --bg-color: #F4F1EE;
+      --bg-alt: #F4F1EE;
+      --border-color: rgba(26, 26, 26, 0.15);
+      --border-light: rgba(26, 26, 26, 0.08);
+      --success-color: #00A69C;
+      --warning-color: #25A8DF;
+      --danger-color: #d46161;
+      --shadow: 0 2px 8px 0 rgba(10, 6, 72, 0.08), 0 1px 4px 0 rgba(10, 6, 72, 0.04);
+      --shadow-lg: 0 8px 24px -4px rgba(10, 6, 72, 0.12), 0 4px 12px -2px rgba(10, 6, 72, 0.08);
+      --radius: 8px;
+      --radius-lg: 12px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: var(--bg-color);
+      display: flex;
+      min-height: 100vh;
+    }
+
+    /* Sidebar Styles */
+    .sidebar {
+      width: 250px;
+      background: white;
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
+      z-index: 1000;
+      box-shadow: var(--shadow);
+    }
+
+    .logo {
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .logo img {
+      width: 40px;
+      height: 40px;
+    }
+
+    .logo-text {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+
+    .logo-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 1rem 0;
+    }
+
+    .nav-item {
+      margin: 0.25rem 0;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1.5rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: all 0.2s ease;
+      font-size: 0.95rem;
+      border-radius: 0;
+      cursor: pointer;
+    }
+
+    .nav-link:hover {
+      background: var(--bg-alt);
+      color: var(--text-color);
+    }
+
+    .nav-link.active {
+      background: var(--primary-color);
+      color: white;
+      border-radius: var(--radius);
+      margin: 0.25rem 1rem;
+      padding: 0.75rem 1.25rem;
+    }
+     .nav-link.active:hover {
+        background: var(--primary-hover);
+    }
+
+    .nav-link i {
+      width: 18px;
+      text-align: center;
+    }
+
+    .sidebar-user {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .user-avatar {
+      width: 35px;
+      height: 35px;
+      background: var(--secondary-color);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .user-details {
+      flex: 1;
+    }
+
+    .user-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text-color);
+    }
+
+    .user-role {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .logout-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .logout-btn:hover {
+      background: var(--bg-alt);
+      color: var(--text-color);
+    }
+
+    /* Main Content */
+    .main-content {
+      flex: 1;
+      margin-left: 250px;
+      padding: 2rem;
+      background: var(--bg-color);
+      overflow-y: auto;
+    }
+
+    /* Alert Banner */
+    .alert-banner {
+      background: rgba(37, 168, 223, 0.1);
+      border: 1px solid var(--warning-color);
+      border-radius: var(--radius);
+      padding: 1rem 1.5rem;
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: var(--shadow);
+    }
+
+    .alert-content {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: var(--text-color);
+    }
+
+    .alert-icon {
+      color: var(--warning-color);
+    }
+
+    .alert-btn {
+      background: var(--warning-color);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .alert-btn:hover {
+      background: var(--primary-hover);
+    }
+
+    /* Page Header */
+    .page-header {
+      margin-bottom: 2rem;
+    }
+
+    .page-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--text-color);
+      margin-bottom: 0.5rem;
+    }
+
+    .page-subtitle {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: 1.5rem;
+      border: 1px solid var(--border-light);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+      cursor: pointer;
+      box-shadow: var(--shadow);
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .stat-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1rem;
+    }
+
+    .stat-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      color: white;
+    }
+
+    .stat-icon.users { background: var(--primary-color); }
+    .stat-icon.sales { background: var(--secondary-color); }
+    .stat-icon.devices { background: var(--warning-color); }
+    .stat-icon.reports { background: var(--success-color); }
+
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text-color);
+      margin-bottom: 0.25rem;
+    }
+
+    .stat-label {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .stat-change {
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+    }
+
+    .stat-change.positive {
+      background: rgba(0, 166, 156, 0.1);
+      color: var(--success-color);
+    }
+
+    .stat-change.negative {
+      background: rgba(212, 97, 97, 0.1);
+      color: var(--danger-color);
+    }
+    
+    .stat-sublabel {
+    font-size: 0.8em;
+    color: #666;
+    margin-top: 5px;
+  }
+
+    /* Content Cards */
+    .content-card {
+      background: white;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-light);
+      margin-bottom: 2rem;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .card-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border-light);
+      display: flex;
+      align-items: center;
+      justify-content: space-between; 
+    }
+
+    .card-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-color);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .card-icon {
+      color: var(--primary-color);
+      font-size: 1.2rem;
+    }
+
+    .card-body {
+      padding: 1.5rem;
+    }
+
+    /* Button Styles */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.75rem 1.25rem;
+      border: none;
+      border-radius: var(--radius);
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      font-size: 0.9rem;
+    }
+
+    .btn-primary {
+      background: var(--primary-color);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    .btn-secondary {
+      background: var(--bg-alt);
+      color: var(--text-muted);
+      border: 1px solid var(--border-color);
+    }
+
+    .btn-secondary:hover {
+      background: var(--border-light);
+    }
+
+    .btn-success {
+      background: var(--success-color);
+      color: white;
+    }
+
+    .btn-success:hover {
+      background: var(--secondary-color);
+    }
+
+    .btn-danger {
+      background: var(--danger-color);
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: #c55555;
+    }
+
+    /* Table Styles */
+    .table-container {
+      overflow-x: auto;
+    }
+
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .table th,
+    .table td {
+      padding: 1rem;
+      text-align: left;
+      border-bottom: 1px solid var(--border-light);
+    }
+
+    .table th {
+      background: var(--bg-alt);
+      font-weight: 600;
+      color: var(--text-color);
+      font-size: 0.85rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .table td {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+    }
+
+    .table tbody tr:hover {
+      background: var(--bg-alt);
+    }
+
+    /* Status Badges */
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: 6px;
+      font-size: 0.8rem;
+      font-weight: 500;
+    }
+
+    .status-active { 
+      background: rgba(0, 166, 156, 0.1);
+      color: var(--success-color);
+    }
+    
+    .status-inactive { 
+      background: rgba(212, 97, 97, 0.1);
+      color: var(--danger-color);
+    }
+    
+    .status-pending { 
+      background: rgba(37, 168, 223, 0.1);
+      color: var(--warning-color);
+    }
+    
+    .status-approved { 
+      background: rgba(37, 168, 223, 0.1);
+      color: var(--primary-color);
+    }
+
+    .status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+    }
+
+    /* Action Buttons */
+    .action-buttons {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .action-btn {
+      padding: 0.5rem;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      font-size: 0.8rem;
+    }
+
+    .action-btn.view {
+      background: rgba(37, 168, 223, 0.1);
+      color: var(--primary-color);
+    }
+
+    .action-btn.edit {
+      background: rgba(37, 168, 223, 0.1);
+      color: var(--warning-color);
+    }
+
+    .action-btn.delete {
+      background: rgba(212, 97, 97, 0.1);
+      color: var(--danger-color);
+    }
+
+    .action-btn.approve {
+      background: rgba(0, 166, 156, 0.1);
+      color: var(--success-color);
+    }
+
+    .action-btn:hover {
+      transform: scale(1.05);
+    }
+
+    /* Grid Layout */
+    .content-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 2rem;
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 100%;
+        position: static;
+        height: auto;
+        overflow-y: visible;
+      }
+      body {
+        flex-direction: column;
+      }
+      
+      .main-content {
+        margin-left: 0;
+        padding: 1rem;
+      }
+      
+      .stats-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .content-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">    <div class="logo">
+      <img src="https://dweehealthcare.com/wp-content/uploads/2023/08/D-wee-Final.png" alt="DWEE Logo" />
+      <div>
+        <div class="logo-text">D-WEE Healthcare</div>
+        <div class="logo-subtitle">Administration</div>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      {% if nav_items is defined and nav_items %}
+        {% for nav_item in nav_items %}
+        <div class="nav-item">
+          <a id="nav-{{ nav_item.id }}" class="nav-link{% if nav_item.active %} active{% endif %}" href="{{ nav_item.url }}">
+            <i class="fas fa-{{ nav_item.icon }}"></i> {{ nav_item.name }}
+          </a>
+        </div>
+        {% endfor %}
+      {% else %}        <!-- Default navigation items -->
+        <div class="nav-item">
+          <a id="nav-dashboard" class="nav-link active" href="{{ url_for('superadmin_dashboard') }}">
+            <i class="fas fa-tachometer-alt"></i> Tableau de Bord
+          </a>
+        </div>
+        <div class="nav-item">
+          <a id="nav-user-management" class="nav-link" href="{{ url_for('admin_user_management') }}">
+            <i class="fas fa-users"></i> Gestion Utilisateurs
+          </a>
+        </div>
+        <div class="nav-item">
+          <a id="nav-appointments" class="nav-link" href="{{ url_for('admin_appointment') }}">
+            <i class="fas fa-calendar-alt"></i> Rendez-vous
+          </a>
+        </div>
+        <div class="nav-item">
+          <a id="nav-dkit-device" class="nav-link" href="{{ url_for('admin_dkit_device_management') }}">
+            <i class="fas fa-microchip"></i> Appareils D-KIT
+          </a>
+        </div>
+      {% endif %}
+    </nav>
+
+    <div class="sidebar-user">
+      <div class="user-avatar">{{ user_initials|default('SA') }}</div>
+      <div class="user-details">      <div class="user-name">{{ user_name|default('Admin') }}</div>
+      <div class="user-role">{{ user_role|default('Administrateur') }}</div>
+      </div>
+      <button class="logout-btn" onclick="confirmLogout()">
+        <i class="fas fa-sign-out-alt"></i>
+      </button>
+    </div>
+  </aside>
+
+  <main class="main-content">    <div class="page-header">
+      <h1 class="page-title">{{ page_title|default('Tableau de Bord') }}</h1>
+      <p class="page-subtitle">Bienvenue sur le panneau d'administration D-WEE Healthcare</p>
+    </div>
+
+    {% if pending_requests_count|default(0) > 0 %}
+    <div class="alert-banner">
+      <div class="alert-content">        <i class="fas fa-exclamation-triangle alert-icon"></i>
+        <span>{{ pending_requests_text|default('Vous avez des demandes en attente') }}</span>
+      </div>
+      <a href="{{ pending_requests_url }}" class="alert-btn">{{ pending_requests_action|default('Examiner') }}</a>
+    </div>
+    {% endif %}
+
+    <div class="stats-grid">
+      {% if stats is defined and stats %}
+        {% for stat in stats %}
+        <a href="{{ stat.url }}" class="stat-card">
+          <div class="stat-header">
+            <div class="stat-icon {{ stat.icon_class|default('users') }}">
+              <i class="fas fa-{{ stat.icon|default('users') }}"></i>
+            </div>
+            <div class="stat-change {% if (stat.change|default(0)) >= 0 %}positive{% else %}negative{% endif %}">
+              {{ stat.change_text|default('+0') }}
+            </div>
+          </div>
+          <div class="stat-number">{{ stat.value|default('0') }}</div>
+          <div class="stat-label">{{ stat.label|default('Statistique') }}</div>
+          {% if stat.sublabel is defined %}
+          <div class="stat-sublabel">{{ stat.sublabel }}</div>
+          {% endif %}
+        </a>
+        {% endfor %}
+      {% else %}
+        <!-- Default stats when no stats data is provided -->
+        <div class="stat-card">
+          <div class="stat-header">
+            <div class="stat-icon users">
+              <i class="fas fa-users"></i>
+            </div>
+            <div class="stat-change positive">+0</div>
+          </div>          <div class="stat-number">0</div>
+          <div class="stat-label">Utilisateurs</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-header">
+            <div class="stat-icon devices">
+              <i class="fas fa-microchip"></i>
+            </div>
+            <div class="stat-change positive">+0</div>
+          </div>
+          <div class="stat-number">0</div>
+          <div class="stat-label">Appareils</div>
+        </div>
+      {% endif %}
+    </div>
+
+    <div class="content-grid">
+      <div class="content-card">
+        <div class="card-header">
+          <div class="card-title">
+            <i class="card-icon fas fa-{{ activities_card.icon|default('history') if activities_card is defined else 'history' }}"></i>
+            {{ activities_card.title|default('Activités Récentes') if activities_card is defined else 'Activités Récentes' }}
+          </div>
+        </div>
+        <div class="card-body">
+          <div class="table-container">
+            <table class="table">              <thead>
+                <tr>
+                  <th>Activité</th>
+                  <th>Utilisateur/Appareil</th>
+                  <th>Date</th>
+                  <th>Statut</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% if recent_activities is defined and recent_activities %}
+                  {% for activity in recent_activities %}
+                  <tr>                    <td>{{ activity.action|default('Inconnu') }}</td>
+                    <td>{{ activity.user|default('Inconnu') }}</td>
+                    <td>{{ activity.date|default('Inconnu') }}</td>
+                    <td>
+                      <span class="status-badge status-{{ activity.status_class|default('pending') }}">
+                        <span class="status-dot"></span>{{ activity.status_text|default('En attente') }}
+                      </span>
+                    </td>
+                  </tr>
+                  {% endfor %}
+                {% else %}                <tr>
+                  <td colspan="4" style="text-align: center;">Aucune activité récente</td>
+                </tr>
+                {% endif %}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <div class="content-card">
+        <div class="card-header">
+          <div class="card-title">
+            <i class="card-icon fas fa-{{ performance_chart.icon|default('chart-pie') if performance_chart is defined else 'chart-pie' }}"></i>
+            {{ performance_chart.title|default('Métriques de Performance') if performance_chart is defined else 'Métriques de Performance' }}
+          </div>
+        </div>
+        <div class="card-body">
+          <div style="height: 250px;">
+            <canvas id="performanceChart"
+              data-main-value="{{ performance_chart.main_value|default(75) if performance_chart is defined else 75 }}"
+              data-secondary-value="{{ performance_chart.secondary_value|default(25) if performance_chart is defined else 25 }}"
+              data-chart-type="{{ performance_chart.type|default('doughnut') if performance_chart is defined else 'doughnut' }}"              data-main-label="{{ performance_chart.main_label|default('Actif') if performance_chart is defined else 'Actif' }}"
+              data-secondary-label="{{ performance_chart.secondary_label|default('Inactif') if performance_chart is defined else 'Inactif' }}"
+              data-main-color="{{ performance_chart.main_color|default('#25A8DF') if performance_chart is defined else '#25A8DF' }}"
+              data-secondary-color="{{ performance_chart.secondary_color|default('#f0f0f0') if performance_chart is defined else '#f0f0f0' }}"
+              {% if performance_chart is defined and performance_chart.labels is defined %}
+              data-labels="{{ performance_chart.labels|join(',') }}"
+              data-main-data="{{ performance_chart.main_data|join(',') }}"
+              data-secondary-data="{{ performance_chart.secondary_data|join(',') }}"
+              {% endif %}>
+            </canvas>
+          </div>
+          <div style="text-align: center; margin-top: 15px; color: #64748b;">
+            <strong>{{ performance_chart.label|default('Taux de Croissance') if performance_chart is defined else 'Taux de Croissance' }}:</strong> {{ performance_chart.value|default(75) if performance_chart is defined else 75 }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script>    // Fonction de déconnexion
+    function confirmLogout() {      if (confirm("{{ logout_confirm_message|default('Êtes-vous sûr de vouloir vous déconnecter?') }}")) {
+        window.location.href = "{{ url_for('logout') }}";
+      }
+    }// Fonction pour définir l'état de navigation active
+    function setActiveNavigation(clickedElement) {
+      // Supprimer la classe active de tous les liens de navigation
+      const navLinks = document.querySelectorAll('.sidebar-nav .nav-link');
+      navLinks.forEach(link => {
+        link.classList.remove('active');
+      });
+      
+      // Ajouter la classe active à l'élément cliqué
+      if (clickedElement) {
+        clickedElement.classList.add('active');
+      }
+    }    // Initialiser le graphique de performance
+    function initPerformanceChart() {
+      const ctx = document.getElementById('performanceChart').getContext('2d');
+      
+      // Obtenir les valeurs depuis les attributs de données sur l'élément du graphique
+      const chartElement = document.getElementById('performanceChart');
+      const chartType = chartElement.dataset.chartType || 'doughnut';
+      const mainColor = chartElement.dataset.mainColor || '#25A8DF';
+      const secondaryColor = chartElement.dataset.secondaryColor || '#f0f0f0';
+        // Vérifier si nous avons des données pour un graphique en ligne
+      const hasLineData = chartElement.dataset.labels && chartElement.dataset.mainData;
+      
+      let chartConfig;
+      
+      if (chartType === 'line' && hasLineData) {
+        // Pour un graphique en ligne
+        const labels = chartElement.dataset.labels.split(',');
+        const mainData = chartElement.dataset.mainData.split(',').map(Number);
+        const secondaryData = chartElement.dataset.secondaryData ? chartElement.dataset.secondaryData.split(',').map(Number) : [];        const mainLabel = chartElement.dataset.mainLabel || 'Appareils';
+        const secondaryLabel = chartElement.dataset.secondaryLabel || 'Utilisateurs';
+        
+        chartConfig = {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: mainLabel,
+                data: mainData,
+                borderColor: mainColor,
+                backgroundColor: mainColor + '20',
+                fill: true,
+                tension: 0.3
+              },
+              {
+                label: secondaryLabel,
+                data: secondaryData,
+                borderColor: secondaryColor,
+                backgroundColor: secondaryColor + '20',
+                fill: true,
+                tension: 0.3
+              }
+            ]
+          },          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true,
+                ticks: {
+                  precision: 0
+                }
+              }
+            },
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: {
+                  font: {
+                    family: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif'
+                  }
+                }
+              }
+            }
+          }
+        };      } else {
+        // Pour le graphique en anneau et autres types de graphiques
+        const mainValue = parseInt(chartElement.dataset.mainValue || 75);
+        const secondaryValue = parseInt(chartElement.dataset.secondaryValue || 25);        const mainLabel = chartElement.dataset.mainLabel || 'Actif';
+        const secondaryLabel = chartElement.dataset.secondaryLabel || 'Inactif';
+        
+        chartConfig = {
+          type: chartType,
+          data: {
+            labels: [mainLabel, secondaryLabel],
+            datasets: [{
+              data: [mainValue, secondaryValue],
+              backgroundColor: [mainColor, secondaryColor],
+              borderColor: [mainColor, secondaryColor],
+              borderWidth: 1
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: 'bottom'
+              }
+            }
+          }
+        };
+      }
+      
+      new Chart(ctx, chartConfig);
+    }    // Initialiser le tableau de bord au chargement de la page
+    document.addEventListener('DOMContentLoaded', () => {
+      // Définir le tableau de bord comme actif par défaut
+      const dashboardNav = document.getElementById('nav-dashboard');
+      if (dashboardNav) {
+        setActiveNavigation(dashboardNav);
+      }
+      
+      // Initialiser les graphiques
+      if (document.getElementById('performanceChart')) {
+        initPerformanceChart();
+      }
+      
+      // Ajouter des transitions fluides pour une meilleure expérience utilisateur
+      document.querySelectorAll('.nav-link').forEach(link => {
+        link.addEventListener('click', function() {
+          // Ajouter un petit indicateur de chargement
+          this.style.opacity = '0.7';
+          setTimeout(() => {
+            this.style.opacity = '1';
+          }, 200);
+        });
+      });
+    });
+  </script>
+</body>
+</html>

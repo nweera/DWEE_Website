@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>D-WEE - Planning</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="../static/userCSS.css" />
+    <link rel="stylesheet" href="user_calendar.css" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css"
+      rel="stylesheet"
+    />
+    <style>
+.appointments-panel .panel-content {
+  max-height: 400px;
+  overflow-y: auto;
+}
+.appointment-list {
+  max-height: 100%;
+  overflow-y: auto;
+}
+.modal {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.4);
+  z-index: 1000;
+  overflow-y: auto;
+  align-items: center;
+  justify-content: center;
+}
+.modal.active {
+  display: flex;
+}
+.modal-content.large {
+  max-width: 500px;
+  width: 90vw;
+  margin: auto;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.2);
+  padding: 32px 24px 24px 24px;
+  position: relative;
+  overflow-y: auto;
+  max-height: 90vh;
+}
+.close-modal {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  color: #888;
+  position: absolute;
+  top: 16px;
+  right: 24px;
+  cursor: pointer;
+}
+@media (max-width: 600px) {
+  .modal-content.large {
+    padding: 16px 4px 16px 4px;
+    max-width: 98vw;
+  }
+}
+.btn-secondary, .btn-danger, .btn-modify {
+  display: inline-block;
+  padding: 6px 16px;
+  border-radius: 4px;
+  border: none;
+  font-size: 0.95em;
+  font-weight: 500;
+  margin: 4px 4px 0 0;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+.btn-secondary {
+  background: #f0f0f0;
+  color: #333;
+  border: 1px solid #ccc;
+}
+.btn-secondary:hover {
+  background: #e0e0e0;
+}
+.btn-danger {
+  background: #d46161;
+  color: #fff;
+  border: 1px solid #b33a3a;
+}
+.btn-danger:hover {
+  background: #b33a3a;
+}
+.btn-modify {
+  background: #00A69C;
+  color: #fff;
+  border: 1px solid #00897b;
+}
+.btn-modify:hover {
+  background: #00897b;
+}
+.appointment-actions {
+  margin-top: 10px;
+}
+    </style>
+  </head>
+  <body class="dashboard">
+    <!-- Sidebar Navigation -->
+    <!-- Sidebar Navigation -->
+
+    <nav class="sidebar">
+      <div class="logo">
+        <img
+          src="https://dweehealthcare.com/wp-content/uploads/2023/08/D-wee-Final.png"
+          alt="DWEE Logo"
+        />
+        <div>
+          <div class="logo-text">D-WEE Healthcare</div>
+          <div class="logo-subtitle">Compte Client</div>
+        </div>
+      </div>
+      <ul class="nav-links">
+        <li >
+          <a href="{{ url_for('user_dashboard') }}"><i class="fas fa-home"></i>Tableau de bord</a>
+        </li>
+        <li>
+          <a href="{{ url_for('user_dkits') }}"><i class="fas fa-box"></i>Mes Dkits</a>
+        </li>
+        <li class="active">
+          <a href="{{ url_for('user_calendar') }}"><i class="fas fa-calendar-alt"></i>RDV maintenance</a>
+        </li>
+        <li>
+          <a href="{{ url_for('user_profile') }}"><i class="fas fa-user"></i>Mon Profil</a>
+        </li>
+        <li>
+          <a href="{{ url_for('user_support') }}"><i class="fas fa-headset"></i>Support</a>
+        </li>
+      </ul>
+      <div class="user-info">
+        <i class="fas fa-user-circle avatar"></i>
+        <a href="{{ url_for('user_profile') }}" class="user-name">{{ user.first_name }} {{ user.last_name }}</a>
+        <span class="sales-badge" style="display: none">Commercial</span>
+        <a href="{{ url_for('logout') }}" class="logout-btn">
+          <i class="fas fa-sign-out-alt"></i>
+        </a>
+      </div>
+      <a
+        href="{{ url_for('user_commercial_registration') }}"
+        class="role-switch"
+        id="becomeSales"
+      >
+        <i class="fas fa-user-tie"></i>
+        Devenir Commercial
+      </a>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- Dashboard Header -->
+      <div class="dashboard-header">
+        <div class="welcome-section">
+          <h1><i class="fas fa-calendar-alt"></i> Planning de Maintenance</h1>
+          <p>Gérez et planifiez vos rendez-vous de maintenance D-KIT</p>
+        </div>
+        <div class="header-actions">
+          <button class="btn-primary" id="addAppointmentBtn">
+            <i class="fas fa-plus"></i>
+            Demander un RDV en urgence
+          </button>
+        </div>
+      </div>
+
+      <!-- Modal de déconnexion -->
+      <div id="logoutModal" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h2 class="modal-title">Confirmation de déconnexion</h2>
+            <button class="close" onclick="closeLogoutModal()">
+              <i class="fas fa-times"></i>
+            </button>
+          </div>
+          <div class="modal-body">
+            <p>Êtes-vous sûr de vouloir vous déconnecter ?</p>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-outline" onclick="closeLogoutModal()">
+              Annuler
+            </button>
+            <button class="btn btn-primary" onclick="confirmLogout()">
+              Se déconnecter
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Calendar Section -->
+      <div class="dashboard-grid">
+        <!-- Calendar Panel -->
+        <div class="calendar-panel">
+          <div class="panel-header">
+            <h3><i class="fas fa-calendar"></i> Calendrier</h3>
+            <div class="calendar-controls">
+              <button class="view-btn active" data-view="month">Mois</button>
+              <!-- <button class="view-btn" data-view="week">Semaine</button> -->
+            </div>
+          </div>
+          <div class="panel-content">
+            <div id="maintenanceCalendar"></div>
+          </div>
+        </div>
+
+        <!-- Upcoming Appointments Panel -->
+        <div class="appointments-panel">
+          <div class="panel-header">
+            <h3><i class="fas fa-list"></i> Prochains RDV</h3>
+          </div>
+          <div class="panel-content">
+            <div class="appointment-list">
+              <!-- Filled by JS -->
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Urgent Requests Section -->
+      <div class="urgent-requests-section">
+        <div class="panel-header">
+          <h3>
+            <i class="fas fa-exclamation-circle"></i> Mes demandes de
+            rendez-vous
+          </h3>
+        </div>
+        <div class="panel-content">
+          <div class="urgent-requests-list" id="urgentRequestsList"></div>
+        </div>
+      </div>
+
+      <!-- Add Appointment Modal -->
+      <div id="addAppointmentModal" class="modal" style="display:none;">
+        <div class="modal-content large">
+          <div class="modal-header">
+            <h3>Demander un RDV en urgence</h3>
+            <button class="close-modal">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div id="appointmentForm">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="dkitSelect">D-KIT concerné *</label>
+                  <select id="dkitSelect" name="dkit" required>
+                    <option value="">Sélectionner un D-KIT</option>
+                    {% for device in validated_devices %}
+                      <option value="{{ device.serial_number }}">D-KIT #{{ device.serial_number }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="appointmentDate">Date souhaitée *</label>
+                  <input
+                    type="date"
+                    id="appointmentDate"
+                    name="date"
+                    required
+                  />
+                </div>
+                <div class="form-group">
+                  <label for="appointmentTime">Heure souhaitée *</label>
+                  <select id="appointmentTime" name="time" required>
+                    <option value="">Sélectionner l'heure</option>
+                    <option value="08:00">08:00 - 10:00</option>
+                    <option value="10:00">10:00 - 12:00</option>
+                    <option value="12:00">12:00 - 14:00</option>
+                    <option value="14:00">14:00 - 16:00</option>
+                    <option value="16:00">16:00 - 18:00</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="description">Description du problème *</label>
+                <textarea
+                  id="description"
+                  name="description"
+                  rows="4"
+                  required
+                  placeholder="Veuillez décrire le problème et la raison de l'urgence..."
+                ></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn-secondary" id="cancelAppointment">
+              Annuler
+            </button>
+            <button type="button" class="btn-primary" id="submitAppointment">
+              <i class="fas fa-paper-plane"></i>
+              Envoyer la demande
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Appointment Details Modal -->
+      <div id="appointmentModal" class="modal">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h3 class="modal-title">Détails du Rendez-vous</h3>
+            <button class="close">&times;</button>
+          </div>
+          <div id="modalDetails"></div>
+        </div>
+      </div>
+
+      <!-- Edit Appointment Modal -->
+      <div id="editAppointmentModal" class="modal" style="display:none;">
+        <div class="modal-content large">
+          <div class="modal-header">
+            <h3>Modifier le RDV</h3>
+            <button class="close-modal">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div id="editAppointmentForm">
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="editDkitSelect">D-KIT concerné *</label>
+                  <select id="editDkitSelect" name="dkit" required>
+                    <option value="">Sélectionner un D-KIT</option>
+                    {% for device in validated_devices %}
+                      <option value="{{ device.serial_number }}">D-KIT #{{ device.serial_number }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="form-group">
+                  <label for="editAppointmentDate">Date souhaitée *</label>
+                  <input type="date" id="editAppointmentDate" name="date" required />
+                </div>
+                <div class="form-group">
+                  <label for="editAppointmentTime">Heure souhaitée *</label>
+                  <select id="editAppointmentTime" name="time" required>
+                    <option value="">Sélectionner l'heure</option>
+                    <option value="08:00">08:00 - 10:00</option>
+                    <option value="10:00">10:00 - 12:00</option>
+                    <option value="12:00">12:00 - 14:00</option>
+                    <option value="14:00">14:00 - 16:00</option>
+                    <option value="16:00">16:00 - 18:00</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group">
+                <label for="editDescription">Description du problème *</label>
+                <textarea id="editDescription" name="description" rows="4" required></textarea>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn-secondary" id="cancelEditAppointment">Annuler</button>
+            <button type="button" class="btn-primary" id="submitEditAppointment">
+              <i class="fas fa-save"></i>
+              Enregistrer les modifications
+            </button>
+          </div>
+        </div>
+      </div>
+    </main>
+    <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+    <script>
+document.addEventListener("DOMContentLoaded", function () {
+  fetch("/api/user_maintenances")
+    .then(response => response.json())
+    .then(data => {
+      const urgentMaintenances = (data.urgent_maintenances || []).map(app => ({...app, type: "urgent"}));
+      const regularMaintenances = (data.regular_maintenances || []).map(app => ({...app, type: "regular"}));
+
+      // Calendar rendering
+      const calendarEl = document.getElementById("maintenanceCalendar");
+      if (calendarEl && window.FullCalendar) {
+        const confirmedUrgent = urgentMaintenances.filter(app => app.status === "confirmed");
+        const confirmedRegular = regularMaintenances.filter(app => app.status === "confirmed");
+        const calendar = new FullCalendar.Calendar(calendarEl, {
+          initialView: "dayGridMonth",
+          locale: "fr",
+          height: "auto",
+          showNonCurrentDates: false,
+          fixedWeekCount: false,
+          headerToolbar: {
+            left: "",
+            center: "title",
+            right: "prev,next",
+          },
+          events: [
+            ...confirmedUrgent.map(app => {
+              // Use requested_time if time_change_status=1, otherwise use datetime
+              const startTime = (app.time_change_status == 1 && app.requested_time) ? app.requested_time : app.datetime;
+              return {
+                id: "urgent_" + app.id,
+                title: `Maintenance Urgente - D-KIT #${app.serial_number}`,
+                start: startTime,
+                end: addHours(startTime, 2),
+                color: "#d46161",
+                extendedProps: {
+                  ...app,
+                  displayTime: startTime // Store which time we're displaying
+                },
+              };
+            }),
+            ...confirmedRegular.map(app => {
+              // Use requested_time if time_change_status=1, otherwise use datetime
+              const startTime = (app.time_change_status == 1 && app.requested_time) ? app.requested_time : app.datetime;
+              return {
+                id: "regular_" + app.id,
+                title: `Maintenance Régulière - D-KIT #${app.serial_number}`,
+                start: startTime,
+                end: addHours(startTime, 2),
+                color: "#1976d2",
+                extendedProps: {
+                  ...app,
+                  displayTime: startTime // Store which time we're displaying
+                },
+              };
+            }),
+          ],
+          eventContent: function (arg) {
+            const typeLabel = arg.event.extendedProps.type === "regular" ? "Régulière" : "Urgente";
+            const status = arg.event.extendedProps.status;
+            const eventEl = document.createElement("div");
+            eventEl.innerHTML = `
+              <div class="fc-event-title">${arg.event.title}</div>
+              ${arg.timeText ? `<div class="fc-event-time">${arg.timeText}</div>` : ""}
+              <div class="maintenance-type">${typeLabel}</div>
+              <div class="maintenance-status status-${status}">${getStatusLabel(status)}</div>
+            `;
+            return { domNodes: [eventEl] };
+          },
+          eventClick: function (info) {
+            showEventDetails(info.event);
+          },
+        });
+        calendar.render();
+      }
+
+      // Upcoming appointments (confirmed)
+      const appointmentsList = document.querySelector(".appointment-list");
+      if (appointmentsList) {
+        appointmentsList.innerHTML = "";
+        const allConfirmed = [
+          ...urgentMaintenances.filter(app => app.status === "confirmed"),
+          ...regularMaintenances.filter(app => app.status === "confirmed"),
+        ];
+        allConfirmed.sort((a, b) => new Date(a.datetime) - new Date(b.datetime));
+        allConfirmed.forEach(app => {
+          // Decide which time to display based on status and time_change_status
+          let displayDateTime = app.datetime;
+          // If confirmed and time_change_status=1, use requested_time instead
+          if (app.status === "confirmed" && app.time_change_status === 1 && app.requested_time) {
+            displayDateTime = app.requested_time;
+          }
+          
+          // Use raw DB format for date and time
+          const dbDateTime = displayDateTime ? displayDateTime.substring(0, 16).replace('T', ' ') : '';
+          // Get the end time (2 hours after start time)
+          const endObj = new Date(displayDateTime); 
+          endObj.setHours(endObj.getHours() + 2);
+          // Format the end time for display (HH:MM)
+          const endTime = endObj.getHours().toString().padStart(2, '0') + ':' + endObj.getMinutes().toString().padStart(2, '0');
+          const typeLabel = app.type === "regular" ? "Maintenance Régulière" : "Maintenance Urgente";
+          const item = document.createElement("div");
+          item.className = `appointment-item ${app.type}`;
+          item.innerHTML = `
+            <div class="appointment-date">
+              <div class="date-day">${displayDateTime ? displayDateTime.substring(8, 10) : ''}</div>
+              <div class="date-month">${displayDateTime ? displayDateTime.substring(5, 7) : ''}</div>
+            </div>
+            <div class="appointment-details">
+              <h4>${typeLabel}</h4>
+              <div class="appointment-full-date" style="font-size: 0.85em; color: var(--text-muted); margin-bottom: 2px;">
+                ${dbDateTime}
+              </div>
+              <p class="appointment-device">D-KIT #${app.serial_number}</p>
+              <p class="appointment-time">${dbDateTime.substring(11, 16)} - ${endTime}</p>
+              <div class="maintenance-type">${typeLabel}</div>
+              <div class="maintenance-status status-${app.status}">${getStatusLabel(app.status)}</div>
+              <div class="appointment-actions">
+                <button class="btn-secondary btn-modify" data-id="${app.id}" data-type="${app.type}">Modifier</button>
+                ${app.type === "urgent" ? `<button class="btn-danger btn-delete" data-id="${app.id}" data-type="urgent">Supprimer</button>` : ""}
+              </div>
+            </div>
+          `;
+          appointmentsList.appendChild(item);
+        });
+
+        // Add event listeners for modify/delete buttons
+        appointmentsList.querySelectorAll('.btn-modify').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const id = btn.getAttribute('data-id');
+            const type = btn.getAttribute('data-type');
+            let app = null;
+            if (type === 'urgent') {
+              app = urgentMaintenances.find(a => a.id == id);
+            } else {
+              app = regularMaintenances.find(a => a.id == id);
+            }
+            if (app) {
+              openEditAppointmentModal(app);
+              // Store type for later use in submit
+              window._editType = type;
+            }
+          });
+        });
+        appointmentsList.querySelectorAll('.btn-delete').forEach(btn => {
+          btn.addEventListener('click', function() {
+            btn.addEventListener('click', function() {
+              if (confirm('Êtes-vous sûr de vouloir supprimer ce rendez-vous urgent ?')) {
+                const id = btn.getAttribute('data-id');
+                fetch(`/api/delete_urgent_maintenance/${id}`, {
+                  method: 'DELETE',
+                })
+                  .then(res => res.json())
+                  .then(data => {
+                    if (data.success) {
+                      alert('Rendez-vous urgent supprimé.');
+                      window.location.reload();
+                    } else {
+                      alert(data.message || 'Erreur lors de la suppression.');
+                    }
+                  })
+                  .catch(() => alert('Erreur lors de la suppression.'));
+              }
+            });
+          });
+        });
+      }
+
+      // Urgent requests (scheduled or modification requested)
+      const requestsList = document.getElementById("urgentRequestsList");
+      if (requestsList) {
+        requestsList.innerHTML = "";
+        // Show urgent maintenances with status 'scheduled' (including modification requested)
+        urgentMaintenances
+          .filter(app => app.status === "scheduled")
+          .forEach(app => {
+            // Debug: log the value of requested_time
+            console.log('DEBUG requested_time:', app.requested_time);
+            // Display datetime as stored in DB, format YYYY-MM-DD HH:MM
+            const item = document.createElement("div");
+            item.className = "urgent-request-item";
+            item.innerHTML = `
+              <div class="request-details">
+                <h4>Maintenance Urgente - D-KIT #${app.serial_number}</h4>
+                <div class="request-info">
+                  <p><strong>Date actuelle:</strong> ${app.datetime ? app.datetime.substring(0, 16).replace('T', ' ') : ''}</p>
+                  ${app.requested_time ? `<p><strong>Date demandée:</strong> ${app.requested_time.substring(0, 16).replace('T', ' ')}</p>` : ""}
+                  <p><strong>Statut:</strong> <span class="request-status status-submitted">Soumise</span></p>
+                </div>
+                <div class="request-description">
+                  <strong>Description:</strong><br>
+                  ${app.notes || ""}
+                </div>
+                <div class="appointment-actions">
+                  <button class="btn-secondary btn-modify" data-id="${app.id}" data-type="urgent">Modifier</button>
+                  <button class="btn-danger btn-delete" data-id="${app.id}" data-type="urgent">Supprimer</button>
+                </div>
+              </div>
+            `;
+            requestsList.appendChild(item);
+          });
+        // Show regular maintenances with status 'scheduled' and time_change_status == 1 (modification requested)
+        regularMaintenances
+          .filter(app => app.status === "scheduled" && app.time_change_status == 1)
+          .forEach(app => {
+            // Display datetime as stored in DB, format YYYY-MM-DD HH:MM
+            const item = document.createElement("div");
+            item.className = "urgent-request-item";
+            item.innerHTML = `
+              <div class="request-details">
+                <h4>Maintenance Régulière - D-KIT #${app.serial_number}</h4>
+                <div class="request-info">
+                  <p><strong>Date actuelle:</strong> ${app.datetime ? app.datetime.substring(0, 16).replace('T', ' ') : ''}</p>
+                  ${app.requested_time ? `<p><strong>Date demandée:</strong> ${app.requested_time.substring(0, 16).replace('T', ' ')}</p>` : ""}
+                  <p><strong>Statut:</strong> <span class="request-status status-submitted">Soumise</span></p>
+                </div>
+                <div class="request-description">
+                  <strong>Description:</strong><br>
+                  ${app.description || app.notes || ""}
+                </div>
+                <div class="appointment-actions">
+                  <button class="btn-secondary btn-modify" data-id="${app.id}" data-type="regular">Modifier</button>
+                </div>
+              </div>
+            `;
+            requestsList.appendChild(item);
+          });
+        // Add event listeners for modify buttons in Mes demandes de rendez-vous
+        requestsList.querySelectorAll('.btn-modify').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const id = btn.getAttribute('data-id');
+            const type = btn.getAttribute('data-type');
+            let app = null;
+            if (type === 'urgent') {
+              app = urgentMaintenances.find(a => a.id == id);
+            } else {
+              app = regularMaintenances.find(a => a.id == id);
+            }
+            if (app) {
+              openEditAppointmentModal(app);
+              window._editType = type;
+            }
+          });
+        });
+        // Add event listeners for delete buttons in Mes demandes de rendez-vous
+        requestsList.querySelectorAll('.btn-delete').forEach(btn => {
+          btn.addEventListener('click', function() {
+            const id = btn.getAttribute('data-id');
+            const type = btn.getAttribute('data-type');
+            if (type === 'urgent') {
+              if (confirm('Voulez-vous vraiment supprimer ce rendez-vous urgent ?')) {
+                fetch(`/api/delete_urgent_maintenance/${id}`, {
+                  method: 'DELETE',
+                })
+                  .then(res => res.json())
+                  .then(data => {
+                    if (data.success) {
+                      alert('Rendez-vous urgent supprimé.');
+                      window.location.reload();
+                    } else {
+                      alert(data.message || 'Erreur lors de la suppression.');
+                    }
+                  })
+                  .catch(() => alert('Erreur lors de la suppression.'));
+              }
+            }
+          });
+        });
+      }
+
+      // Modal open/close logic for "Demander un RDV en urgence" and Edit Modal
+      const addAppointmentBtn = document.getElementById("addAppointmentBtn");
+      const addAppointmentModal = document.getElementById("addAppointmentModal");
+      const closeModalBtn = addAppointmentModal ? addAppointmentModal.querySelector(".close-modal") : null;
+      const cancelAppointmentBtn = document.getElementById("cancelAppointment");
+      // Edit Appointment Modal logic
+      const editAppointmentModal = document.getElementById("editAppointmentModal");
+      const closeEditModalBtn = editAppointmentModal ? editAppointmentModal.querySelector(".close-modal") : null;
+      const cancelEditAppointmentBtn = document.getElementById("cancelEditAppointment");
+      let editingAppointmentId = null;
+      function openAddAppointmentModal() {
+        if (addAppointmentModal) {
+          addAppointmentModal.style.display = "block";
+          addAppointmentModal.classList.add("active");
+          document.body.style.overflow = "hidden";
+        }
+      }
+      function closeAddAppointmentModal() {
+        if (addAppointmentModal) {
+          addAppointmentModal.style.display = "none";
+          addAppointmentModal.classList.remove("active");
+          document.body.style.overflow = "auto";
+        }
+      }
+      function openEditAppointmentModal(app) {
+        if (editAppointmentModal) {
+          document.getElementById("editDkitSelect").value = app.serial_number;
+          document.getElementById("editAppointmentDate").value = app.datetime.split("T")[0];
+          document.getElementById("editAppointmentTime").value = app.datetime.split("T")[1]?.substring(0,5) || "";
+          document.getElementById("editDescription").value = app.notes || "";
+          editingAppointmentId = app.id;
+          editAppointmentModal.style.display = "block";
+          editAppointmentModal.classList.add("active");
+          document.body.style.overflow = "hidden";
+        }
+      }
+      function closeEditAppointmentModal() {
+        if (editAppointmentModal) {
+          editAppointmentModal.style.display = "none";
+          editAppointmentModal.classList.remove("active");
+          document.body.style.overflow = "auto";
+        }
+      }
+      if (addAppointmentBtn && addAppointmentModal) {
+        addAppointmentBtn.addEventListener("click", openAddAppointmentModal);
+      }
+      if (closeModalBtn) {
+        closeModalBtn.addEventListener("click", closeAddAppointmentModal);
+      }
+      if (cancelAppointmentBtn) {
+        cancelAppointmentBtn.addEventListener("click", closeAddAppointmentModal);
+      }
+      if (closeEditModalBtn) closeEditModalBtn.addEventListener("click", closeEditAppointmentModal);
+      if (cancelEditAppointmentBtn) cancelEditAppointmentBtn.addEventListener("click", closeEditAppointmentModal);
+
+      // Submit edit appointment
+      const submitEditAppointmentBtn = document.getElementById("submitEditAppointment");
+      if (submitEditAppointmentBtn) {
+        submitEditAppointmentBtn.addEventListener("click", function () {
+          const dkit = document.getElementById("editDkitSelect").value;
+          const date = document.getElementById("editAppointmentDate").value;
+          const time = document.getElementById("editAppointmentTime").value;
+          const description = document.getElementById("editDescription").value;
+          if (!dkit || !date || !time || !description) {
+            alert("Veuillez remplir tous les champs obligatoires.");
+            return;
+          }
+          const type = window._editType || 'urgent';
+          const endpoint = type === 'urgent'
+            ? `/api/update_urgent_maintenance/${editingAppointmentId}`
+            : `/api/update_regular_maintenance/${editingAppointmentId}`;
+          fetch(endpoint, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ dkit, date, time, description }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.success) {
+                alert("Le rendez-vous a été modifié avec succès.");
+                window.location.reload();
+              } else {
+                alert(data.message || "Erreur lors de la modification.");
+              }
+            })
+            .catch(() => {
+              alert("Erreur lors de la modification.");
+            });
+        });
+      }
+
+      // Submit urgent appointment
+      const submitAppointmentBtn = document.getElementById("submitAppointment");
+      if (submitAppointmentBtn) {
+        submitAppointmentBtn.addEventListener("click", function () {
+          const dkit = document.getElementById("dkitSelect").value;
+          const date = document.getElementById("appointmentDate").value;
+          const time = document.getElementById("appointmentTime").value;
+          const description = document.getElementById("description").value;
+
+          if (!dkit || !date || !time || !description) {
+            alert("Veuillez remplir tous les champs obligatoires.");
+            return;
+          }
+
+          fetch("/user_add_appointment", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              dkit: dkit,
+              date: date,
+              time: time,
+              description: description,
+            }),
+          })
+            .then((response) => response.json())
+            .then((data) => {
+              if (data.success) {
+                alert("Votre demande de RDV a été envoyée avec succès.");
+                window.location.reload();
+              } else {
+                alert(data.message || "Erreur lors de l'envoi de la demande.");
+              }
+            })
+            .catch(() => {
+              alert("Erreur lors de l'envoi de la demande.");
+            });
+        });
+      }
+
+      // Helpers
+      function addHours(dateStr, hours) {
+        const d = new Date(dateStr);
+        d.setHours(d.getHours() + hours);
+        return d.toISOString(); // Return ISO string for FullCalendar
+      }
+      function getStatusLabel(status) {
+        const labels = {
+          scheduled: "En attente",
+          confirmed: "Confirmé",
+          completed: "Terminé",
+          cancelled: "Annulé",
+          pending: "En attente",
+          rejected: "Refusé",
+        };
+        return labels[status] || status;
+      }
+      function showEventDetails(event) {
+        const props = event.extendedProps;
+        const startTime = event.start.toLocaleTimeString("fr-FR", {
+          hour: "2-digit",
+          minute: "2-digit",
+        });
+        const endTime = event.end
+          ? event.end.toLocaleTimeString("fr-FR", {
+              hour: "2-digit",
+              minute: "2-digit",
+            })
+          : "";
+        const typeLabel = props.type === "regular" ? "Régulière" : "Urgente";
+        const details = `
+          <div class="event-details">
+            <div class="detail-row"><strong>Dispositif:</strong> D-KIT #${props.serial_number}</div>
+            <div class="detail-row"><strong>Type:</strong> ${typeLabel}</div>
+            <div class="detail-row"><strong>Date:</strong> ${event.start.toLocaleDateString("fr-FR")}</div>
+            <div class="detail-row"><strong>Heure:</strong> ${startTime}${endTime ? " - " + endTime : ""}</div>
+            ${props.notes ? `<div class="detail-row"><strong>Description:</strong> ${props.notes}</div>` : ""}
+            <div class="detail-row">
+              <strong>Statut:</strong> 
+              <span class="maintenance-status status-${props.status}">${getStatusLabel(props.status)}</span>
+            </div>
+          </div>
+          <div class="modal-actions">
+            <button class="btn-secondary" onclick="closeAllModals()">Fermer</button>
+          </div>
+        `;
+        showModal("Détails du Rendez-vous", details);
+      }
+      function showModal(title, content) {
+        const modal = document.createElement("div");
+        modal.className = "modal";
+        modal.style.display = "block";
+        modal.innerHTML = `
+          <div class="modal-content">
+            <div class="modal-header">
+              <h3>${title}</h3>
+              <button class="close-modal" onclick="this.closest('.modal').remove(); document.body.style.overflow='auto'">&times;</button>
+            </div>
+            <div class="modal-body">
+              ${content}
+            </div>
+          </div>
+        `;
+        document.body.appendChild(modal);
+        document.body.style.overflow = "hidden";
+      }
+      window.closeAllModals = function () {
+        document.querySelectorAll(".modal").forEach((modal) => {
+          modal.style.display = "none";
+        });
+        document.body.style.overflow = "auto";
+      };
+  });
+});
+</script>
+  </body>
+</html>

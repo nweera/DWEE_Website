@@ -1,0 +1,2230 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" />
+    <title>D-WEE Healthcare - Gestion Clients</title>
+    <style>
+
+        :root {
+    --primary-color: #25A8DF;
+    --primary-hover: #1E8FBF;
+    --secondary-color: #00A69C;
+    --text-color: #0A0648;
+    --text-muted: #1A1A1A;
+    --bg-color: #F4F1EE;
+    --bg-alt: #F4F1EE;
+    --border-color: rgba(26, 26, 26, 0.15);
+    --border-light: rgba(26, 26, 26, 0.08);
+    --success-color: #00A69C;
+    --warning-color: #25A8DF;
+    --danger-color: #d46161;
+    --shadow: 0 2px 8px 0 rgba(10, 6, 72, 0.08), 0 1px 4px 0 rgba(10, 6, 72, 0.04);
+    --shadow-lg: 0 8px 24px -4px rgba(10, 6, 72, 0.12), 0 4px 12px -2px rgba(10, 6, 72, 0.08);
+    --radius: 8px;
+    --radius-lg: 12px;
+}
+
+.password-field-container {
+    position: relative;
+    width: 100%;
+}
+
+.password-field-container input {
+    padding-right: 35px;
+}
+
+.password-toggle {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #666;
+}
+
+.password-toggle:hover {
+    color: #333;
+}
+
+.password-toggle i {
+    font-size: 16px;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg-color);
+    min-height: 100vh;
+    color: var(--text-color);
+}
+
+.container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Form validation styles */
+.form-group {
+    position: relative;
+}
+
+.form-error {
+    position: absolute;
+    bottom: -20px;
+    left: 0;
+    color: var(--danger-color);
+    font-size: 0.8rem;
+    display: none;
+}
+
+.form-group.error .form-error {
+    display: block;
+}
+
+.form-group.error .form-input,
+.form-group.error .form-select {
+    border-color: var(--danger-color);
+}
+
+.form-group.error .form-label {
+    color: var(--danger-color);
+}
+
+/* Sidebar - Updated with new colors */
+.sidebar {
+      width: 250px;
+      background: white;
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
+      z-index: 1000;
+      box-shadow: var(--shadow);
+    }
+
+    .logo {
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .logo img {
+      width: 40px;
+      height: 40px;
+    }
+
+    .logo-text {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+
+    .logo-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 1rem 0;
+    }
+
+    .nav-item {
+      margin: 0.25rem 0;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1.5rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: all 0.2s ease;
+      font-size: 0.95rem;
+      border-radius: 0;
+      cursor: pointer;
+    }
+
+    .nav-link:hover {
+      background: var(--bg-alt);
+      color: var(--text-color);
+    }
+
+    .nav-link.active {
+      background: var(--primary-color);
+      color: white;
+      border-radius: var(--radius);
+      margin: 0.25rem 1rem;
+      padding: 0.75rem 1.25rem;
+    }
+     .nav-link.active:hover {
+        background: var(--primary-hover);
+    }
+
+    .nav-link i {
+      width: 18px;
+      text-align: center;
+    }
+
+    .sidebar-user {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .user-avatar {
+      width: 35px;
+      height: 35px;
+      background: var(--secondary-color);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .user-details {
+      flex: 1;
+    }
+
+    .user-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text-color);
+    }
+
+    .user-role {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .logout-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .logout-btn:hover {
+      background: var(--bg-alt);
+      color: var(--text-color);
+    }
+/* Main Content */
+.main-content {
+    flex: 1;
+    margin-left: 250px;
+    padding: 2rem;
+    background: var(--bg-color);
+    min-height: 100vh;
+    overflow-x: hidden;
+}
+
+/* Form Container */
+.form-container {
+    max-width: 600px;
+    margin: 0 auto;
+    padding: 2rem;
+    background: white;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    transform: translateY(20px);
+    opacity: 0;
+    transition: all 0.5s ease;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+/* Custom Scrollbar */
+.form-container::-webkit-scrollbar {
+    width: 8px;
+}
+
+.form-container::-webkit-scrollbar-track {
+    background: rgba(26, 26, 26, 0.05);
+    border-radius: 4px;
+}
+
+.form-container::-webkit-scrollbar-thumb {
+    background: rgba(37, 168, 223, 0.5);
+    border-radius: 4px;
+    transition: background-color 0.2s ease;
+}
+
+.form-container::-webkit-scrollbar-thumb:hover {
+    background: rgba(37, 168, 223, 0.7);
+}
+
+.form-container.active {
+    transform: translateY(0);
+    opacity: 1;
+}
+
+/* Animation Keyframes */
+@keyframes slideIn {
+    from {
+        transform: translateY(20px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Form Group Animation */
+.filter-group {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    align-items: center;
+    background: white;
+    padding: 1rem;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.filter-group .btn {
+    flex: 1;
+    min-width: 120px;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+}
+
+.filter-group .btn-group {
+    flex: 2;
+    position: relative;
+}
+
+.btn-group button {
+    width: 100%;
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    background: white;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-group button:hover {
+    background: var(--bg-alt);
+}
+
+.btn-group .dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    min-width: 200px;
+    z-index: 1000;
+    border: 1px solid var(--border-color);
+}
+
+.btn-group.active .dropdown-content {
+    display: block;
+}
+
+.btn-group .dropdown-content button {
+    width: 100%;
+    text-align: left;
+    padding: 0.75rem 1rem;
+    border: none;
+    background: white;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.btn-group .dropdown-content button:hover {
+    background: var(--bg-alt);
+}
+
+.search-bar {
+    margin-bottom: 1.5rem;
+    background: white;
+    padding: 1rem;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+}
+
+.search-bar input {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    font-size: 1rem;
+    transition: all 0.2s ease;
+}
+
+.search-bar input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(37, 168, 223, 0.1);
+    outline: none;
+}
+
+.filter-group .btn-group {
+    flex: 1;
+    min-width: 200px;
+}
+
+.search-bar {
+    margin-bottom: 2rem;
+}
+
+.search-bar input {
+    width: 100%;
+    padding: 0.75rem 1.5rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    font-size: 1rem;
+    transition: all 0.2s ease;
+}
+
+.search-bar input:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(37, 168, 223, 0.1);
+    outline: none;
+}
+
+.btn-group {
+    position: relative;
+    display: inline-block;
+}
+
+.btn-group button {
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius);
+    background: white;
+    border: 1px solid var(--border-color);
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.btn-group button:hover {
+    background: var(--bg-alt);
+}
+
+.btn-group button:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(37, 168, 223, 0.1);
+}
+
+.btn-group .dropdown-content {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background: white;
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    min-width: 200px;
+    z-index: 1000;
+}
+
+.btn-group.active .dropdown-content {
+    display: block;
+}
+
+.btn-group .dropdown-content button {
+    width: 100%;
+    text-align: left;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    background: white;
+    cursor: pointer;
+}
+
+/* Form Group Animation */
+.form-group {
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+}
+
+.form-group.active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.form-group:nth-child(1) { animation-delay: 0.1s; }
+.form-group:nth-child(2) { animation-delay: 0.2s; }
+.form-group:nth-child(3) { animation-delay: 0.3s; }
+.form-group:nth-child(4) { animation-delay: 0.4s; }
+.form-group:nth-child(5) { animation-delay: 0.5s; }
+.form-group:nth-child(6) { animation-delay: 0.6s; }
+.form-group:nth-child(7) { animation-delay: 0.7s; }
+.form-group:nth-child(8) { animation-delay: 0.8s; }
+.form-group:nth-child(9) { animation-delay: 0.9s; }
+
+/* Form Group */
+.form-group {
+    margin-bottom: 1.5rem;
+}
+
+.form-group:last-child {
+    margin-bottom: 2rem;
+}
+
+/* Form Labels */
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+/* Form Inputs */
+.form-input,
+.form-select {
+    width: 100%;
+    padding: 0.75rem 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    font-size: 1rem;
+    transition: all 0.2s ease;
+}
+
+.form-input:focus,
+.form-select:focus {
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 2px rgba(37, 168, 223, 0.1);
+    outline: none;
+}
+
+/* Country and Phone Code Group */
+.country-phone-group {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.country-phone-group label {
+    margin-bottom: 0.25rem;
+}
+
+.country-phone-group .form-select {
+    flex: 1;
+    min-width: 150px;
+}
+
+/* Action Buttons */
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-end;
+}
+
+.btn {
+    padding: 0.75rem 1.5rem;
+    border-radius: var(--radius);
+    font-weight: 600;
+    transition: all 0.2s ease;
+    cursor: pointer;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: white;
+    border: none;
+}
+
+.btn-primary:hover {
+    background: var(--primary-hover);
+}
+
+.btn-secondary {
+    background: var(--bg-alt);
+    color: var(--text-color);
+    border: none;
+}
+
+.btn-secondary:hover {
+    background: var(--primary-color);
+    color: white;
+}
+
+/* Alert Banner - Updated with new colors */
+.alert-banner {
+      background: rgba(37, 168, 223, 0.1);
+      border: 1px solid var(--warning-color);
+      border-radius: var(--radius);
+      padding: 1rem 1.5rem;
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: var(--shadow);
+    }
+
+    .alert-content {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      color: var(--text-color);
+    }
+
+    .alert-icon {
+      color: var(--warning-color);
+    }
+
+ .alert-btn {
+      background: var(--warning-color);
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .alert-btn:hover {
+      background: var(--primary-hover);
+    }
+
+
+/* Management Grid */
+.management-grid {
+    display: grid;
+
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.section-card {
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-light);
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 1.5rem;
+}
+
+.section-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: var(--radius);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    color: white;
+    font-weight: 600;
+}
+
+.create-section .section-icon {
+    background: linear-gradient(135deg, var(--success-color), var(--secondary-color));
+}
+
+.view-section .section-icon {
+    background: linear-gradient(135deg, var(--primary-color), var(--primary-hover));
+}
+
+.section-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.action-buttons {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.btn {
+    padding: 10px 16px;
+    border: none;
+    border-radius: var(--radius);
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    text-decoration: none;
+    text-align: center;
+    display: inline-block;
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--primary-hover);
+}
+
+.btn-secondary {
+    background: var(--bg-alt);
+    color: var(--text-color);
+    border: 1px solid var(--border-color);
+}
+
+.btn-secondary:hover {
+    background: var(--bg-color);
+    border-color: var(--border-color);
+}
+
+.btn-danger {
+    background: var(--danger-color);
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #c55555;
+}
+
+/* Users Table */
+.users-table-container {
+    background: white;
+    border-radius: var(--radius-lg);
+    padding: 1.5rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-light);
+    width: 100%;
+}
+
+.users-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 1rem;
+    display: block;
+    max-width: 100%;
+    overflow-x: auto;
+}
+
+.users-table th,
+.users-table td {
+    padding: 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--border-light);
+    font-size: 0.875rem;
+}
+
+.users-table th {
+    background: var(--bg-alt);
+    font-weight: 600;
+    color: var(--text-color);
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.users-table td {
+    color: var(--text-muted);
+}
+
+.status-badge {
+    padding: 4px 12px;
+    border-radius: var(--radius-lg);
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.status-approuve {
+    background: rgba(0, 166, 156, 0.1);
+    color: var(--success-color);
+}
+
+.status-en-attente {
+    background: rgba(37, 168, 223, 0.1);
+    color: var(--warning-color);
+}
+
+.action-menu {
+    display: flex;
+    gap: 6px;
+}
+
+.action-btn {
+    padding: 4px 8px;
+    border: none;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.edit-btn {
+    background: rgba(37, 168, 223, 0.1);
+    color: var(--primary-color);
+}
+
+.edit-btn:hover {
+    background: rgba(37, 168, 223, 0.2);
+}
+
+.delete-btn {
+    background: rgba(212, 97, 97, 0.1);
+    color: var(--danger-color);
+}
+
+.delete-btn:hover {
+    background: rgba(212, 97, 97, 0.2);
+}
+
+
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(10, 6, 72, 0.5);
+}
+
+.modal-content {
+    background: white;
+    margin: 5% auto;
+    padding: 2rem;
+    border-radius: var(--radius-lg);
+    width: 90%;
+    max-width: 500px;
+    box-shadow: var(--shadow-lg);
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.modal-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.close {
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-muted);
+    font-weight: bold;
+}
+
+.close:hover {
+    color: var(--text-color);
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--text-color);
+    font-size: 0.875rem;
+}
+
+.form-input,
+.form-select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    font-size: 0.875rem;
+    color: var(--text-color);
+}
+
+.form-input:focus,
+.form-select:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(37, 168, 223, 0.1);
+}
+
+/* Pagination button styles */
+        .btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        
+        .pagination {
+            margin-top: 20px;
+            text-align: center;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        #pageNumbers {
+            font-weight: 600;
+            color: var(--text-color);
+            margin: 0 15px;
+            min-width: 50px;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+      <aside class="sidebar">
+    <div class="logo">
+      <img src="https://dweehealthcare.com/wp-content/uploads/2023/08/D-wee-Final.png" alt="DWEE Logo" />
+      <div>
+        <div class="logo-text">D-WEE Healthcare</div>
+        <div class="logo-subtitle">Super Admin</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+  <div class="nav-item">
+    <a id="nav-dashboard" class="nav-link" href="{{ url_for('superadmin_dashboard') }}">
+        <i class="fas fa-home"></i> Tableau de bord
+    </a>
+</div>
+  <div class="nav-item">
+    <a id="nav-users" class="nav-link active" href="{{ url_for('admin_user_management') }}">
+      <i class="fas fa-users"></i> Gestion Utilisateurs
+    </a>
+  </div>
+  <div class="nav-item">
+    <a id="nav-appointments" class="nav-link " href="{{ url_for('admin_appointment') }}">
+      <i class="fas fa-calendar-alt"></i> Rendez-vous
+    </a>
+  </div>
+  <div class="nav-item">
+    <a id="nav-devices" class="nav-link" href="{{ url_for('admin_dkit_device_management') }}">
+      <i class="fas fa-microchip"></i> Appareils 
+    </a>
+  </div>
+</nav>
+    
+    <div class="sidebar-user">
+      <div class="user-avatar">SA</div>
+      <div class="user-details">
+        <div class="user-name">Super Admin</div>
+        <div class="user-role">Administrateur</div>
+      </div>
+      <button class="logout-btn" onclick="confirmLogout()">
+        <i class="fas fa-sign-out-alt"></i>
+      </button>
+    </div>
+  </aside>
+
+
+        <div class="main-content">               
+            
+
+
+            <div class="management-grid">
+                <div class="section-card create-section">
+                    <div class="section-header">
+                        <div class="section-icon">+</div>
+                        <div class="section-title">Création des Comptes Clients </div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" onclick="openCreateModal()">
+                            Créer un compte Client
+                        </button>
+                    </div>
+
+
+                </div>
+
+                <div class="section-card view-section">
+                    <div class="section-header">
+                        <div class="section-icon">👁</div>
+                        <div class="section-title">Visualiser les Clients</div>
+                    </div>
+                    <div class="action-buttons">
+                        <button class="btn btn-primary" onclick="showAllUsers()">
+                            Voir Tous les clients
+                        </button>
+                        
+                    </div>
+                </div>
+            </div>
+
+            <div class="users-table-container">
+                <div class="table-header">
+                    <div class="table-title">Liste des Clients</div>
+                </div>
+               <table class="users-table" id="usersTable">                    <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Nom complet</th>
+                            <th>DKIT</th>
+                            <th>Email</th>
+                            <th>Téléphone</th>
+                            <th>Pays-Région</th>
+                            <th>Adresse</th>
+                            <th>Mot de passe</th>
+                            <th>Statut</th>
+                            <th>Date d'Inscription</th>
+                            <th>Dernière modification</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>                    <tbody id="usersTableBody">
+                        </tbody>
+                </table>
+                <div class="pagination" style="margin-top: 20px; text-align: center;">
+                    <button id="prevPage" class="btn btn-secondary" style="margin-right: 10px;">Précédent</button>
+                    <span id="pageNumbers" style="margin: 0 10px;"></span>
+                    <button id="nextPage" class="btn btn-secondary" style="margin-left: 10px;">Suivant</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="createClientModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Créer un Nouveau Utilisateur</h2>
+                <span class="close" onclick="closeModal('createClientModal')">&times;</span>
+            </div>
+            <div class="form-container">
+                <form id="createClientForm">
+                    <div class="form-group">
+                        <label class="form-label">Nom *</label>
+                        <input type="text" class="form-input" name="nom" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Prénom *</label>
+                        <input type="text" class="form-input" name="prenom" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email *</label>
+                        <input type="email" class="form-input" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Mot de passe *</label>
+                        <div class="password-field-container">
+                            <input type="password" class="form-input" name="password" required>
+                            <button type="button" class="password-toggle" onclick="togglePasswordVisibility()">
+                                <i class="fas fa-eye"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Pays *</label>
+                        <select class="form-select" id="countrySelect" name="pays" required>
+                            <option value="">Sélectionner un pays</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Province/Gouvernorat *</label>
+                        <select class="form-select" id="provinceSelect" name="province" required>
+                            <option value="">Sélectionner la province/gouvernorat</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Adresse *</label>
+                        <input type="text" class="form-input" name="adresse" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Indicatif Téléphonique *</label>
+                        <select class="form-select" id="phoneCodeSelect" name="indicatif" required>
+                            <option value="">Sélectionner l'indicatif</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Numéro de Téléphone *</label>
+                        <input type="tel" class="form-input" id="phoneNumber" name="telephone" required placeholder="Entrez le numéro de téléphone">
+                    </div>
+                    <div class="action-buttons">
+                        <button type="submit" class="btn btn-primary">Créer l'utilisateur</button>
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('createClientModal')">Annuler</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <!-- Formulaire de modification -->
+    <div id="edituserModal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Modifier le représentant commercial</h2>
+                <span class="close" onclick="closeModal('edituserModal')">&times;</span>
+            </div>
+            <div class="form-container">
+                <form id="edituserForm">
+                    <input type="hidden" name="id" id="edituserId">
+                    <div class="form-group">
+                        <label class="form-label">Nom complet *</label>
+                        <input type="text" class="form-input" name="nom_complet" required>
+                    </div>
+                    <div class="form-group">                        <label class="form-label">DKIT *</label>
+                        <input type="text" class="form-input" name="dkit" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Email *</label>
+                        <input type="email" class="form-input" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Téléphone *</label>
+                        <input type="tel" class="form-input" name="telephone" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Région assignée *</label>
+                        <input type="text" class="form-input" name="region" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Adresse *</label>
+                        <input type="text" class="form-input" name="adresse" required>
+                    </div>                
+                    <div class="action-buttons">
+                        <button type="submit" class="btn btn-primary">Enregistrer</button>
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('editCommercialModal')">Annuler</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+      <script>
+        // Initialize form fields and dropdowns
+        async function initializeFormFields() {
+            const countrySelect = document.getElementById('countrySelect');
+            const provinceSelect = document.getElementById('provinceSelect');
+            const phoneCodeSelect = document.getElementById('phoneCodeSelect');
+
+            try {
+                // Fetch countries from our Flask backend
+                const response = await fetch('/api/countries');
+                const countries = await response.json();
+
+                // Sort countries alphabetically
+                countries.sort((a, b) => a.name.localeCompare(b.name));
+
+                // Populate country select
+                countrySelect.innerHTML = '<option value="">Sélectionner un pays</option>';
+                countries.forEach(country => {
+                    const option = document.createElement('option');
+                    option.value = country.iso2;
+                    option.textContent = country.name;
+                    countrySelect.appendChild(option);
+                });
+
+                // Populate phone code select                phoneCodeSelect.innerHTML = '<option value="">Sélectionner l\'indicatif</option>';
+                countries.forEach(country => {
+                    const option = document.createElement('option');
+                    option.value = country.phonecode;
+                    option.textContent = country.phonecode;
+                    phoneCodeSelect.appendChild(option);
+                });// Store countries data for phone code lookup
+            let countriesData = [];
+
+            // Add event listener for country selection to load provinces and update phone code
+            countrySelect.addEventListener('change', async () => {
+                const selectedCountry = countrySelect.value;
+                provinceSelect.innerHTML = '<option value="">Sélectionner la province/gouvernorat</option>';
+                
+                if (selectedCountry) {
+                    try {
+                        // Update provinces
+                        const response = await fetch(`/api/states/${selectedCountry}`);
+                        const provinces = await response.json();
+                        
+                        provinces.forEach(province => {
+                            const option = document.createElement('option');
+                            option.value = province.iso2;
+                            option.textContent = province.name;
+                            provinceSelect.appendChild(option);
+                        });
+                        provinceSelect.disabled = false;
+
+                        // Update phone code
+                        const selectedCountryData = countriesData.find(c => c.iso2 === selectedCountry);
+                        if (selectedCountryData) {
+                            phoneCodeSelect.value = selectedCountryData.phonecode;
+                        }
+                    } catch (error) {
+                        console.error('Error loading provinces:', error);
+                        provinceSelect.innerHTML = '<option value="">Erreur de chargement des provinces</option>';
+                    }
+                } else {
+                    provinceSelect.disabled = true;
+                    phoneCodeSelect.value = ''; // Reset phone code when no country is selected
+                }
+            });
+
+            // Store countries data after fetching
+            countriesData = countries;
+
+            } catch (error) {
+                console.error('Error initializing form fields:', error);
+            }
+        }
+
+// Function to fetch and populate provinces/states
+async function fetchProvinces(countryCode) {
+    try {
+        const response = await fetch(`/api/states/${countryCode}`, {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json'
+            }
+        });
+        return await response.json();
+    } catch (error) {
+        console.error('Error fetching provinces:', error);
+        return [];
+    }
+}
+
+// Function to populate province select based on selected country
+async function populateProvinces(countrySelect, provinceSelect) {
+    // Clear existing options
+    provinceSelect.innerHTML = '<option value="">Select Province/State</option>';
+    
+    const selectedCountry = countrySelect.value;
+    if (!selectedCountry) return;
+
+    try {
+        const provinces = await fetchProvinces(selectedCountry);
+        provinces.forEach(province => {
+            const option = document.createElement('option');
+            option.value = province.iso2;
+            option.textContent = province.name;
+            provinceSelect.appendChild(option);
+        });
+    } catch (error) {
+        console.error('Error populating provinces:', error);
+    }
+}        // Initialize when DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+            // Initialize form fields
+            initializeFormFields();
+
+    async function fetchProvinces(countryCode) {
+        try {
+            const response = await fetch(`/api/states/${countryCode}`, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json'
+                }
+            });
+            return await response.json();
+        } catch (error) {
+            console.error('Error fetching provinces:', error);
+            return [];
+        }
+    }
+
+    async function populateProvinces(countrySelect, provinceSelect) {
+        // Clear existing options
+        provinceSelect.innerHTML = '<option value="">Select Province/State</option>';
+        
+        const selectedCountry = countrySelect.value;
+        if (!selectedCountry) return;
+
+        try {
+            const provinces = await fetchProvinces(selectedCountry);
+            provinces.forEach(province => {
+                const option = document.createElement('option');
+                option.value = province.iso2;
+                option.textContent = province.name;
+                provinceSelect.appendChild(option);
+            });
+        } catch (error) {
+            console.error('Error populating provinces:', error);
+        }
+    }
+
+    // Add event listeners for country selection
+    countrySelects.forEach((countrySelect, index) => {
+        countrySelect.addEventListener('change', () => {
+            if (provinceSelects[index]) {
+                populateProvinces(countrySelect, provinceSelects[index]);
+            }
+        });
+    });
+});
+
+// Liste des utilisateurs
+let allUsers = [];
+
+// Function pour charger les utilisateurs depuis la base de données
+// Fonction principale pour charger tous les utilisateurs
+async function loadAllUsers() {
+    try {
+        console.log('Chargement des utilisateurs depuis l\'API...');
+        
+        // Afficher un indicateur de chargement dans le tableau
+        const tableBody = document.querySelector('#users-table tbody');
+        if (tableBody) {
+            tableBody.innerHTML = '<tr><td colspan="8" class="text-center">Chargement des utilisateurs...</td></tr>';
+        }
+        
+        // Request all users without pagination from the backend
+        const response = await fetch('/api/users/all');
+        if (!response.ok) {
+            console.error('Erreur HTTP:', response.status, response.statusText);
+            throw new Error(`Erreur lors du chargement des utilisateurs: ${response.status} ${response.statusText}`);
+        }
+        
+        const data = await response.json();
+        console.log('Réponse API complète:', data);
+        
+        // Vérifier si la propriété 'users' existe
+        if (!data.users) {
+            console.error('La propriété "users" est manquante dans la réponse:', data);
+            throw new Error('Erreur de format dans la réponse API: "users" est manquant');
+        }
+        
+        // Extraction de la liste des utilisateurs à partir de la réponse
+        allUsers = data.users.map(user => ({
+            ...user,
+            user_id: user.id.toString().startsWith('USR') ? user.id : `USR${user.id.toString().padStart(3, '0')}`
+        })) || [];
+        
+        // Log pour vérifier le nombre d'utilisateurs récupérés
+        console.log(`Total users loaded: ${allUsers.length}`);
+        
+        // Si la liste est vide, afficher un message
+        if (allUsers.length === 0) {
+            console.warn('Aucun utilisateur retourné par l\'API');
+        }
+        
+        // Réinitialiser à la première page lors du chargement initial
+        currentPage = 1;
+        renderUsersTable(allUsers);
+        
+        return true;
+
+    } catch (error) {
+        console.error('Erreur lors du chargement des utilisateurs:', error);
+        alert(`Une erreur est survenue lors du chargement des utilisateurs: ${error.message}`);
+        return false;
+    }
+}
+
+// Ne pas définir de DOMContentLoaded ici, on le fait plus bas dans le code avec la pagination
+        // Modal functions with animations
+        // Validation functions
+        function validateEmail(email) {
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return emailRegex.test(email);
+        }
+
+        function validatePhoneNumber(phone) {
+            // Allow only numbers and spaces
+            return /^[0-9\s]+$/.test(phone);
+        }
+
+        // Form validation
+        function validateForm(form) {
+            let isValid = true;
+            const formGroups = form.querySelectorAll('.form-group');
+            
+            formGroups.forEach(group => {
+                const input = group.querySelector('input, select');
+                const error = group.querySelector('.form-error');
+                
+                if (input && input.required && !input.value) {
+                    group.classList.add('error');
+                    error.textContent = 'Ce champ est requis';
+                    isValid = false;
+                } else {
+                    group.classList.remove('error');
+                }
+            });
+
+            // Validate email
+            const emailInput = form.querySelector('input[type="email"]');
+            if (emailInput && emailInput.value && !validateEmail(emailInput.value)) {
+                const emailGroup = emailInput.closest('.form-group');
+                emailGroup.classList.add('error');
+                emailGroup.querySelector('.form-error').textContent = "Format d'email invalide";
+                isValid = false;
+            }
+
+            // Validate phone number
+            const phoneInput = form.querySelector('input[type="tel"]');
+            if (phoneInput && phoneInput.value && !validatePhoneNumber(phoneInput.value)) {
+                const phoneGroup = phoneInput.closest('.form-group');
+                phoneGroup.classList.add('error');
+                phoneGroup.querySelector('.form-error').textContent = 'Veuillez entrer uniquement des chiffres';
+                isValid = false;
+            }
+
+            return isValid;
+        }
+
+        // Add event listeners for real-time validation
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('createClientForm');
+            if (form) {
+                form.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    if (validateForm(form)) {
+                        // Créer un nouvel utilisateur
+                        const newUser = {
+                            id: `USR${String(allUsers.length + 1).padStart(3, '0')}`,
+                            name: `${form.querySelector('[name="nom"]').value} ${form.querySelector('[name="prenom"]').value}`,
+                            dkit: "N/A",
+                            email: form.querySelector('[name="email"]').value,
+                            tel: `${form.querySelector('[name="indicatif"]').value} ${form.querySelector('[name="telephone"]').value}`,
+                            region: `${form.querySelector('[name="province"]').value}-${form.querySelector('[name="pays"]').value}`,
+                            adresse: form.querySelector('[name="adresse"]').value,                            password: form.querySelector('[name="password"]').value,
+                            status: "approuve", // Le super admin crée directement des comptes approuvés
+                            date: new Date().toLocaleDateString('fr-FR'),
+                            lastModified: new Date().toLocaleDateString('fr-FR')
+                        };
+
+                        // Ajouter au début du tableau
+                        allUsers.unshift(newUser);
+
+                        // Mettre à jour l'affichage
+                        renderUsersTable(allUsers);
+
+                        // Fermer le modal
+                        closeModal('createClientModal');
+
+                        // Message de confirmation
+                        alert('Utilisateur créé avec succès! En attente de validation.');
+                    }
+                });
+
+                // Real-time validation
+                form.querySelectorAll('input, select').forEach(input => {
+                    if (input.type === 'email') {
+                        input.addEventListener('input', () => {
+                            const group = input.closest('.form-group');
+                            if (input.value && !validateEmail(input.value)) {
+                                group.classList.add('error');
+                                group.querySelector('.form-error').textContent = 'Format d\'email invalide';
+                            } else {
+                                group.classList.remove('error');
+                            }
+                        });
+                    }
+
+                    if (input.type === 'tel') {
+                        input.addEventListener('input', () => {
+                            const group = input.closest('.form-group');
+                            if (input.value && !validatePhoneNumber(input.value)) {
+                                group.classList.add('error');
+                                group.querySelector('.form-error').textContent = 'Veuillez entrer uniquement des chiffres';
+                            } else {
+                                group.classList.remove('error');
+                            }
+                        });
+                    }
+                });
+            }
+        });
+
+        function openCreateModal() {
+            const modal = document.getElementById('createClientModal');
+            const formContainer = modal.querySelector('.form-container');
+            const formGroups = formContainer.querySelectorAll('.form-group');
+
+            modal.style.display = 'block';
+            
+            // Add animation classes
+            formContainer.classList.add('active');
+            formGroups.forEach(group => group.classList.add('active'));
+
+            // Clear any previous errors
+            formGroups.forEach(group => {
+                group.classList.remove('error');
+                const error = group.querySelector('.form-error');
+                if (error) {
+                    error.textContent = '';
+                }
+            });
+
+            // Reset form
+            document.getElementById('createClientForm').reset();
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            const formContainer = modal.querySelector('.form-container');
+            const formGroups = formContainer.querySelectorAll('.form-group');
+            
+            formContainer.classList.remove('active');
+            formGroups.forEach(group => group.classList.remove('active'));
+            
+            setTimeout(() => {
+                modal.style.display = 'none';
+            }, 300);
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            // Initialize form fields
+            initializeFormFields();
+
+            // Add form submission handler
+            const createClientForm = document.getElementById('createClientForm');
+            if (createClientForm) {
+                createClientForm.addEventListener('submit', async (e) => {
+                    e.preventDefault();
+                    if (validateForm(createClientForm)) {
+                        // Handle form submission here
+                        console.log('Form submitted successfully');
+                        closeModal('createClientModal');
+                    }
+                });
+            }
+
+            // Add error divs to form groups if they don't exist
+            const formGroups = document.querySelectorAll('.form-group');
+            formGroups.forEach(group => {
+                if (!group.querySelector('.form-error')) {
+                    const errorDiv = document.createElement('div');
+                    errorDiv.className = 'form-error';
+                    group.appendChild(errorDiv);
+                }
+            });
+        });
+
+        // User management functions
+        function editUser(userId) {
+            // Récupérer l'utilisateur depuis la liste
+            const user = allUsers.find(u => u.user_id === userId);
+            if (!user) {
+                console.error(`Utilisateur avec ID ${userId} non trouvé`);
+                alert(`Erreur: Utilisateur avec ID ${userId} non trouvé`);
+                return;
+            }
+            
+            console.log("Modification de l'utilisateur:", user);
+
+            // Récupérer le modal et le formulaire
+            const modal = document.getElementById('edituserModal');
+            const form = document.getElementById('edituserForm');
+            
+            // S'assurer que le modal existe
+            if (!modal || !form) {
+                console.error("Modal ou formulaire d'édition non trouvé");
+                alert("Erreur: Impossible d'ouvrir le formulaire d'édition");
+                return;
+            }
+            
+            // Mettre à jour le titre du modal
+            modal.querySelector('.modal-title').textContent = `Modifier l'utilisateur ${user.full_name}`;
+            
+            // Vider le contenu du formulaire
+            form.innerHTML = '';
+            
+            // Créer un champ caché pour l'ID
+            const idField = document.createElement('input');
+            idField.type = 'hidden';
+            idField.name = 'user_id';
+            idField.value = userId.startsWith('USR') ? userId.substring(3) : userId;
+            form.appendChild(idField);
+            
+            // Extraire le prénom et le nom
+            const nameParts = user.full_name.split(' ');
+            const firstName = nameParts.shift() || '';
+            const lastName = nameParts.join(' ') || '';
+            
+            // Extraire la région et le pays
+            let country = '', province = '';
+            if (user.region) {
+                const regionParts = user.region.split(' - ');
+                province = regionParts[0] || '';
+                country = regionParts[1] || '';
+            }
+            
+            // Extraire le préfixe téléphonique et le numéro
+            let phonePrefix = '', phoneNumber = '';
+            if (user.phone) {
+                const phoneParts = user.phone.split(' ');
+                phonePrefix = phoneParts.shift() || '';
+                phoneNumber = phoneParts.join(' ') || '';
+            }
+            
+            // Créer les champs du formulaire
+            const fields = [
+                { label: 'Prénom *', name: 'first_name', value: firstName, type: 'text', required: true },
+                { label: 'Nom *', name: 'last_name', value: lastName, type: 'text', required: true },
+                { label: 'Email *', name: 'email', value: user.email, type: 'email', required: true },
+                { label: 'Indicatif téléphonique *', name: 'phone_prefix', value: phonePrefix, type: 'text', required: true },
+                { label: 'Numéro de téléphone *', name: 'phone_number', value: phoneNumber, type: 'tel', required: true },
+                { label: 'Pays *', name: 'address_country', value: country, type: 'text', required: true },
+                { label: 'Province/Gouvernorat *', name: 'address_province', value: province, type: 'text', required: true },
+                { label: 'Adresse *', name: 'address_detail', value: user.address, type: 'text', required: true }
+            ];
+            
+            // Ajouter les champs au formulaire
+            fields.forEach(field => {
+                const formGroup = document.createElement('div');
+                formGroup.className = 'form-group';
+                
+                const label = document.createElement('label');
+                label.className = 'form-label';
+                label.textContent = field.label;
+                formGroup.appendChild(label);
+                
+                const input = document.createElement('input');
+                input.type = field.type;
+                input.className = 'form-input';
+                input.name = field.name;
+                input.value = field.value || '';
+                input.required = field.required;
+                formGroup.appendChild(input);
+                
+                const errorDiv = document.createElement('div');
+                errorDiv.className = 'form-error';
+                formGroup.appendChild(errorDiv);
+                
+                form.appendChild(formGroup);
+            });
+            
+            // Ajouter les boutons d'action
+            const actionButtons = document.createElement('div');
+            actionButtons.className = 'action-buttons';
+            
+            const saveButton = document.createElement('button');
+            saveButton.type = 'submit';
+            saveButton.className = 'btn btn-primary';
+            saveButton.textContent = 'Enregistrer';
+            actionButtons.appendChild(saveButton);
+            
+            const cancelButton = document.createElement('button');
+            cancelButton.type = 'button';
+            cancelButton.className = 'btn btn-secondary';
+            cancelButton.textContent = 'Annuler';
+            cancelButton.onclick = function() { closeModal('edituserModal'); };
+            actionButtons.appendChild(cancelButton);
+            
+            form.appendChild(actionButtons);
+            
+            // Afficher le modal avec animation
+            modal.style.display = 'block';
+            const formContainer = modal.querySelector('.form-container');
+            formContainer.classList.add('active');
+            
+            // Animer les champs du formulaire
+            const formGroups = formContainer.querySelectorAll('.form-group');
+            formGroups.forEach(group => group.classList.add('active'));
+        }
+
+        // Fonction pour gérer la soumission du formulaire de modification
+        async function handleEditSubmit(e) {
+            e.preventDefault();
+            const form = e.target;
+            const userId = form.querySelector('[name="user_id"]').value;
+            const numericUserId = parseInt(userId);
+            
+            if (isNaN(numericUserId)) {
+                console.error("ID utilisateur invalide:", userId);
+                alert("ID utilisateur invalide");
+                return;
+            }
+            
+            // Récupérer les données du formulaire
+            const formData = {
+                first_name: form.querySelector('[name="first_name"]').value.trim(),
+                last_name: form.querySelector('[name="last_name"]').value.trim(),
+                email: form.querySelector('[name="email"]').value.trim(),
+                phone_number: form.querySelector('[name="phone_number"]').value.trim(),
+                phone_prefix: form.querySelector('[name="phone_prefix"]').value.trim(),
+                address_country: form.querySelector('[name="address_country"]').value.trim(),
+                address_province: form.querySelector('[name="address_province"]').value.trim(),
+                address_detail: form.querySelector('[name="address_detail"]').value.trim()
+            };
+            
+            // Validation des données
+            if (!formData.first_name || !formData.last_name) {
+                alert("Le prénom et le nom sont obligatoires");
+                return;
+            }
+            
+            if (!formData.email || !/^\S+@\S+\.\S+$/.test(formData.email)) {
+                alert("Veuillez fournir une adresse e-mail valide");
+                return;
+            }
+            
+            if (!formData.phone_prefix || !formData.phone_number) {
+                alert("Le numéro de téléphone et son indicatif sont obligatoires");
+                return;
+            }
+            
+            if (!formData.address_country || !formData.address_province || !formData.address_detail) {
+                alert("Tous les champs d'adresse sont obligatoires");
+                return;
+            }
+            
+            console.log("Envoi des données de mise à jour:", formData);
+            
+            // Afficher un indicateur de chargement
+            const saveButton = form.querySelector('button[type="submit"]');
+            const originalText = saveButton.textContent;
+            saveButton.textContent = "Enregistrement...";
+            saveButton.disabled = true;
+            
+            try {
+                // Appel à l'API pour mettre à jour l'utilisateur
+                const response = await fetch(`/api/users/update/${numericUserId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                // Restaurer le bouton d'enregistrement
+                saveButton.textContent = originalText;
+                saveButton.disabled = false;
+                
+                // Vérifier si la réponse est OK
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || `Erreur HTTP: ${response.status}`);
+                }
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // Mettre à jour l'utilisateur dans le tableau côté client
+                    const userToUpdateIndex = allUsers.findIndex(u => {
+                        const uId = u.user_id.startsWith('USR') ? 
+                            parseInt(u.user_id.substring(3)) : parseInt(u.user_id);
+                        return uId === numericUserId;
+                    });
+                    
+                    if (userToUpdateIndex !== -1) {
+                        // Mettre à jour les données de l'utilisateur tout en conservant l'ID formaté
+                        const userIdFormatted = allUsers[userToUpdateIndex].user_id;
+                        
+                        // Construire l'utilisateur mis à jour avec les nouvelles valeurs
+                        allUsers[userToUpdateIndex] = {
+                            ...allUsers[userToUpdateIndex], // Garder les propriétés existantes
+                            full_name: `${formData.first_name} ${formData.last_name}`,
+                            email: formData.email,
+                            phone: `${formData.phone_prefix} ${formData.phone_number}`,
+                            region: `${formData.address_province} - ${formData.address_country}`,
+                            address: formData.address_detail,
+                            last_modified: new Date().toLocaleDateString('fr-FR')
+                        };
+                        
+                        // Mettre à jour l'affichage
+                        renderUsersTable(allUsers);
+                        
+                        // Fermer le modal
+                        closeModal('edituserModal');
+                        
+                        // Afficher un message de confirmation
+                        alert('Les modifications ont été enregistrées avec succès');
+                    } else {
+                        console.error(`Utilisateur avec ID ${numericUserId} non trouvé dans le tableau`);
+                        alert("L'utilisateur a été mis à jour dans la base de données, mais n'a pas été trouvé dans la liste affichée. La page va être actualisée.");
+                        closeModal('edituserModal');
+                        // Recharger les utilisateurs après un court délai
+                        setTimeout(() => {
+                            fetchUsers();
+                        }, 1500);
+                    }
+                } else {
+                    // En cas d'erreur, afficher le message d'erreur
+                    alert(`Erreur lors de la mise à jour : ${result.message}`);
+                }
+            } catch (error) {
+                console.error("Erreur lors de la mise à jour :", error);
+                alert(`Une erreur est survenue: ${error.message || "Erreur inconnue"}`);
+                
+                // Restaurer le bouton d'enregistrement s'il n'a pas été restauré
+                saveButton.textContent = originalText;
+                saveButton.disabled = false;
+            }
+        }
+
+        // Ajouter l'écouteur d'événements pour le formulaire de modification
+        document.addEventListener('DOMContentLoaded', () => {
+            const editForm = document.getElementById('edituserForm');
+            if (editForm) {
+                editForm.addEventListener('submit', handleEditSubmit);
+            }
+            // ...existing code...
+        });
+
+        async function deleteUser(userId) {
+            // Récupérer l'identifiant numérique de l'utilisateur à partir du préfixe 'USRxxx'
+            const numericUserId = userId.startsWith('USR') ? parseInt(userId.substring(3)) : userId;
+            
+            // Trouver l'utilisateur dans le tableau
+            const userToDelete = allUsers.find(user => user.user_id === userId);
+            
+            if (userToDelete) {
+                if (confirm(`Êtes-vous sûr de vouloir supprimer l'utilisateur ${userToDelete.full_name} ?`)) {
+                    try {
+                        console.log(`Suppression de l'utilisateur avec ID ${numericUserId}`);
+                        
+                        // Appel à l'API pour supprimer l'utilisateur de la base de données
+                        const response = await fetch(`/api/users/delete/${numericUserId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            }
+                        });
+                        
+                        const result = await response.json();
+                        
+                        if (result.success) {
+                            // Supprimer l'utilisateur du tableau côté client
+                            allUsers = allUsers.filter(user => user.user_id !== userId);
+                            
+                            // Si nous sommes sur une page qui devient vide après la suppression,
+                            // revenir à la page précédente (sauf si c'est la première page)
+                            const totalPages = Math.ceil(allUsers.length / usersPerPage);
+                            if (currentPage > totalPages && currentPage > 1) {
+                                currentPage--;
+                            }
+                            
+                            // Mettre à jour l'affichage
+                            renderUsersTable(allUsers);
+                            
+                            // Afficher un message de confirmation
+                            alert(`L'utilisateur ${userToDelete.full_name} a été supprimé avec succès.`);
+                        } else {
+                            // En cas d'erreur, afficher le message d'erreur
+                            alert(`Erreur lors de la suppression : ${result.message}`);
+                        }
+                    } catch (error) {
+                        console.error("Erreur lors de la suppression :", error);
+                        alert("Une erreur est survenue lors de la tentative de suppression de l'utilisateur.");
+                    }
+                }
+            } else {
+                console.error(`Utilisateur avec ID ${userId} non trouvé dans le tableau`);
+                alert("Impossible de trouver l'utilisateur à supprimer.");
+            }
+        }
+
+        function approveUser(userId) {
+            const userIndex = allUsers.findIndex(user => user.id === userId);
+            if (userIndex !== -1) {
+                const user = allUsers[userIndex];
+                if (confirm(`Êtes-vous sûr de vouloir confirmer l'utilisateur ${user.name} ?`)) {
+                    // Approuver l'utilisateur
+                    allUsers[userIndex].status = 'approuve';
+                    allUsers[userIndex].lastModified = new Date().toLocaleDateString('fr-FR');
+                    
+                    // Garder la pagination sur la page actuelle
+                    renderUsersTable(displayedUsers);
+                    alert(`L'utilisateur ${user.name} a été confirmé avec succès.`);
+                }
+            }
+        }        
+        // Variables globales pour la pagination
+        let currentPage = 1;
+        const usersPerPage = 8;
+        let displayedUsers = [];
+
+        // Fonction pour afficher les utilisateurs dans le tableau
+        function renderUsersTable(users) {
+            // Sauvegarder la liste complète des utilisateurs à afficher
+            displayedUsers = users;
+            
+            // Calculer les indices de début et de fin pour la pagination
+            const startIndex = (currentPage - 1) * usersPerPage;
+            const endIndex = startIndex + usersPerPage;
+            
+            // Obtenir les utilisateurs pour la page actuelle
+            const usersForPage = users.slice(startIndex, endIndex);
+            
+            // Mise à jour de l'affichage de pagination
+            updatePaginationDisplay(users.length);
+            const tbody = document.getElementById('usersTableBody');
+            tbody.innerHTML = '';
+            
+            usersForPage.forEach(user => {
+                const tr = document.createElement('tr');
+                tr.setAttribute('data-userid', user.user_id);
+                tr.innerHTML = `
+                    <td>${user.user_id}</td>
+                    <td>${user.full_name}</td>
+                    <td>${user.dkit}</td>
+                    <td>${user.email}</td>
+                    <td>${user.phone}</td>
+                    <td>${user.region}</td>
+                    <td>${user.address}</td>
+                    <td>${user.password_hash}</td>
+                    <td><span class="status-badge status-${user.status.replace(' ', '-')}">${user.status}</span></td>
+                    <td>${user.date}</td>
+                    <td>${user.last_modified}</td>
+                    <td class="action-menu">
+                        <button class="action-btn edit-btn" onclick="editUser('${user.user_id}')">
+                            <i class="fas fa-edit"></i> Modifier
+                        </button>
+                        <button class="action-btn delete-btn" onclick="deleteUser('${user.user_id}')">
+                            <i class="fas fa-trash"></i> Supprimer
+                        </button>
+                        ${user.status === 'en attente' ? 
+                            `<button class="action-btn approve-btn" onclick="approveUser('${user.user_id}')">
+                                <i class="fas fa-check"></i> Confirmer
+                            </button>` : 
+                            ''}
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            // Mettre à jour la pagination
+            updatePagination();
+        }
+
+        // Fonction pour afficher une page spécifique des utilisateurs déjà chargés
+        function displayUserPage(page = 1) {
+            console.log(`Affichage de la page ${page} des utilisateurs`);
+            currentPage = page;
+            // Utiliser les données déjà chargées dans allUsers
+            renderUsersTable(allUsers);
+        }
+
+        // Fonction pour aller à une page spécifique
+        function goToPage(pageNum) {
+            displayUserPage(pageNum);
+        }
+
+        // Ne pas ajouter de DOMContentLoaded ici, nous le ferons une seule fois à la fin
+        function filterByStatus(status) {
+    const filtered = status === 'all' ? 
+        allUsers : 
+        allUsers.filter(user => user.status === status);
+    
+    // Réinitialiser à la première page quand on filtre
+    currentPage = 1;
+    renderUsersTable(filtered);
+}
+
+function searchUsers(query) {
+    const filtered = allUsers.filter(user => 
+        user.name.toLowerCase().includes(query.toLowerCase()) ||
+        user.email.toLowerCase().includes(query.toLowerCase()) ||
+        user.dkit.toLowerCase().includes(query.toLowerCase())
+    );
+    
+    // Réinitialiser à la première page quand on recherche
+    currentPage = 1;
+    renderUsersTable(filtered);
+}
+
+function showAllUsers() {
+    // Réinitialiser à la première page quand on affiche tous les utilisateurs
+    currentPage = 1;
+    renderUsersTable(allUsers);
+}
+
+// Fonction pour mettre à jour la pagination (appelée par renderUsersTable)
+        function updatePagination() {
+            const totalPages = Math.ceil(displayedUsers.length / usersPerPage);
+            
+            // Activer/désactiver les boutons selon la position
+            document.getElementById('prevPage').disabled = currentPage === 1;
+            document.getElementById('nextPage').disabled = currentPage === totalPages || totalPages === 0;
+            
+            // Mettre à jour l'affichage du numéro de page
+            const pageNumbers = document.getElementById('pageNumbers');
+            pageNumbers.textContent = totalPages === 0 ? '0/0' : `${currentPage}/${totalPages}`;
+        }
+        
+        // Cette fonction est désormais obsolète, mais remplacée par updatePagination
+        function updatePaginationDisplay(totalUsers) {
+            // Appeler la nouvelle fonction à la place
+            updatePagination();
+        }
+        
+        // Fonction pour changer de page
+        function changePage(direction) {
+            const totalPages = Math.ceil(displayedUsers.length / usersPerPage);
+            
+            if (direction === 'next' && currentPage < totalPages) {
+                currentPage++;
+            } else if (direction === 'prev' && currentPage > 1) {
+                currentPage--;
+            }
+            
+            renderUsersTable(displayedUsers);
+        }
+        
+        // Centraliser toutes les initialisations dans un seul DOMContentLoaded
+        document.addEventListener('DOMContentLoaded', () => {
+            console.log('DOM chargé, initialisation de la page de gestion des utilisateurs');
+            
+            // Configurer les boutons de pagination
+            document.getElementById('prevPage').addEventListener('click', () => changePage('prev'));
+            document.getElementById('nextPage').addEventListener('click', () => changePage('next'));
+            
+            // Ajouter l'écouteur d'événements pour le formulaire d'édition
+            const editForm = document.getElementById('edituserForm');
+            if (editForm) {
+                editForm.addEventListener('submit', handleEditSubmit);
+                console.log("Écouteur d'événements ajouté au formulaire d'édition");
+            } else {
+                console.error("Formulaire d'édition non trouvé");
+            }
+            
+            // Charger les utilisateurs depuis l'API
+            loadAllUsers();
+            
+            console.log('Initialisation terminée');
+        });
+    </script>
+    <script>
+        // Function to toggle the 'Autre' secteur field visibility
+        function toggleAutreSecteur() {
+            const secteurSelect = document.querySelector('select[name="secteurActivite"]');
+            const autreGroup = document.getElementById('autreSecteurGroup');
+            const autreInput = document.querySelector('input[name="autreSecteur"]');
+            
+            if (secteurSelect.value === 'autre') {
+                autreGroup.style.display = 'block';
+                autreInput.required = true;
+            } else {
+                autreGroup.style.display = 'none';
+                autreInput.required = false;
+            }
+        }
+
+        // Reset all form fields including dynamically generated ones
+        function resetFormFields() {
+            const form = document.getElementById('createClientForm');
+            if (form) {
+                // Reset form using native reset method
+                form.reset();
+                
+                // Clear all input types
+                const inputs = form.querySelectorAll('input, select, textarea');
+                inputs.forEach(input => {
+                    // Clear value
+                    input.value = '';
+                    
+                    // Handle special input types
+                    if (input.type === 'checkbox' || input.type === 'radio') {
+                        input.checked = false;
+                    }
+                    
+                    // Clear selected options for selects
+                    if (input.tagName === 'SELECT') {
+                        input.selectedIndex = 0;
+                    }
+                    
+                    // Clear any data attributes that might hold values
+                    if (input.dataset && input.dataset.value) {
+                        input.dataset.value = '';
+                    }
+                });
+                
+                // Clear any dynamically generated elements
+                const dynamicElements = form.querySelectorAll('[data-dynamic]');
+                dynamicElements.forEach(el => {
+                    if (el.tagName === 'INPUT' || el.tagName === 'SELECT' || el.tagName === 'TEXTAREA') {
+                        el.value = '';
+                        if (el.type === 'checkbox' || el.type === 'radio') {
+                            el.checked = false;
+                        }
+                    }
+                });
+                
+                // Clear any error messages
+                const errorElements = form.querySelectorAll('.form-error');
+                errorElements.forEach(el => {
+                    el.textContent = '';
+                });
+                
+                // Clear any success messages
+                const successElements = form.querySelectorAll('.form-success');
+                successElements.forEach(el => {
+                    el.textContent = '';
+                });
+            }
+        }    function showAllUsers() {
+        currentPage = 1;
+        renderUsersTable(allUsers);
+    }
+
+    function filterByStatus(statusValue) {
+        currentPage = 1;
+        const filtered = statusValue === 'all' ? 
+            allUsers : 
+            allUsers.filter(user => user.status === statusValue);
+        renderUsersTable(filtered);
+    }
+
+    function searchUsers(query) {
+        currentPage = 1;
+        query = query.toLowerCase();
+        const filteredUsers = allUsers.filter(user => 
+            (user.user_id && user.user_id.toLowerCase().includes(query)) ||
+            (user.full_name && user.full_name.toLowerCase().includes(query)) ||
+            (user.email && user.email.toLowerCase().includes(query)) ||
+            (user.dkit && user.dkit.toLowerCase().includes(query)) ||
+            (user.phone && user.phone.toLowerCase().includes(query)) ||
+            (user.region && user.region.toLowerCase().includes(query))
+        );
+        renderUsersTable(filteredUsers);
+    }
+
+        // Function called when clicking the close button or outside the modal
+        function openCreateModal() {
+            const modal = document.getElementById('createClientModal');
+            if (modal) {
+                modal.style.display = 'block';
+                const formContainer = modal.querySelector('.form-container');
+                const formGroups = formContainer.querySelectorAll('.form-group');
+                
+                // Add animation classes
+                formContainer.classList.add('active');
+                formGroups.forEach(group => group.classList.add('active'));
+                
+                // Reset form when opening
+                resetFormFields();
+                
+                // Initialize country and phone code selects
+                const countrySelect = formContainer.querySelector('#countrySelect');
+                const phoneCodeSelect = formContainer.querySelector('#phoneCodeSelect');
+                if (countrySelect && phoneCodeSelect) {
+                    initializeCountryPhone();
+                }
+            }
+        }
+
+        
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modals = document.getElementsByClassName('modal');
+            for (let modal of modals) {
+                if (event.target === modal) {
+                    modal.style.display = 'none';
+                    resetFormFields(); // Reset form when clicking outside
+                }
+            }
+        }
+
+        // Form submission handler
+        document.getElementById('createClientForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            console.log('Form submitted'); // Debug log
+            
+            if (!validateForm(e.target)) {
+                return;
+            }
+
+            const formData = new FormData(e.target);
+            const userData = {
+                email: formData.get('email'),
+                phone_country_code: formData.get('indicatif'),
+                phone_number: formData.get('telephone'),
+                address_country: formData.get('pays'),
+                address_province: formData.get('province'),
+                address_detail: formData.get('adresse'),
+                first_name: formData.get('prenom'),
+                last_name: formData.get('nom'),
+                password_hash: formData.get('password'),
+                role_id: '2', // Default role_id for regular users
+                status: 'active'
+            };
+
+            console.log('Sending user data:', userData); // Debug log
+
+            try {
+                const response = await fetch('/api/users/create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(userData)
+                });
+
+                console.log('Response:', response.status); // Debug log
+
+                const result = await response.json();
+                console.log('Response data:', result); // Debug log
+
+                if (response.ok) {
+                    // Afficher un message indiquant que nous rechargeons les données
+                    const successMessage = 'Utilisateur créé avec succès! Rechargement des données...';
+                    alert(successMessage);
+                    
+                    // Fermer le modal et réinitialiser le formulaire
+                    closeModal('createClientModal');
+                    e.target.reset();
+                    
+                    // Rechargement des utilisateurs depuis la base de données
+                    const loadSuccess = await loadAllUsers();
+                    
+                    if (!loadSuccess) {
+                        console.warn("Les données ont été enregistrées mais le rechargement automatique a échoué.");
+                    }
+                } else {
+                    alert('Erreur: ' + (result.message || 'Une erreur est survenue'));
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Une erreur est survenue lors de la création de l\'utilisateur');
+            }
+        });
+
+        function validateForm(form) {
+            let isValid = true;
+            const formGroups = form.querySelectorAll('.form-group');
+            
+            formGroups.forEach(group => {
+                const input = group.querySelector('input, select');
+                if (!input) return;
+                
+                if (input.required && !input.value.trim()) {
+                    isValid = false;
+                    group.classList.add('error');
+                    const error = group.querySelector('.form-error') || document.createElement('div');
+                    error.className = 'form-error';
+                    error.textContent = 'Ce champ est requis';
+                    if (!group.querySelector('.form-error')) {
+                        group.appendChild(error);
+                    }
+                } else {
+                    group.classList.remove('error');
+                    const error = group.querySelector('.form-error');
+                    if (error) {
+                        error.remove();
+                    }
+                }
+            });
+            
+            return isValid;
+        }
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,1498 @@
+
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Maintenance - D-WEE</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        
+:root {
+    --primary-color: #25A8DF;
+    --primary-hover: #1E8FBF;
+    --secondary-color: #00A69C;
+    --text-color: #0A0648;
+    --text-muted: #1A1A1A;
+    --bg-color: #F4F1EE;
+    --bg-alt: #F4F1EE;
+    --border-color: rgba(26, 26, 26, 0.15);
+    --border-light: rgba(26, 26, 26, 0.08);
+    --success-color: #00A69C;
+    --warning-color: #25A8DF;
+    --danger-color: #d46161;
+    --shadow: 0 2px 8px 0 rgba(10, 6, 72, 0.08), 0 1px 4px 0 rgba(10, 6, 72, 0.04);
+    --shadow-lg: 0 8px 24px -4px rgba(10, 6, 72, 0.12), 0 4px 12px -2px rgba(10, 6, 72, 0.08);
+    --radius: 8px;
+    --radius-lg: 12px;
+    --hover-color: rgba(244, 241, 238, 0.7);
+    --transition: all 0.2s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg-color);
+    color: var(--text-color);
+    line-height: 1.6;
+}
+
+.container {
+    display: flex;
+    min-height: 100vh;
+}
+
+/* Sidebar Styles */
+    .sidebar {
+      width: 250px;
+      background: white;
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
+      z-index: 1000;
+      box-shadow: var(--shadow);
+    }
+
+    .logo {
+      padding: 1.5rem;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .logo img {
+      width: 40px;
+      height: 40px;
+    }
+
+    .logo-text {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-color);
+    }
+
+    .logo-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      padding: 1rem 0;
+    }
+
+    .nav-item {
+      margin: 0.25rem 0;
+    }
+
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.75rem 1.5rem;
+      color: var(--text-muted);
+      text-decoration: none;
+      transition: all 0.2s ease;
+      font-size: 0.95rem;
+      border-radius: 0;
+      cursor: pointer;
+    }
+
+    .nav-link:hover {
+      background: var(--bg-alt);
+      color: var(--text-color);
+    }
+
+    .nav-link.active {
+      background: var(--primary-color);
+      color: white;
+      border-radius: var(--radius);
+      margin: 0.25rem 1rem;
+      padding: 0.75rem 1.25rem;
+    }
+     .nav-link.active:hover {
+        background: var(--primary-hover);
+    }
+
+    .nav-link i {
+      width: 18px;
+      text-align: center;
+    }
+
+    .sidebar-user {
+      padding: 1rem 1.5rem;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+    }
+
+    .user-avatar {
+      width: 35px;
+      height: 35px;
+      background: var(--secondary-color);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      font-size: 0.9rem;
+    }
+
+    .user-details {
+      flex: 1;
+    }
+
+    .user-name {
+      font-weight: 600;
+      font-size: 0.9rem;
+      color: var(--text-color);
+    }
+
+    .user-role {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .logout-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 0.5rem;
+      border-radius: 6px;
+      transition: all 0.2s ease;
+    }
+
+    .logout-btn:hover {
+      background: var(--bg-alt);
+      color: var(--text-color);
+    }
+/* Main Content */
+.main-content {
+    flex: 1;
+    margin-left: 250px;
+    padding: 2rem;
+    background: var(--bg-color);
+    min-height: 100vh;
+}
+
+.page-header {
+    margin-bottom: 2rem;
+}
+
+.page-title {
+    font-size: 1.75rem;
+    font-weight: 600;
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+}
+
+.page-subtitle {
+    color: var(--text-muted);
+    font-size: 0.9rem;
+}
+
+.card {
+    background: white;
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-light);
+    overflow: hidden;
+    margin-bottom: 2rem;
+}
+
+.card-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid var(--border-light);
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: var(--bg-alt);
+}
+
+.card-icon {
+    color: var(--primary-color);
+    font-size: 1.25rem;
+}
+
+.card-title {
+    font-weight: 600;
+    color: var(--text-color);
+    font-size: 1.1rem;
+}
+
+.card-content {
+    padding: 1.5rem;
+}
+
+/* Appointment Styles */
+.pending-appointments {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.appointment-request {
+    background: var(--hover-color);
+    padding: 1.5rem;
+    border-radius: var(--radius);
+    
+    transition: var(--transition);
+    position: relative;
+}
+
+.appointment-request:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
+}
+
+.appointment-info {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.info-label {
+    font-weight: 500;
+    color: var(--text-color);
+    min-width: 80px;
+}
+
+.info-value {
+    color: var(--text-muted);
+}
+
+.appointment-actions {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+}
+
+.btn {
+    padding: 0.5rem 1rem;
+    border: none;
+    border-radius: var(--radius);
+    font-family: inherit;
+    font-size: 0.875rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.btn:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-lg);
+}
+
+.btn-primary {
+    background: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--primary-hover);
+}
+
+.btn-danger {
+    background: var(--danger-color);
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #c55555;
+}
+
+/* Calendar Styles */
+.calendar-container {
+    background: white;
+    border-radius: var(--radius);
+    padding: 1rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-light);
+}
+
+#maintenanceCalendar {
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Modal Styles */
+.modal {
+    position: fixed;
+    z-index: 9999;
+    left: 0;
+    top: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(10, 6, 72, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    visibility: hidden;
+    transition: var(--transition);
+}
+
+.modal.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    background: white;
+    padding: 2rem;
+    border-radius: var(--radius-lg);
+    max-width: 500px;
+    width: 90%;
+    position: relative;
+    box-shadow: var(--shadow-lg);
+    transform: scale(0.9);
+    transition: var(--transition);
+}
+
+.modal.show .modal-content {
+    transform: scale(1);
+}
+
+.modal-close {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 1.5rem;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: var(--transition);
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+}
+
+.modal-close:hover {
+    color: var(--danger-color);
+    background: var(--hover-color);
+}
+
+.modal-header {
+    margin-bottom: 1.5rem;
+    padding-right: 2rem;
+}
+
+.modal-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-color);
+}
+
+.modal-body {
+    margin-bottom: 1.5rem;
+}
+
+.form-group {
+    margin-bottom: 1rem;
+}
+
+.form-label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 500;
+    color: var(--text-color);
+}
+
+.form-control {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid var(--border-color);
+    border-radius: var(--radius);
+    font-family: inherit;
+    font-size: 0.875rem;
+    transition: var(--transition);
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(37, 168, 223, 0.1);
+}
+
+textarea.form-control {
+    min-height: 100px;
+    resize: vertical;
+}
+
+.modal-footer {
+    display: flex;
+    gap: 0.75rem;
+    justify-content: flex-end;
+}
+
+/* Status indicators */
+.status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 4px 12px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+}
+
+.status-pending {
+    background: rgba(37, 168, 223, 0.1);
+    color: var(--warning-color);
+}
+
+.status-accepted {
+    background: rgba(0, 166, 156, 0.1);
+    color: var(--success-color);
+}
+
+.status-declined {
+    background: rgba(212, 97, 97, 0.1);
+    color: var(--danger-color);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .sidebar {
+        transform: translateX(-100%);
+        transition: transform 0.3s ease;
+    }
+
+    .sidebar.active {
+        transform: translateX(0);
+    }
+
+    .main-content {
+        margin-left: 0;
+    }
+
+    .appointment-info {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        padding: 1rem;
+    }
+
+    .modal-content {
+        padding: 1.5rem;
+        margin: 1rem;
+    }
+
+    .appointment-actions {
+        flex-direction: column;
+    }
+
+    .btn {
+        justify-content: center;
+    }
+}
+
+/* FullCalendar Custom Styles */
+.fc {
+    font-family: 'Poppins', sans-serif !important;
+}
+
+.fc-button-primary {
+    background-color: var(--primary-color) !important;
+    border-color: var(--primary-color) !important;
+    font-weight: 500 !important;
+}
+
+.fc-button-primary:hover {
+    background-color: var(--primary-hover) !important;
+    border-color: var(--primary-hover) !important;
+}
+
+.fc-event {
+    border-radius: var(--radius) !important;
+    border: none !important;
+    font-weight: 500 !important;
+}
+
+.fc-daygrid-event {
+    font-size: 0.8rem !important;
+}
+
+.fc-header-toolbar {
+    margin-bottom: 1rem !important;
+}
+
+/* Loading state */
+.loading {
+    opacity: 0.6;
+    pointer-events: none;
+}
+
+.spinner {
+    border: 2px solid var(--border-color);
+    border-top: 2px solid var(--primary-color);
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+    display: inline-block;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Empty state */
+.empty-state {
+    text-align: center;
+    padding: 2rem;
+    color: var(--text-muted);
+}
+
+.empty-state-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+}
+    </style>
+
+</head>
+<body>
+    <div class="container">
+      <aside class="sidebar">
+    <div class="logo">
+      <img src="https://dweehealthcare.com/wp-content/uploads/2023/08/D-wee-Final.png" alt="DWEE Logo" />
+      <div>
+        <div class="logo-text">D-WEE Healthcare</div>
+        <div class="logo-subtitle">Super Admin</div>
+      </div>
+    </div>
+    <nav class="sidebar-nav">
+  <div class="nav-item">
+    <a id="nav-dashboard" class="nav-link" href="{{ url_for('superadmin_dashboard') }}">
+        <i class="fas fa-home"></i> Tableau de bord
+    </a>
+</div>
+  <div class="nav-item">
+    <a id="nav-users" class="nav-link" href="{{ url_for('admin_user_management') }}">
+      <i class="fas fa-users"></i> Gestion Utilisateurs
+    </a>
+  </div>
+  <div class="nav-item">
+    <a id="nav-appointments" class="nav-link " href="{{ url_for('admin_appointment') }}">
+      <i class="fas fa-calendar-alt"></i> Rendez-vous
+    </a>
+  </div>
+  <div class="nav-item">
+    <a id="nav-devices" class="nav-link" href="{{ url_for('admin_dkit_device_management') }}">
+      <i class="fas fa-microchip"></i> Appareils 
+    </a>
+  </div>
+</nav>
+    
+    <div class="sidebar-user">
+      <div class="user-avatar">SA</div>
+      <div class="user-details">
+        <div class="user-name">Super Admin</div>
+        <div class="user-role">Administrateur</div>
+      </div>
+      <button class="logout-btn" onclick="confirmLogout()">
+        <i class="fas fa-sign-out-alt"></i>
+      </button>
+    </div>
+  </aside>
+
+        <main class="main-content">
+            <div class="page-header">
+                <h1 class="page-title">Calendrier de Maintenance</h1>
+                <p class="page-subtitle">Gérez les demandes de maintenance et planifiez les interventions</p>
+            </div>
+
+            <!-- Pending Appointments Card -->
+            <div class="card">                <div class="card-header">
+                    <i class="card-icon fas fa-clock"></i>
+                    <h2 class="card-title">Demandes de maintenance urgente en attente</h2>
+                </div>                <div class="card-content">
+                    <div id="pendingAppointments" class="pending-appointments">
+                        <!-- Maintenance requests will be loaded dynamically -->
+                    </div>
+                    <div id="emptyState" class="empty-state" style="display: none;">
+                        <div class="empty-state-icon">📅</div>
+                        <p>Aucune demande de maintenance urgente en attente</p>
+                    </div>
+                </div>            </div>
+
+            <!-- Scheduled Maintenance Card -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="card-icon fas fa-tools"></i>
+                    <h2 class="card-title">Maintenances programmées</h2>
+                </div>
+                <div class="card-content">
+                    <div id="scheduledMaintenances" class="pending-appointments">
+                        <!-- Scheduled maintenance requests will be loaded dynamically -->
+                    </div>
+                    <div id="emptyScheduledState" class="empty-state" style="display: none;">
+                        <div class="empty-state-icon">🔧</div>
+                        <p>Aucune maintenance programmée</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Calendar Card -->
+            <div class="card">
+                <div class="card-header">
+                    <i class="card-icon fas fa-calendar-alt"></i>
+                    <h2 class="card-title">Planning de maintenance</h2>
+                </div>
+                <div class="card-content">
+                    <div class="calendar-container">
+                        <div id="maintenanceCalendar"></div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+
+    <!-- Appointment Details Modal -->
+    <div id="appointmentModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Détails du Rendez-vous</h3>
+                <span class="modal-close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div id="modalDetails"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Refuse Reason Modal -->
+    <div id="refuseReasonModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Motif du refus</h3>
+                <span class="modal-close">&times;</span>
+            </div>
+            <div class="modal-body">
+                <form id="refuseReasonForm">
+                    <div class="form-group">
+                        <label for="refuseReason" class="form-label">
+                            Veuillez indiquer la raison du refus :
+                        </label>
+                        <textarea 
+                            id="refuseReason" 
+                            class="form-control" 
+                            placeholder="Expliquez pourquoi ce rendez-vous ne peut pas être accepté..."
+                            required
+                        ></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelRefuse">Annuler</button>
+                <button type="submit" form="refuseReasonForm" class="btn btn-danger">
+                    <i class="fas fa-paper-plane"></i>
+                    Envoyer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/6.1.11/index.global.min.js"></script>
+    <script>        class MaintenanceCalendar {
+            constructor() {
+                this.calendar = null;
+                this.currentDeclinedRequest = null;
+                this.appointments = [];
+                this.init();
+            }            init() {
+                this.fetchPendingMaintenances();
+                this.fetchScheduledMaintenances();
+                this.initCalendar();
+                this.bindEvents();
+                
+                // Set up auto-refresh every 30 seconds to keep data current
+                this.refreshInterval = setInterval(() => {
+                    console.log("Auto-refreshing maintenance data...");
+                    this.fetchPendingMaintenances();
+                    this.fetchScheduledMaintenances();
+                    this.calendar.refetchEvents(); // Refresh calendar events
+                }, 30000); // 30 seconds
+            }
+            
+            fetchPendingMaintenances() {
+                // Show loading state
+                const pendingContainer = document.getElementById('pendingAppointments');
+                pendingContainer.innerHTML = '<div class="loading-container" style="text-align: center; padding: 2rem;"><span class="spinner"></span><p style="margin-top: 1rem;">Chargement des demandes...</p></div>';                // First check the debug endpoint
+                fetch('/api/maintenance/debug')
+                    .then(response => response.json())
+                    .then(debugData => {
+                        console.log('Debug API Response:', debugData);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching debug info:', error);
+                    });
+                
+                // Fetch ALL maintenance requests from the API first
+                fetch('/api/maintenance/all')
+                    .then(response => response.json())
+                    .then(allData => {
+                        console.log('All Maintenances API Response:', allData);
+                        
+                        // Now fetch pending maintenance requests
+                        fetch('/api/maintenance/pending')
+                            .then(response => response.json())
+                            .then(data => {
+                                console.log('Pending API Response:', data);                                if (data.success && data.maintenances && data.maintenances.length > 0) {
+                                    console.log('Found pending maintenance requests (status "scheduled"):', data.maintenances.length);
+                                    this.renderPendingMaintenances(data.maintenances);
+                                    this.appointments = data.maintenances;
+                                } else if (allData.success && allData.maintenances && allData.maintenances.length > 0) {
+                                    // If there are maintenance requests but none are pending/scheduled
+                                    console.log('No pending requests, but found all requests:', allData.maintenances.length);                                    // Show all of them for now (for debugging)
+                                    const scheduledOrPending = allData.maintenances.filter(m => m.status === 'scheduled');                                    if (scheduledOrPending.length > 0) {
+                                        console.log('Found pending maintenance requests (status "scheduled") in all data:', scheduledOrPending.length);
+                                        this.renderPendingMaintenances(scheduledOrPending);
+                                        this.appointments = scheduledOrPending;
+                                    } else {
+                                        console.log('No pending maintenance requests (status "scheduled") found');
+                                        this.showEmptyState();
+                                    }
+                                } else {
+                                    console.log('No maintenance requests found or error in response');
+                                    this.showEmptyState();
+                                }
+                            })
+                    })
+                    .catch(error => {
+                        console.error('Error fetching maintenance requests:', error);
+                        pendingContainer.innerHTML = `
+                            <div class="error-state" style="text-align: center; padding: 2rem; color: var(--danger-color);">
+                                <i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                                <p>Erreur lors du chargement des demandes.</p>
+                                <button class="btn btn-primary" onclick="window.location.reload()" style="margin-top: 1rem;">
+                                    <i class="fas fa-sync-alt"></i>
+                                    Réessayer
+                                </button>
+                            </div>
+                        `;
+                    });
+            }
+              renderPendingMaintenances(maintenances) {
+                const pendingContainer = document.getElementById('pendingAppointments');
+                pendingContainer.innerHTML = '';
+                
+                maintenances.forEach(maintenance => {
+                    const maintenanceElement = document.createElement('div');
+                    maintenanceElement.className = 'appointment-request';
+                    maintenanceElement.dataset.id = maintenance.id;                      console.log('Rendering maintenance:', maintenance);
+                        // Choisir la date et l'heure à afficher selon time_change_status
+                      let dateToDisplay, timeToDisplay;
+                      
+                      // Utiliser les champs fournis par l'API si disponibles
+                      if (maintenance.using_requested_time || (maintenance.time_change_status === 1 && maintenance.requested_time)) {
+                          // Utiliser requested_time si time_change_status=1
+                          dateToDisplay = maintenance.display_date || maintenance.requested_date || 
+                                         (maintenance.requested_time ? new Date(maintenance.requested_time).toLocaleDateString('fr-FR') : '');
+                          timeToDisplay = maintenance.display_time || maintenance.requested_time_formatted || 
+                                         (maintenance.requested_time ? new Date(maintenance.requested_time).toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'}) : '');
+                          console.log(`Using requested_time for maintenance ${maintenance.id}: ${maintenance.requested_time}`);
+                      } else {
+                          // Utiliser datetime si time_change_status=0 ou requested_time est vide
+                          dateToDisplay = maintenance.display_date || maintenance.formatted_date || 
+                                         (maintenance.datetime ? new Date(maintenance.datetime).toLocaleDateString('fr-FR') : '');
+                          timeToDisplay = maintenance.display_time || maintenance.formatted_time || 
+                                         (maintenance.datetime ? new Date(maintenance.datetime).toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'}) : '');
+                          console.log(`Using datetime for maintenance ${maintenance.id}: ${maintenance.datetime}`);
+                      }
+                      
+                      maintenanceElement.innerHTML = `
+                        <div class="appointment-info">
+                            <div class="info-item">
+                                <span class="info-label">Client:</span>
+                                <span class="info-value">${maintenance.client_name || 'Non spécifié'}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">D-KIT:</span>
+                                <span class="info-value">${maintenance.device_serial_number || 'Non spécifié'} ${maintenance.device_model ? '(' + maintenance.device_model + ')' : ''}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Date:</span>
+                                <span class="info-value">${dateToDisplay}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Heure:</span>
+                                <span class="info-value">${timeToDisplay}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Localisation:</span>
+                                <span class="info-value">${maintenance.location || 'Non spécifié'}</span>
+                            </div>                            ${maintenance.notes ? `
+                            <div class="info-item">
+                                <span class="info-label">Notes:</span>
+                                <span class="info-value">${maintenance.notes}</span>
+                            </div>
+                            ` : ''}
+                            ${maintenance.time_change_status === 1 ? `
+                            <div class="info-item">
+                                <span class="info-label">Info:</span>
+                                <span class="info-value" style="color: var(--primary-color);">
+                                    <i class="fas fa-clock"></i> Horaire modifié par l'utilisateur
+                                </span>
+                            </div>
+                            ` : ''}
+                        </div>
+                        <div class="appointment-actions">
+                            <button class="btn btn-primary accept-btn">
+                                <i class="fas fa-check"></i>
+                                Accepter
+                            </button>
+                            <button class="btn btn-danger decline-btn">
+                                <i class="fas fa-times"></i>
+                                Refuser
+                            </button>
+                        </div>
+                    `;
+                    
+                    pendingContainer.appendChild(maintenanceElement);
+                });
+                
+                this.checkEmptyState();
+            }
+            
+            showEmptyState() {
+                document.getElementById('pendingAppointments').innerHTML = '';
+                document.getElementById('emptyState').style.display = 'block';
+            }            fetchScheduledMaintenances() {
+                // Show loading state
+                const scheduledContainer = document.getElementById('scheduledMaintenances');
+                scheduledContainer.innerHTML = '<div class="loading-container" style="text-align: center; padding: 2rem;"><span class="spinner"></span><p style="margin-top: 1rem;">Chargement des maintenances programmées...</p></div>';
+                
+                // Fetch scheduled maintenance requests (status = 'confirmed')
+                fetch('/api/maintenance/accepted')
+                    .then(response => response.json())
+                    .then(data => {
+                        console.log('Scheduled Maintenances API Response:', data);
+                        
+                        if (data.success && data.maintenances && data.maintenances.length > 0) {
+                            console.log('Found scheduled maintenance requests:', data.maintenances.length);
+                            this.renderScheduledMaintenances(data.maintenances);
+                        } else {
+                            console.log('No scheduled maintenance requests found');
+                            this.showEmptyScheduledState();
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Error fetching scheduled maintenance requests:', error);
+                        scheduledContainer.innerHTML = `
+                            <div class="error-state" style="text-align: center; padding: 2rem; color: var(--danger-color);">
+                                <i class="fas fa-exclamation-triangle" style="font-size: 2rem; margin-bottom: 1rem;"></i>
+                                <p>Erreur lors du chargement des maintenances programmées.</p>
+                                <button class="btn btn-primary" onclick="window.location.reload()" style="margin-top: 1rem;">
+                                    <i class="fas fa-sync-alt"></i>
+                                    Réessayer
+                                </button>
+                            </div>
+                        `;
+                    });
+            }
+              renderScheduledMaintenances(maintenances) {
+                const scheduledContainer = document.getElementById('scheduledMaintenances');
+                scheduledContainer.innerHTML = '';
+                
+                maintenances.forEach(maintenance => {
+                    const maintenanceElement = document.createElement('div');
+                    maintenanceElement.className = 'appointment-request';
+                    maintenanceElement.style.background = 'rgba(0, 166, 156, 0.08)'; // Light green background for confirmed maintenances
+                    maintenanceElement.dataset.id = maintenance.id;
+                    
+                    maintenanceElement.innerHTML = `
+                        <div class="appointment-info">
+                            <div class="info-item">
+                                <span class="info-label">Client:</span>
+                                <span class="info-value">${maintenance.client_name || 'Non spécifié'}</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">D-KIT:</span>
+                                <span class="info-value">${maintenance.device_serial_number || 'Non spécifié'} ${maintenance.device_model ? '(' + maintenance.device_model + ')' : ''}</span>
+                            </div>                            <div class="info-item">
+                                <span class="info-label">Date:</span>
+                                <span class="info-value">${
+                                    maintenance.using_requested_time || (maintenance.time_change_status === 1 && maintenance.requested_time) 
+                                        ? (maintenance.display_date || maintenance.requested_date || new Date(maintenance.requested_time).toLocaleDateString('fr-FR')) 
+                                        : (maintenance.display_date || maintenance.formatted_date || new Date(maintenance.datetime).toLocaleDateString('fr-FR'))
+                                }</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Heure:</span>
+                                <span class="info-value">${
+                                    maintenance.using_requested_time || (maintenance.time_change_status === 1 && maintenance.requested_time) 
+                                        ? (maintenance.display_time || maintenance.requested_time_formatted || new Date(maintenance.requested_time).toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'})) 
+                                        : (maintenance.display_time || maintenance.formatted_time || new Date(maintenance.datetime).toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'}))
+                                }</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Localisation:</span>
+                                <span class="info-value">${maintenance.location || 'Non spécifié'}</span>
+                            </div>
+                            ${maintenance.notes ? `
+                            <div class="info-item">
+                                <span class="info-label">Notes:</span>
+                                <span class="info-value">${maintenance.notes}</span>
+                            </div>
+                            ` : ''}
+                            <div class="info-item">
+                                <span class="info-label">Statut:</span>
+                                <span class="status-badge status-accepted">Confirmée</span>
+                            </div>
+                        </div>
+                    `;
+                    
+                    scheduledContainer.appendChild(maintenanceElement);
+                });
+                
+                this.checkEmptyScheduledState();
+            }
+            
+            showEmptyScheduledState() {
+                document.getElementById('scheduledMaintenances').innerHTML = '';
+                document.getElementById('emptyScheduledState').style.display = 'block';
+            }
+            
+            checkEmptyScheduledState() {
+                const scheduledMaintenances = document.querySelectorAll('#scheduledMaintenances .appointment-request');
+                const emptyScheduledState = document.getElementById('emptyScheduledState');
+                
+                if (scheduledMaintenances.length === 0) {
+                    emptyScheduledState.style.display = 'block';
+                } else {
+                    emptyScheduledState.style.display = 'none';
+                }
+            }            initCalendar() {
+                const calendarEl = document.getElementById('maintenanceCalendar');
+                this.calendar = new FullCalendar.Calendar(calendarEl, {
+                    initialView: 'dayGridMonth',
+                    locale: 'fr',
+                    firstDay: 1,
+                    headerToolbar: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'dayGridMonth,timeGridWeek,listWeek'
+                    },
+                    height: 'auto',                    events: (info, successCallback, failureCallback) => {
+                        // Utilisation d'une fonction fléchée pour préserver le contexte 'this'
+                        console.log('Fetching calendar events from API...');
+                        
+                        // Récupérer les maintenances confirmées depuis le serveur
+                        fetch('/api/maintenance/accepted')
+                            .then(response => {
+                                console.log('API response status:', response.status);
+                                return response.json();
+                            })
+                            .then(data => {
+                                console.log('Calendar API Response:', data);
+                                
+                                if (data.success && data.maintenances && data.maintenances.length > 0) {                                    
+                                    console.log(`Found ${data.maintenances.length} confirmed maintenance(s) for calendar`);
+                                    
+                                    const events = data.maintenances.map(maintenance => {
+                                        console.log('Processing maintenance for calendar:', maintenance);
+                                          // Déterminer quelle date utiliser
+                                        let dateToUse;
+                                        
+                                        if (maintenance.time_change_status === 1 && maintenance.requested_time) {
+                                            // Si le temps a été modifié, utiliser requested_time
+                                            if (maintenance.requested_time_str) {
+                                                dateToUse = maintenance.requested_time_str;
+                                            } else {
+                                                dateToUse = maintenance.requested_time;
+                                            }
+                                            console.log(`Calendar: Using requested_time for ${maintenance.id}: ${dateToUse}`);
+                                        } else {
+                                            // Sinon utiliser datetime
+                                            if (maintenance.datetime_str) {
+                                                dateToUse = maintenance.datetime_str;
+                                            } else {
+                                                dateToUse = maintenance.datetime;
+                                            }
+                                            console.log(`Calendar: Using datetime for ${maintenance.id}: ${dateToUse}`);
+                                        }
+                                        
+                                        // Ensure dateToUse is in a format FullCalendar can handle
+                                        // Properly format string dates in MySQL format to ISO format
+                                        if (typeof dateToUse === 'string' && dateToUse.includes(' ')) {
+                                            // Convert MySQL datetime format to ISO format
+                                            dateToUse = dateToUse.replace(' ', 'T');
+                                            console.log(`Converted MySQL date to ISO format: ${dateToUse}`);
+                                        }
+                                        
+                                        // Vérifier si la date de l'événement est dans le passé
+                                        let eventDate;
+                                        try {
+                                            eventDate = new Date(dateToUse);
+                                            console.log(`Parsed date: ${eventDate} from ${dateToUse}`);
+                                            
+                                            // If the date is invalid, log details for debugging
+                                            if (isNaN(eventDate.getTime())) {
+                                                console.error(`Invalid date parsed from ${dateToUse}. Using current date.`);
+                                                eventDate = new Date();
+                                            }
+                                        } catch (e) {
+                                            console.error(`Error parsing date ${dateToUse}:`, e);
+                                            eventDate = new Date(); // Fallback to current date
+                                        }
+                                        
+                                        const now = new Date();
+                                        const isPastEvent = eventDate < now;
+                                        
+                                        // Format du titre selon la spécification
+                                        const title = `Maintenance - ${maintenance.client_name || 'Client'}`;
+                                          // Convert the date to ISO string for FullCalendar
+                                        const startDate = eventDate.toISOString();
+                                        console.log(`Final event start date: ${startDate}`);
+                                        
+                                        // Créer l'événement pour le calendrier
+                                        const calendarEvent = {
+                                            id: maintenance.id,
+                                            title: title,
+                                            start: startDate,
+                                            allDay: false,
+                                            color: isPastEvent ? '#A0A0A0' : '#00A69C', // Gris pour les événements passés
+                                            extendedProps: {
+                                                clientName: maintenance.client_name,
+                                                deviceSerial: maintenance.device_serial_number,
+                                                deviceModel: maintenance.device_model,
+                                                location: maintenance.location,
+                                                notes: maintenance.notes,
+                                                hasModifiedTime: maintenance.time_change_status === 1,
+                                                isPastEvent: isPastEvent,
+                                                originalDate: dateToUse // Store the original date for debugging
+                                            }
+                                        };
+                                        
+                                        console.log('Created calendar event:', calendarEvent);
+                                        return calendarEvent;
+                                    });
+                                    
+                                    // Sauvegarder ces événements dans l'instance
+                                    this.savedEvents = events;
+                                    localStorage.setItem('calendarEvents', JSON.stringify(events));
+                                    successCallback(events);
+                                } else {
+                                    console.log('No confirmed maintenance requests found or API error');
+                                    successCallback([]); // Empty calendar
+                                }
+                            }).catch(error => {
+                                console.error('Error fetching calendar events:', error);
+                                // Show empty calendar with error notification
+                                successCallback([]);
+                                // Display a notification about the error
+                                setTimeout(() => {
+                                    const notificationDiv = document.createElement('div');
+                                    notificationDiv.className = 'status-badge status-declined';
+                                    notificationDiv.style.position = 'absolute';
+                                    notificationDiv.style.top = '10px';
+                                    notificationDiv.style.right = '10px';
+                                    notificationDiv.style.zIndex = '1000';
+                                    notificationDiv.innerHTML = 'Erreur de chargement du calendrier';
+                                    document.querySelector('.calendar-container').appendChild(notificationDiv);
+                                    
+                                    setTimeout(() => notificationDiv.remove(), 5000);
+                                }, 500);
+                            });
+                    },
+                    eventClick: (info) => this.showEventDetails(info.event),
+                    dayCellDidMount: (info) => {
+                        if (info.date < new Date()) {
+                            info.el.style.backgroundColor = '#f9fafb';
+                        }
+                    }
+                });
+                this.calendar.render();
+            }
+
+            bindEvents() {
+                // Accept buttons
+                document.addEventListener('click', (e) => {
+                    if (e.target.closest('.accept-btn')) {
+                        this.acceptAppointment(e.target.closest('.appointment-request'));
+                    }
+                });
+
+                // Decline buttons
+                document.addEventListener('click', (e) => {
+                    if (e.target.closest('.decline-btn')) {
+                        this.showDeclineModal(e.target.closest('.appointment-request'));
+                    }
+                });
+
+                // Modal close events
+                document.querySelectorAll('.modal-close').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        this.closeModal(e.target.closest('.modal'));
+                    });
+                });
+
+                // Click outside modal to close
+                document.addEventListener('click', (e) => {
+                    if (e.target.classList.contains('modal')) {
+                        this.closeModal(e.target);
+                    }
+                });
+
+                // Refuse form submission
+                document.getElementById('refuseReasonForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.submitRefusal();
+                });
+
+                // Cancel refuse button
+                document.getElementById('cancelRefuse').addEventListener('click', () => {
+                    this.closeModal(document.getElementById('refuseReasonModal'));
+                });
+
+                // Keyboard events
+                document.addEventListener('keydown', (e) => {
+                    if (e.key === 'Escape') {
+                        const openModal = document.querySelector('.modal.show');
+                        if (openModal) {
+                            this.closeModal(openModal);
+                        }
+                    }
+                });
+            }            acceptAppointment(requestElement) {
+                const maintenanceId = requestElement.dataset.id;
+                
+                if (!maintenanceId) {
+                    this.showNotification('Erreur: ID de maintenance manquant', 'error');
+                    return;
+                }
+                
+                // Add loading state
+                const acceptBtn = requestElement.querySelector('.accept-btn');
+                const originalText = acceptBtn.innerHTML;
+                acceptBtn.innerHTML = '<span class="spinner"></span> Traitement...';
+                acceptBtn.disabled = true;
+                  // Make real API call to update the status                // Log the payload being sent
+                const payloadData = {
+                    status: 'confirmed'  // Use 'confirmed' to match the database schema
+                };
+                console.log("Sending payload:", payloadData);
+                console.log("Payload JSON:", JSON.stringify(payloadData));
+                
+                fetch(`/api/maintenance/${maintenanceId}/status`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payloadData)
+                })                .then(response => {
+                    console.log("Response status:", response.status);
+                    return response.json();
+                })
+                .then(data => {
+                    console.log("Response data:", data);
+                    if (data.success) {
+                        this.removeAppointmentRequest(requestElement);
+                        this.showNotification('Rendez-vous accepté avec succès!', 'success');
+                        this.checkEmptyState();
+                        
+                        // Also update the calendar with this maintenance
+                        const maintenance = this.appointments.find(m => m.id == maintenanceId);
+                        if (maintenance) {
+                            this.addMaintenanceToCalendar(maintenance);
+                        }
+                        
+                        // Refresh the scheduled maintenances list to show the newly confirmed maintenance
+                        this.fetchScheduledMaintenances();
+                    } else {
+                        acceptBtn.innerHTML = originalText;
+                        acceptBtn.disabled = false;
+                        this.showNotification(`Erreur: ${data.message}`, 'error');
+                    }
+                })
+                .catch(error => {
+                    console.error('Error accepting maintenance:', error);
+                    acceptBtn.innerHTML = originalText;
+                    acceptBtn.disabled = false;
+                    this.showNotification('Erreur de connexion au serveur', 'error');
+                });
+            }
+
+            showDeclineModal(requestElement) {
+                this.currentDeclinedRequest = requestElement;
+                const modal = document.getElementById('refuseReasonModal');
+                document.getElementById('refuseReason').value = '';
+                this.showModal(modal);
+            }            submitRefusal() {
+                const reason = document.getElementById('refuseReason').value.trim();
+                if (!reason) {
+                    this.showNotification('Veuillez saisir un motif de refus', 'error');
+                    return;
+                }
+                
+                if (!this.currentDeclinedRequest || !this.currentDeclinedRequest.dataset.id) {
+                    this.showNotification('Erreur: Demande non identifiée', 'error');
+                    return;
+                }
+
+                const maintenanceId = this.currentDeclinedRequest.dataset.id;
+                const submitBtn = document.querySelector('#refuseReasonForm button[type="submit"]');
+                const originalText = submitBtn.innerHTML;
+                submitBtn.innerHTML = '<span class="spinner"></span> Envoi...';
+                submitBtn.disabled = true;                // Make real API call                // Log the payload being sent
+                const payloadData = {
+                    status: 'cancelled',  // Use 'cancelled' to match the database schema
+                    reason: reason
+                };
+                console.log("Sending reject payload:", payloadData);
+                console.log("Reject payload JSON:", JSON.stringify(payloadData));
+                
+                fetch(`/api/maintenance/${maintenanceId}/status`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(payloadData)
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        if (this.currentDeclinedRequest) {
+                            this.removeAppointmentRequest(this.currentDeclinedRequest);
+                            this.showNotification(`Rendez-vous refusé. Motif: ${reason}`, 'error');
+                            this.closeModal(document.getElementById('refuseReasonModal'));
+                            this.currentDeclinedRequest = null;
+                            this.checkEmptyState();
+                        }
+                    } else {
+                        this.showNotification(`Erreur: ${data.message}`, 'error');
+                    }
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                })
+                .catch(error => {
+                    console.error('Error rejecting maintenance:', error);
+                    this.showNotification('Erreur de connexion au serveur', 'error');
+                    submitBtn.innerHTML = originalText;
+                    submitBtn.disabled = false;
+                });
+            }            addMaintenanceToCalendar(maintenance) {                // Add the accepted maintenance to the calendar
+                if (this.calendar) {
+                    // Choisir la date et l'heure à utiliser selon time_change_status
+                    let dateTimeToUse;
+                    if (maintenance.using_requested_time || (maintenance.time_change_status === 1 && maintenance.requested_time)) {
+                        dateTimeToUse = maintenance.display_datetime || maintenance.requested_time;
+                        console.log(`Calendar: Using requested_time for maintenance ${maintenance.id}: ${maintenance.requested_time}`);
+                    } else {
+                        dateTimeToUse = maintenance.display_datetime || maintenance.datetime;
+                        console.log(`Calendar: Using datetime for maintenance ${maintenance.id}: ${maintenance.datetime}`);
+                    }
+                    
+                    const dateObj = new Date(dateTimeToUse);                    const event = {
+                        id: maintenance.id,
+                        title: `Maintenance ${maintenance.device_serial_number}`,
+                        start: dateObj,
+                        color: '#00A69C',
+                        extendedProps: {
+                            client: maintenance.client_name,
+                            kit: maintenance.device_serial_number,
+                            model: maintenance.device_model,
+                            time: maintenance.using_requested_time ? 
+                                  maintenance.display_time || maintenance.requested_time_formatted || maintenance.formatted_time : 
+                                  maintenance.display_time || maintenance.formatted_time,
+                            notes: maintenance.notes,
+                            location: maintenance.location,
+                            timeChangeStatus: maintenance.time_change_status,
+                            usingRequestedTime: maintenance.using_requested_time,
+                            requestedTime: maintenance.requested_time,
+                            originalTime: maintenance.datetime
+                        }
+                    };
+                    
+                    this.calendar.addEvent(event);
+                }
+            }
+
+            removeAppointmentRequest(element) {
+                element.style.transition = 'all 0.3s ease';
+                element.style.transform = 'translateX(100%)';
+                element.style.opacity = '0';
+                setTimeout(() => {
+                    element.remove();
+                }, 300);
+            }            showEventDetails(event) {
+                console.log('Calendar event details:', event);
+                const details = `
+                    <div class="info-item">
+                        <strong>Titre:</strong> ${event.title}
+                    </div>
+                    <div class="info-item">
+                        <strong>Client:</strong> ${event.extendedProps.clientName || 'Non spécifié'}
+                    </div>
+                    <div class="info-item">
+                        <strong>D-KIT:</strong> ${event.extendedProps.deviceSerial || 'Non spécifié'} ${event.extendedProps.deviceModel ? '(' + event.extendedProps.deviceModel + ')' : ''}
+                    </div>
+                    <div class="info-item">
+                        <strong>Date:</strong> ${event.start.toLocaleDateString('fr-FR')}
+                    </div>
+                    <div class="info-item">
+                        <strong>Heure:</strong> ${event.start.toLocaleTimeString('fr-FR', {hour: '2-digit', minute:'2-digit'})}
+                    </div>                    <div class="info-item">
+                        <strong>Localisation:</strong> ${event.extendedProps.location || 'Non spécifiée'}
+                    </div>
+                    ${event.extendedProps.notes ? `
+                    <div class="info-item">
+                        <strong>Notes:</strong> ${event.extendedProps.notes}
+                    </div>` : ''}                    ${event.extendedProps.hasModifiedTime ? `
+                    <div class="info-item">
+                        <strong style="color: var(--primary-color);">Info:</strong> 
+                        <span style="color: var(--primary-color);">
+                            <i class="fas fa-clock"></i> Horaire modifié par l'utilisateur
+                        </span>
+                    </div>` : ''}
+                `;
+                document.getElementById('modalDetails').innerHTML = details;
+                this.showModal(document.getElementById('appointmentModal'));
+            }
+
+            showModal(modal) {
+                modal.classList.add('show');
+                document.body.style.overflow = 'hidden';
+            }
+
+            closeModal(modal) {
+                modal.classList.remove('show');
+                document.body.style.overflow = '';
+                
+                // Reset forms
+                const forms = modal.querySelectorAll('form');
+                forms.forEach(form => form.reset());
+            }
+
+            getAppointmentData(element) {
+                const client = element.querySelector('.info-value').textContent;
+                const kit = element.querySelectorAll('.info-value')[1].textContent;
+                const date = element.querySelectorAll('.info-value')[2].textContent;
+                const time = element.querySelectorAll('.info-value')[3].textContent;
+                
+                return { client, kit, date, time };
+            }
+
+            checkEmptyState() {
+                const pendingAppointments = document.querySelectorAll('.appointment-request');
+                const emptyState = document.getElementById('emptyState');
+                
+                if (pendingAppointments.length === 0) {
+                    emptyState.style.display = 'block';
+                } else {
+                    emptyState.style.display = 'none';
+                }
+            }
+
+            showNotification(message, type = 'info') {
+                // Create notification element
+                const notification = document.createElement('div');
+                notification.style.cssText = `
+                    position: fixed;
+                    top: 20px;
+                    right: 20px;
+                    padding: 1rem 1.5rem;
+                    border-radius: 8px;
+                    color: white;
+                    font-weight: 500;
+                    z-index: 10000;
+                    transform: translateX(100%);
+                    transition: transform 0.3s ease;
+                    max-width: 300px;
+                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+                `;
+                
+                // Set background color based on type
+                switch(type) {
+                    case 'success':
+                        notification.style.background = '#10B981';
+                        break;
+                    case 'error':
+                        notification.style.background = '#dc2626';
+                        break;
+                    default:
+                        notification.style.background = '#00A69C';
+                }
+                
+                notification.textContent = message;
+                document.body.appendChild(notification);
+                
+                // Animate in
+                setTimeout(() => {
+                    notification.style.transform = 'translateX(0)';
+                }, 100);
+                
+                // Remove after 4 seconds
+                setTimeout(() => {
+                    notification.style.transform = 'translateX(100%)';
+                    setTimeout(() => {
+                        if (notification.parentNode) {
+                            notification.parentNode.removeChild(notification);
+                        }
+                    }, 300);
+                }, 4000);
+            }
+        }
+
+        // Initialize the application when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            const calendar = new MaintenanceCalendar();
+            
+            // Clean up when page is unloaded
+            window.addEventListener('beforeunload', function() {
+                if (calendar.refreshInterval) {
+                    clearInterval(calendar.refreshInterval);
+                }
+            });
+        });
+
+        // Logout function
+        function logout() {
+            if (confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) {
+                window.location.href = 'login.html';
+            }
+        }
+    </script>
+    <script>
+        function confirmLogout() {
+            if (confirm("Êtes-vous sûr de vouloir vous déconnecter?")) {
+                window.location.href = "{{ url_for('logout') }}";
+            }
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>D-WEE - Détails D-KIT</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.3.0/css/all.min.css" />
+  <link rel="stylesheet" href="{{ url_for('static', filename='userCSS.css') }}" />
+  <style>
+    /* Modal Styles */
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 1000;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+    }
+
+    .modal-content {
+      background: white;
+      border-radius: 12px;
+      width: 90%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+      animation: modalSlideIn 0.3s ease;
+    }
+
+    @keyframes modalSlideIn {
+      from {
+        opacity: 0;
+        transform: scale(0.95) translateY(-20px);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    .modal-header {
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid #eee;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h3 {
+      margin: 0;
+      font-size: 1.25rem;
+      color: var(--text-color);
+      font-weight: 600;
+    }
+
+    .close-modal {
+      background: none;
+      border: none;
+      font-size: 1.5rem;
+      cursor: pointer;
+      color: #666;
+      padding: 0.5rem;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+      width: 32px;
+      height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .close-modal:hover {
+      background: #f5f5f5;
+      color: #333;
+    }
+
+    .modal-body {
+      padding: 2rem;
+    }
+
+    .modal-footer {
+      padding: 1rem 2rem 2rem;
+      display: flex;
+      gap: 1rem;
+      justify-content: flex-end;
+      border-top: 1px solid #eee;
+    }
+
+    /* Form Styles */
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 0.5rem;
+      font-weight: 500;
+      color: var(--text-color);
+      font-size: 0.9rem;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid #ddd;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      color: var(--text-color);
+      background: white;
+      transition: border-color 0.2s ease;
+      box-sizing: border-box;
+    }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      outline: none;
+      border-color: var(--primary-color);
+      box-shadow: 0 0 0 3px rgba(37, 168, 223, 0.1);
+    }
+
+    /* Button Styles */
+    .btn-primary, .btn-secondary {
+      padding: 0.75rem 1.5rem;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.9rem;
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: var(--primary-color);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: #f5f5f5;
+      color: var(--text-color);
+      border: 1px solid #ddd;
+    }
+
+    .btn-secondary:hover {
+      background: #e5e5e5;
+      border-color: #ccc;
+    }
+
+    /* Info message */
+    .info-message {
+      background: rgba(37, 168, 223, 0.1);
+      border: 1px solid rgba(37, 168, 223, 0.2);
+      color: var(--primary-color);
+      padding: 1rem;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      font-size: 0.875rem;
+      margin-top: 1rem;
+    }
+
+    .info-message i {
+      color: var(--primary-color);
+    }
+
+    /* Improved empty state styles */
+    .no-devices-message,
+    .empty-maintenance {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 220px;
+      background: #f8fafc;
+      border: 1.5px dashed #b6d6ee;
+      border-radius: 12px;
+      margin: 2rem 0;
+      box-shadow: 0 2px 8px rgba(37,168,223,0.04);
+      transition: background 0.2s;
+    }
+
+    .no-devices-message .empty-state,
+    .empty-maintenance {
+      text-align: center;
+      color: #5a6e7f;
+      width: 100%;
+    }
+
+    .no-devices-message .empty-state i,
+    .empty-maintenance i {
+      font-size: 3rem;
+      color: #25a8df;
+      margin-bottom: 1.2rem;
+      display: block;
+      opacity: 0.85;
+    }
+
+    .no-devices-message .empty-state h3,
+    .empty-maintenance h3 {
+      font-size: 1.35rem;
+      font-weight: 700;
+      margin-bottom: 0.4rem;
+      color: #1a2a38;
+      letter-spacing: -0.5px;
+    }
+
+    .no-devices-message .empty-state p,
+    .empty-maintenance p {
+      font-size: 1.05rem;
+      margin-bottom: 1.3rem;
+      color: #5a6e7f;
+      opacity: 0.95;
+    }
+
+    .no-devices-message .empty-state .btn-primary {
+      margin-top: 0.3rem;
+      font-size: 1rem;
+      padding: 0.55rem 1.4rem;
+      border-radius: 6px;
+      min-width: unset;
+      box-shadow: 0 2px 8px rgba(37,168,223,0.08);
+      font-weight: 600;
+      line-height: 1.2;
+      background: linear-gradient(90deg, #25a8df 80%, #1e8fc6 100%);
+      transition: background 0.2s, box-shadow 0.2s, transform 0.1s;
+    }
+
+    .no-devices-message .empty-state .btn-primary:hover {
+      background: linear-gradient(90deg, #1e8fc6 80%, #25a8df 100%);
+      box-shadow: 0 4px 16px rgba(37,168,223,0.13);
+      transform: translateY(-2px) scale(1.03);
+    }
+
+    @media (max-width: 600px) {
+      .no-devices-message,
+      .empty-maintenance {
+        min-height: 140px;
+        margin: 1rem 0;
+        padding: 1rem 0.5rem;
+      }
+      .no-devices-message .empty-state i,
+      .empty-maintenance i {
+        font-size: 2rem;
+      }
+      .no-devices-message .empty-state h3,
+      .empty-maintenance h3 {
+        font-size: 1.05rem;
+      }
+      .no-devices-message .empty-state p,
+      .empty-maintenance p {
+        font-size: 0.95rem;
+      }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .modal-content {
+        width: 95%;
+        margin: 1rem;
+      }
+
+      .modal-header {
+        padding: 1rem 1.5rem;
+      }
+
+      .modal-body {
+        padding: 1.5rem;
+      }
+
+      .modal-footer {
+        padding: 1rem 1.5rem 1.5rem;
+        flex-direction: column;
+      }
+    }
+  </style>
+</head>
+<body class="dashboard">
+  <!-- Sidebar Navigation -->
+  <nav class="sidebar">
+    <div class="logo">
+      <img src="https://dweehealthcare.com/wp-content/uploads/2023/08/D-wee-Final.png" alt="DWEE Logo" />
+      <div>
+        <div class="logo-text">D-WEE Healthcare</div>
+        <div class="logo-subtitle">Compte Client</div>
+      </div>
+    </div>
+    <ul class="nav-links">
+      <li>
+        <a href="{{ url_for('user_dashboard') }}"><i class="fas fa-home"></i>Tableau de bord</a>
+      </li>            
+      <li class="active">
+        <a href="{{ url_for('user_dkits') }}"><i class="fas fa-box"></i>Mes Dkits</a>
+      </li>
+      <li>
+        <a href="{{ url_for('user_calendar') }}"><i class="fas fa-calendar-alt"></i>RDV maintenance</a>
+      </li>
+      <li>
+        <a href="{{ url_for('user_profile') }}"><i class="fas fa-user"></i>Mon Profil</a>
+      </li>
+      <li>
+        <a href="{{ url_for('user_support') }}"><i class="fas fa-headset"></i>Support</a>
+      </li>
+    </ul>
+    <div class="user-info">
+      <i class="fas fa-user-circle avatar"></i>
+      <a href="{{ url_for('user_profile') }}" class="user-name">
+        {% if user %}
+          {{ user.first_name }} {{ user.last_name }}
+        {% else %}
+          Utilisateur
+        {% endif %}
+      </a>
+      <span class="sales-badge" style="display: none;">Commercial</span>
+      <button class="logout-btn" onclick="logout()"><i class="fas fa-sign-out-alt"></i></button>
+    </div>
+
+    <a href="{{ url_for('user_commercial_registration') }}" class="role-switch" id="becomeSales">
+      <i class="fas fa-user-tie"></i>
+      Devenir Commercial
+    </a>    
+  </nav>
+
+  <!-- Main Content -->
+  <main class="main-content">
+    <!-- Page Header -->
+    <div class="dashboard-header">
+      <div class="welcome-section">
+        <h1><i class="fas fa-cube"></i> Mes D-KITs</h1>
+        <p>Gérez et surveillez vos D-KITs en temps réel</p>
+      </div>
+      <div class="header-actions">
+        <button class="btn-primary" id="addDkitBtn">
+          <i class="fas fa-plus"></i>
+          Ajouter D-KIT
+        </button>
+      </div>
+    </div>
+
+    <!-- D-KIT Cards -->
+    <div class="dkit-grid">
+      {% set validated_devices = devices | selectattr('validated', 'equalto', 1) | list %}
+      {% if validated_devices and validated_devices|length > 0 %}
+        {% for device in validated_devices %}
+        <div class="dkit-card">
+          <div class="dkit-card-header">
+            <div class="dkit-info">
+              <h3>D-KIT #{{ device.serial_number }}</h3>
+            </div>
+            <span class="status-badge status-{{ device.status }}">
+              <i class="fas fa-{% if device.status == 'active' %}check-circle{% elif device.status == 'maintenance' %}tools{% else %}times-circle{% endif %}"></i>
+              {% if device.status == 'active' %}Actif{% elif device.status == 'maintenance' %}En maintenance{% else %}Inactif{% endif %}
+            </span>
+          </div>
+          
+          <div class="dkit-details">
+            <div class="detail-row">
+              <span class="detail-label">Date d'achat</span>
+              <span class="detail-value">{{ device.purchase_date.strftime('%d %B %Y') if device.purchase_date else 'Non spécifiée' }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Garantie jusqu'au</span>
+              <span class="detail-value">{{ device.warranty_end.strftime('%d %B %Y') if device.warranty_end else 'Non spécifiée' }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Dernière maintenance</span>
+              <span class="detail-value">{{ device.last_maintenance.strftime('%d %B %Y') if device.last_maintenance else 'Aucune' }}</span>
+            </div>
+            <div class="detail-row">
+              <span class="detail-label">Prochaine maintenance</span>
+              <span class="detail-value">{{ device.next_maintenance_date.strftime('%d %B %Y') if device.next_maintenance_date else 'À planifier' }}</span>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <!-- No devices message -->
+        <div class="no-devices-message">
+          <div class="empty-state">
+            <i class="fas fa-box-open"></i>
+            <h3>Aucun D-KIT validé enregistré</h3>
+            <p>Vous n'avez pas encore de D-KIT validé dans votre compte.</p>
+            <button class="btn-primary" id="registerNewDkit">
+              <i class="fas fa-plus"></i>
+              Enregistrer mon premier D-KIT
+            </button>
+          </div>
+        </div>
+      {% endif %}
+    </div>
+
+    <!-- Maintenance History -->
+    <section class="section">
+      <h2><i class="fas fa-history"></i> Historique des Maintenances</h2>
+      <div class="maintenance-history">
+        {% if maintenances and maintenances|length > 0 %}
+          {% for maintenance in maintenances %}
+          <div class="maintenance-record">
+            <div class="maintenance-date-badge">
+              <div class="date-day">{{ maintenance.date.strftime('%d') }}</div>
+              <div class="date-month">{{ maintenance.date.strftime('%b') }}</div>
+            </div>
+            <div class="maintenance-info">
+              <h4>{{ maintenance.type }}</h4>
+              <p class="maintenance-device">D-KIT #{{ maintenance.device_serial_number }}</p>
+              <p class="maintenance-description">{{ maintenance.description or 'Maintenance standard' }}</p>
+            </div>
+            <div class="maintenance-status">
+              <span class="status-badge status-{{ maintenance.status }}">
+                <i class="fas fa-{% if maintenance.status == 'completed' %}check{% elif maintenance.status == 'in_progress' %}clock{% else %}times{% endif %}"></i>
+                {% if maintenance.status == 'completed' %}Complétée{% elif maintenance.status == 'in_progress' %}En cours{% else %}Annulée{% endif %}
+              </span>
+            </div>
+          </div>
+          {% endfor %}
+        {% else %}
+          <div class="empty-maintenance">
+            <p>Aucun historique de maintenance disponible.</p>
+          </div>
+        {% endif %}
+      </div>
+    </section>
+
+    {% set pending_devices = devices | selectattr('validated', 'equalto', 0) | list %}
+    {% if pending_devices %}
+      <section class="section">
+        <h2><i class="fas fa-hourglass-half"></i> D-KITs en attente de validation</h2>
+        <div class="dkit-grid">
+          {% for device in pending_devices %}
+            <div class="dkit-card pending">
+              <div class="dkit-card-header">
+                <div class="dkit-info">
+                  <h3>D-KIT #{{ device.serial_number }}</h3>
+                </div>
+                <span class="status-badge status-pending">
+                  <i class="fas fa-hourglass-half"></i>
+                  En attente de validation
+                </span>
+              </div>
+              <div class="dkit-details">
+                <div class="detail-row">
+                  <span class="detail-label">Date d'achat</span>
+                  <span class="detail-value">{{ device.purchase_date.strftime('%d %B %Y') if device.purchase_date else 'Non spécifiée' }}</span>
+                </div>
+                <div class="detail-row">
+                  <span class="detail-label">Localisation</span>
+                  <span class="detail-value">{{ device.location or 'Non spécifiée' }}</span>
+                </div>
+              </div>
+            </div>
+          {% endfor %}
+        </div>
+      </section>
+    {% endif %}
+  </main>
+
+  <!-- Add D-KIT Modal -->
+  <div id="addDkitModal" class="modal" style="display:none;">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3>Ajouter un nouveau D-KIT</h3>
+        <button class="close-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <form id="addDkitForm" method="POST" action="{{ url_for('user_add_dkit') }}">
+          <div class="form-group">
+            <label for="serialNumber">Numéro de série</label>
+            <input type="text" id="serialNumber" name="serial_number" required>
+          </div>
+          <div class="form-group">
+            <label for="purchaseDate">Date d'achat</label>
+            <input type="date" id="purchaseDate" name="purchase_date" required>
+          </div>
+          <div class="form-group">
+            <label for="location">Localisation</label>
+            <input type="text" id="location" name="location" required>
+          </div>
+          <button type="submit" class="btn-primary">Ajouter</button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de déconnexion -->
+  <div id="logoutModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 class="modal-title">Confirmation de déconnexion</h2>
+        <button class="close" onclick="closeLogoutModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Êtes-vous sûr de vouloir vous déconnecter ?</p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" onclick="closeLogoutModal()">Annuler</button>
+        <button class="btn btn-primary" onclick="confirmLogout()">Se déconnecter</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="myDiv" data-mydata="{{ python_data|tojson }}"></div>
+  <script>
+    const data = JSON.parse(document.getElementById('myDiv').dataset.mydata);
+  </script>
+
+  <script>
+    // Modal functionality
+    const addDkitModal = document.getElementById('addDkitModal');
+    const addDkitBtn = document.getElementById('addDkitBtn');
+    const registerNewDkit = document.getElementById('registerNewDkit');
+    const closeModal = document.querySelector('.close-modal');
+    const cancelAdd = document.getElementById('cancelAdd');
+    const addDkitForm = document.getElementById('addDkitForm');
+
+    // Open modal functions
+    function openModal() {
+      if (addDkitModal) {
+        addDkitModal.style.display = 'flex';
+        document.body.style.overflow = 'hidden';
+      }
+    }
+
+    // Close modal function
+    function closeModalFunc() {
+      if (addDkitModal) {
+        addDkitModal.style.display = 'none';
+        document.body.style.overflow = 'auto';
+        if (addDkitForm) {
+          addDkitForm.reset();
+        }
+      }
+    }
+
+    // Event listeners for opening modal
+    if (addDkitBtn) {
+      addDkitBtn.addEventListener('click', openModal);
+    }
+    if (registerNewDkit) {
+      registerNewDkit.addEventListener('click', openModal);
+    }
+
+    // Event listeners for closing modal
+    if (closeModal) {
+      closeModal.addEventListener('click', closeModalFunc);
+    }
+    if (cancelAdd) {
+      cancelAdd.addEventListener('click', closeModalFunc);
+    }
+
+    // Close modal when clicking outside
+    window.addEventListener('click', function(event) {
+      if (event.target === addDkitModal) {
+        closeModalFunc();
+      }
+    });
+
+    // Initialize page
+    document.addEventListener('DOMContentLoaded', function() {
+      // Set current date as max for purchase date
+      const today = new Date().toISOString().split('T')[0];
+      const purchaseDateInput = document.getElementById('purchaseDate');
+      if (purchaseDateInput) {
+        purchaseDateInput.setAttribute('max', today);
+      }
+    });
+
+    // Logout functionality
+    function logout() {
+      const modal = document.getElementById('logoutModal');
+      modal.style.display = 'flex';
+    }
+
+    function closeLogoutModal() {
+      const modal = document.getElementById('logoutModal');
+      modal.style.display = 'none';
+    }
+
+    function confirmLogout() {
+      window.location.href = "{{ url_for('logout') }}";
+    }
+
+    // Close logout modal when clicking outside
+    window.onclick = function(event) {
+      const modal = document.getElementById('logoutModal');
+      if (event.target == modal) {
+        closeLogoutModal();
+      }
+    }
+
+    document.addEventListener("DOMContentLoaded", function () {
+      document.getElementById("addDkitBtn").onclick = function () {
+        document.getElementById("addDkitModal").style.display = "block";
+      };
+
+      document.getElementById("addDkitForm").onsubmit = function (e) {
+        e.preventDefault();
+        const serial = this.serial_number.value;
+        const purchase_date = this.purchase_date.value;
+        const location = this.location.value;
+        fetch("/api/add_dkit", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ serial_number: serial, purchase_date, location })
+        })
+        .then(res => res.json())
+        .then(data => {
+          alert(data.message);
+          document.getElementById("addDkitModal").style.display = "none";
+          location.reload(); // This will reload the page and show the new D-KIT
+        });
+      };
+    });
+  </script>
+</body>
+</html>
